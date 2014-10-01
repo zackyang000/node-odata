@@ -3,6 +3,12 @@ node-odata
 
 node-odata是一个基于oData协议, 由node实现的REST API框架. 它可以让你轻松的编写基于odata的相关API.
 
+## 安装
+
+## 创建
+
+## 运行
+
 ## 已支持的 OData v4 特性
 
 * Full CRUD
@@ -30,5 +36,5 @@ node-odata是一个基于oData协议, 由node实现的REST API框架. 它可以�
 
 ## 不支持的 OData v4 特性
 * $filter
-  * Type Functions
-  * Geo Functions
+  * Type Functions (cast, isof)
+  * Geo Functions (geo.distance, geo.length, geo.intersects)
