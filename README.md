@@ -1,13 +1,59 @@
 node-odata
 ==========
 
-node-odata是一个基于oData协议, 由node实现的REST API框架. 它可以让你轻松的编写基于odata的相关API.
+Create awesome oData APIs using express.
+使用express创建酷炫的oData APIs
+
+```
+
+##What's the oData
+##什么是oData
+
+The Open Data Protocol (OData) is a data access protocol built on core protocols like HTTP and commonly accepted methodologies like REST for the web.
+
+```
+var express = require('express'),
+    odata = require('node-odata'),
+    mongoose = odata.mongoose;
+var app = express();
+
+app.use(express.bodyParser());
+app.use(express.query());
+
+mongoose.connect("mongodb://localhost/my-app");
+
+var books = odata.resource('book', mongoose.Schema({
+    subject: 'string',
+    author: 'string',
+  }));
+
+odata.register({
+    model: books,
+    url: '/book'
+  });
+
+app.listen(3000);
+
+```
+
+Registers the following routes:
+
+```
+GET /resources
+GET /resources/:id
+POST /resources
+PUT /resources/:id
+DELETE /resources/:id
+```
 
 ## 安装
 
 ## 创建
 
 ## 运行
+
+## 文档
+  odata.function.register
 
 ## 已支持的 OData v4 特性
 
