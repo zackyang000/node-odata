@@ -47,9 +47,9 @@ DELETE /books/:id
 
 ```
 Example:
-http://host/service/books?$select=subject, author
-http://host/service/books?$top=5&$skip=2
-http://host/service/books?$filter=price lt 10
+GET http://host/service/books?$select=subject, author
+GET http://host/service/books?$top=5&$skip=2
+GET http://host/service/books?$filter=price lt 10
 ...
 
 ```
