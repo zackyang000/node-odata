@@ -1,7 +1,11 @@
+***
+[CHINESE README](https://github.com/TossShinHwa/node-odata/blob/master/README.cn.md)
+***
+
 node-odata
 ==========
 
-Create awesome REST APIs based on [OData v4](http://www.odata.org/).
+基于[OData v4](http://www.odata.org/)协议构建酷炫的REST APIs.
 
 ### 
 ```
@@ -30,7 +34,7 @@ app.listen(3000);
 
 ```
 
-Registers the following routes:
+将注册以下路由:
 
 ```
 GET    /books
@@ -40,7 +44,7 @@ PUT    /books/:id
 DELETE /books/:id
 ```
 
-Use the following OData query:
+使用以下oData语法进行查询:
 
 ```
 Example:
@@ -51,21 +55,20 @@ GET http://host/service/books?$filter=price lt 10
 
 ```
 
-## Install
+## 安装
 
 ```
 npm install node-odata
 ```
 
+##OData是什么
 
-##What's the OData
-
-The Open Data Protocol (OData) is a data access protocol built on core protocols like HTTP and commonly accepted methodologies like REST for the web.
+Open Data Protocol（OData）是一个基于HTTP的, 支持REST请求的数据访问协议。
 
 
-## What's the node-oata
+##node-odata是什么
 
-node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
+node-odata是遵循[OData协议 v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html)规范实现的NodeJS版本.
 
 
 ## APIs
@@ -74,7 +77,7 @@ node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasi
 ##### odata.function.register
 
 
-## Support OData v4 Feature
+## 已支持的 OData v4 特性
 
 * Full CRUD Request
 * $count
@@ -86,7 +89,7 @@ node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasi
 * $skip
 * $orderby
 
-## Will Be Support OData v4 Feature
+## 计划支持的 OData v4 特性
 * $expand
 * $filter
   * Comparison Operators (has)
@@ -97,4 +100,3 @@ node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasi
   * Math Functions (round, floor, ceiling)
 * $metadata generation
 * XML/JSON format
-
