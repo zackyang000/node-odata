@@ -171,26 +171,6 @@
         options:
           expand: true
 
-    inline_angular_templates:
-      dist:
-        options:
-          base: '_dist/client'
-          prefix: '/'
-          selector: 'body'
-          method: 'append'
-          unescape:
-            '&lt;': '<'
-            '&gt;': '>'
-            '&apos;': '\''
-            '&amp;': '&'
-        files:
-          '_dist/client/index.html': [
-            '_dist/client/app/**/*.html'
-          ]
-          '_dist/client/admin-index.html': [
-            '_dist/client/app-admin/**/*.html'
-          ]
-
     replace:
       livereload:
         src: ["_dist/client/index.html","_dist/client/admin-index.html"]
@@ -207,7 +187,6 @@
 
 
   grunt.registerTask "build", ->
-    if debug
       grunt.task.run [
         "clean:all"
         "bower"
@@ -216,19 +195,6 @@
         "less"
         "sails-linker"
         "replace:livereload"
-      ]
-    else
-      grunt.task.run [
-        "clean:all"
-        "bower"
-        "copy"
-        "coffee"
-        "less"
-        "uglify"
-        "cssmin"
-        "sails-linker"
-        "inline_angular_templates"
-        "clean:redundant"
       ]
 
   grunt.registerTask "default", [
