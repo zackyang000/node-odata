@@ -8,7 +8,7 @@ node-odata
 Create awesome REST APIs based on [OData v4](http://www.odata.org/).
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
-  [![Build Status](https://img.shields.io/travis/tossshinhwa/node-odata.svg?style=flat)](https://travis-ci.org/tossshinhwa/node-odata)
+  [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
 
 ```
 var express = require('express'),
