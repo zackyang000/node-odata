@@ -22,10 +22,10 @@ del = require("./delete")
 _options =
   prefix : 'oData'
 
-exports.register = (params) ->
+register = (params) ->
   app = _options.app
   url = params.url
-  mongooseModel = mongoose.model(params.modelName)
+  mongooseModel = mongoose.model(params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
 
@@ -35,26 +35,25 @@ exports.register = (params) ->
       methods: key.toLowerCase().split(',')
       valid: value
 
-  app.post "/#{_options.prefix}/#{url}", (req, res, next) -> checkAuth(req, res, auth, 'post') && create(req, res, next, mongooseModel)
-  app.put "/#{_options.prefix}/#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'put') && update(req, res, next, mongooseModel)
-  app.del "/#{_options.prefix}/#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'delete') && del(req, res, next, mongooseModel)
-  app.get "/#{_options.prefix}/#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.get(req, res, next, mongooseModel)
-  app.get "/#{_options.prefix}/#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
+  app.post "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'post') && create(req, res, next, mongooseModel)
+  app.put "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'put') && update(req, res, next, mongooseModel)
+  app.del "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'delete') && del(req, res, next, mongooseModel)
+  app.get "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.get(req, res, next, mongooseModel)
+  app.get "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
 
   for item in actions
     app.post "/#{_options.prefix}/#{url}/:id/#{item.url}", item.handle
 
 
-exports.registerFunction = (params) ->
+registerFunction = (params) ->
   url = params.url
   method = params.method
   handle = params.handle
   _options.app[method.toLowerCase()]("/#{_options.prefix}/#{url}", handle)
 
 
-exports.options =
-  set: (key, value) ->
-    _options[key] = value
+set = (key, value) ->
+  _options[key] = value
 
 
 checkAuth = (req, res, auth, method) ->
@@ -64,4 +63,7 @@ checkAuth = (req, res, auth, method) ->
       return false
   return true
 
-
+exports.register = register
+exports.registerFunction = registerFunction
+exports.mongoose = mongoose
+exports.set = set

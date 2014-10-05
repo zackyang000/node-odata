@@ -1,20 +1,29 @@
-﻿{
+{
   "name": "node-odata",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "private": false,
+  "description": "A module for easily create a REST API based on oData protocol",
+  "main": "index.js",
   "author": "Zack <zackyang@outlook.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TossShinHwa/CMS.git"
+    "url": "https://github.com/TossShinHwa/node-odata.git"
   },
   "engines": {
     "node": "0.10.x",
     "npm": "1.4.x"
   },
   "scripts": {
-    "start": "grunt"
+    "run": "grunt"
   },
+  "keywords": [
+    "node-odata",
+    "OData",
+    "restful-api"
+  ],
+  "license": "MIT",
   "dependencies": {
+    "coffee-script": "*",
     "express": "3.2.0",
     "cors": "2.4.2",
     "errorhandler": "1.2.0",

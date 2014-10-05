@@ -7,11 +7,11 @@ node-odata
 
 Create awesome REST APIs based on [OData v4](http://www.odata.org/).
 
-### 
 ```
 var express = require('express'),
-    odata = require('node-odata'),
+    odata = require('/Users/zack/node-odata'),
     mongoose = odata.mongoose;
+    Schema = mongoose.Schema;
 var app = express();
 
 app.use(express.bodyParser());
@@ -19,29 +19,33 @@ app.use(express.query());
 
 mongoose.connect("mongodb://localhost/my-app");
 
-var books = mongoose.Schema({
+odata.set('app', app);
+
+mongoose.model('books', new Schema({
     subject: String,
     author: String,
     price: Number
-  });
+  }));
 
 odata.register({
-    model: books,
+    model: 'books',
     url: '/books'
   });
 
-app.listen(3000);
+app.listen(3000, function() {
+    console.log('OData service has started.');
+});
 
 ```
 
 Registers the following routes:
 
 ```
-GET    /books
-GET    /books/:id
-POST   /books
-PUT    /books/:id
-DELETE /books/:id
+GET    /odata/books
+GET    /odata/books/:id
+POST   /odata/books
+PUT    /odata/books/:id
+DELETE /odata/books/:id
 ```
 
 Use the following OData query:
