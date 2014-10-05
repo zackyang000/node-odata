@@ -6,7 +6,7 @@ node-odata
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://github.com/TossShinHwa/node-odata/blob/master/LICENSE)
-  
+
 ```
 var express = require('express'),
     odata = require('/Users/zack/node-odata'),
@@ -67,12 +67,10 @@ npm install node-odata
 
 ##OData是什么
 
-Open Data Protocol（OData）是一个基于HTTP的, 支持REST请求的数据访问协议。
-
-
+[Open Data Protocol](http://www.odata.org/)（OData）是一个基于HTTP的, 支持REST请求的数据访问协议。
 ##node-odata是什么
 
-node-odata是遵循[OData协议 v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html)规范实现的NodeJS版本.
+node-odata是遵循OData协议 [v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html)规范实现的NodeJS版本.
 
 
 ## APIs
