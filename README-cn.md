@@ -3,6 +3,9 @@ node-odata
 
 基于[OData v4](http://www.odata.org/)协议构建酷炫的REST APIs.
 
+  [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
+  [![Build Status](https://img.shields.io/travis/tossshinhwa/node-odata.svg?style=flat)](https://travis-ci.org/tossshinhwa/node-odata)
+
 ```
 var express = require('express'),
     odata = require('/Users/zack/node-odata'),
