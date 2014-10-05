@@ -84,6 +84,7 @@ node-odata是遵循[OData协议 v4.0](http://docs.oasis-open.org/odata/odata/v4.
 * $filter
   * Comparison Operators (eq, ne, lt, le, gt, ge)
   * Logical Operators (and)
+  * String Functions (indexof)
 * $select
 * $top
 * $skip
@@ -95,7 +96,7 @@ node-odata是遵循[OData协议 v4.0](http://docs.oasis-open.org/odata/odata/v4.
   * Comparison Operators (has)
   * Logical Operators (or, not)
   * Arithmetic Operators (add, sub, mul, div, mod)
-  * String Functions (contains, endswith, startswith, length, indexof, substring, tolower, toupper, trim ,concat)
+  * String Functions (contains, endswith, startswith, length, substring, tolower, toupper, trim ,concat)
   * Date Functions (year, month, day, hour, minute, second, fractionalseconds, date, time, totaloffsetminutes, now, mindatetime, maxdatetime)
   * Math Functions (round, floor, ceiling)
 * $metadata generation
