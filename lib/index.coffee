@@ -42,14 +42,14 @@ register = (params) ->
   app.get "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
 
   for item in actions
-    app.post "/#{_options.prefix}/#{url}/:id/#{item.url}", item.handle
+    app.post "/#{_options.prefix}#{url}/:id#{item.url}", item.handle
 
 
 registerFunction = (params) ->
   url = params.url
   method = params.method
   handle = params.handle
-  _options.app[method.toLowerCase()]("/#{_options.prefix}/#{url}", handle)
+  _options.app[method.toLowerCase()]("/#{_options.prefix}#{url}", handle)
 
 
 set = (key, value) ->
