@@ -63,7 +63,9 @@ checkAuth = (req, res, auth, method) ->
       return false
   return true
 
-exports.register = register
-exports.registerFunction = registerFunction
+exports.resources =
+  register: register
+exports.functions =
+  register: registerFunction
 exports.mongoose = mongoose
 exports.set = set

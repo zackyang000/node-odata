@@ -31,7 +31,7 @@ mongoose.model('books', new Schema({
     price: Number
   }));
 
-odata.register({
+odata.resources.register({
     model: 'books',
     url: '/books'
   });
