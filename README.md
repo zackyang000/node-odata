@@ -82,8 +82,8 @@ node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasi
 
 ## APIs
 
-##### odata.resource.register
-##### odata.function.register
+##### odata.resources.register
+##### odata.functions.register
 
 
 ## Support OData v4 Feature

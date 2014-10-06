@@ -75,8 +75,14 @@ node-odata是遵循OData协议 [v4.0](http://docs.oasis-open.org/odata/odata/v4.
 
 ## APIs
 
-##### odata.resource.register
-##### odata.function.register
+##### odata.resources.register(params);
+| Param         | Type    | Details  |
+|:-------------:|:-------:| -----    |
+| params        | objects | test |
+
+
+
+##### odata.functions.register(params);
 
 
 ## 已支持的 OData v4 特性
