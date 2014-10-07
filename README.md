@@ -70,16 +70,6 @@ npm install node-odata
 ```
 
 
-##What's the OData
-
-The [Open Data Protocol](http://www.odata.org/) (OData) is a data access protocol built on core protocols like HTTP and commonly accepted methodologies like REST for the web.
-
-
-## What's the node-oata
-
-node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
-
-
 ## APIs
 
 ##### odata.resources.register
@@ -99,7 +89,9 @@ node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasi
 * $skip
 * $orderby
 
+
 ## Will Be Support OData v4 Feature
+
 * $expand
 * $filter
   * Comparison Operators (has)
@@ -110,4 +102,15 @@ node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasi
   * Math Functions (round, floor, ceiling)
 * $metadata generation
 * XML/JSON format
+
+
+## What's the OData
+
+The [Open Data Protocol](http://www.odata.org/) (OData) is a data access protocol built on core protocols like HTTP and commonly accepted methodologies like REST for the web.
+
+
+## What's the node-oata
+
+node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
+
 

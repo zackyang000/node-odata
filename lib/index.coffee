@@ -1,4 +1,3 @@
-
 _ = require("lodash")
 mongoose = require('mongoose')
 create = require("./create")
@@ -7,23 +6,9 @@ read = require("./read")
 del = require("./delete")
 
 _options =
+  app : undefined
   prefix : 'oData'
 
-###
- # register a resource for OData that support writing and reading data using the OData formats.
- # @params {object} in the form of {
- #     url: request url,
- #     model: mongoose model
- #     options:
- #       maxTop: 10
- #       maxSkip: undefined
- #       defaultOrderby: 'date desc'
- #     actions: undefined
- #     auth:
- #       "POST,PUT,DELETE": (req) -> req.user.isAdmin
- #       "GET": (req) -> !!req.user
- #  }
-###
 register = (params) ->
   app = _options.app
   url = params.url
@@ -44,7 +29,11 @@ register = (params) ->
   app.get "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
 
   for item in actions
-    app.post "/#{_options.prefix}#{url}/:id#{item.url}", item.handle
+    app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
+    if item.auth
+      item.auth() && item.handle(req, res, next)
+    else
+      item.handle(req, res, next)
 
 
 registerFunction = (params) ->
