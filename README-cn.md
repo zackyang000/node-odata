@@ -96,7 +96,7 @@ params: {object} in the form of
 
 undefined
 
-###### example
+###### Example
 
 ```
 odata.resources.register({
