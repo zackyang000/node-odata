@@ -77,7 +77,7 @@ node-odata是遵循OData协议 [v4.0](http://docs.oasis-open.org/odata/odata/v4.
 
 ### 1. resources.register(params);
 
-注册一个OData资源, 可以使用OData格式对其进行读写.
+注册一个OData资源, 可以使用OData格式的请求对其进行读写.
 register a resource for OData that support writing and reading data using the OData formats.
 
 ###### Arguments
