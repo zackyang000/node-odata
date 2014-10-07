@@ -1,16 +1,3 @@
-###
-  app: express app object,
-  url: request url,
-  model: mongoose model
-  options:
-    maxTop: 10
-    maxSkip: undefined
-    defaultOrderby: 'date desc'
-  actions: undefined
-  auth:
-    "POST,PUT,DELETE": (req) -> req.user.isAdmin
-    "GET": (req) -> !!req.user
-###
 
 _ = require("lodash")
 mongoose = require('mongoose')
@@ -22,6 +9,21 @@ del = require("./delete")
 _options =
   prefix : 'oData'
 
+###
+ # register a resource for OData that support writing and reading data using the OData formats.
+ # @params {object} in the form of {
+ #     url: request url,
+ #     model: mongoose model
+ #     options:
+ #       maxTop: 10
+ #       maxSkip: undefined
+ #       defaultOrderby: 'date desc'
+ #     actions: undefined
+ #     auth:
+ #       "POST,PUT,DELETE": (req) -> req.user.isAdmin
+ #       "GET": (req) -> !!req.user
+ #  }
+###
 register = (params) ->
   app = _options.app
   url = params.url

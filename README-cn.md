@@ -24,10 +24,10 @@ odata.set('app', app);
 mongoose.model('books', new Schema({
     subject: String,
     author: String,
-    price: Number
+    price: Number    
   }));
 
-odata.register({
+odata.resources.register({
     model: 'books',
     url: '/books'
   });
@@ -75,10 +75,48 @@ node-odata是遵循OData协议 [v4.0](http://docs.oasis-open.org/odata/odata/v4.
 
 ## APIs
 
-##### odata.resources.register(params);
-| Param         | Type    | Details  |
-|:-------------:|:-------:| -----    |
-| params        | objects | test |
+### 1. resources.register(params);
+
+注册一个OData资源, 可以使用OData格式对其进行读写.
+register a resource for OData that support writing and reading data using the OData formats.
+
+###### Arguments
+
+params: {object} in the form of
+
+| Name          | Type              | Details                          | 
+|---------------|-------------------|----------------------------------|
+| url           | string            | resource url                     |
+| model         | string            |                                  |
+| options       | object (optional) |                                  |
+| actions       | array (optional)  |                                  |
+| auth          | object (optional) |                                  |
+
+###### Returns
+
+undefined
+
+###### example
+
+```
+odata.resources.register({
+    app: express app object,
+    url: request url,
+    model: mongoose model,
+    options: {
+        maxTop: 100,
+        maxSkip: 10000,
+        defaultOrderby: 'date desc'
+    },
+    actions: undefined,
+    auth: {
+        "POST,PUT": function(req){ return req.user.isAdmin; }
+        "GET": function(req){ return !!req.user; }
+        "DELETE": function(req){ return false; }
+    }
+});
+```
+ 
 
 
 
