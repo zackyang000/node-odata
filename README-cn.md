@@ -22,7 +22,7 @@ mongoose.connect("mongodb://localhost/my-app");
 odata.set('app', app);
 
 mongoose.model('books', new Schema({
-    subject: String,
+    title: String,
     author: String,
     price: Number    
 }));
@@ -52,7 +52,7 @@ DELETE /odata/books/:id
 
 ```
 Example:
-GET http://host/service/books?$select=subject, author
+GET http://host/service/books?$select=title, author
 GET http://host/service/books?$top=5&$skip=2
 GET http://host/service/books?$filter=price lt 10
 ...
