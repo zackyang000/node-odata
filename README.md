@@ -13,7 +13,7 @@ Create awesome REST APIs based on [OData v4](http://www.odata.org/).
 
 ```
 var express = require('express'),
-    odata = require('/Users/zack/node-odata'),
+    odata = require('node-odata'),
     mongoose = odata.mongoose;
     Schema = mongoose.Schema;
 var app = express();
