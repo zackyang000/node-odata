@@ -20,7 +20,7 @@ var app = express();
 app.use(express.bodyParser());
 app.use(express.query());
 
-mongoose.connect("mongodb://localhost/my-app");
+mongoose.connect('mongodb://localhost/my-app');
 mongoose.model('books', new mongoose.Schema({ title: String, price: Number }));
 
 odata.set('app', app);
