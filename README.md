@@ -15,14 +15,13 @@ Create awesome REST APIs based on [OData v4](http://www.odata.org/).
 var express = require('express'),
     odata = require('node-odata'),
     mongoose = odata.mongoose;
-    Schema = mongoose.Schema;
 var app = express();
 
 app.use(express.bodyParser());
 app.use(express.query());
 
 mongoose.connect("mongodb://localhost/my-app");
-mongoose.model('books', new Schema({ title: String, price: Number }));
+mongoose.model('books', new mongoose.Schema({ title: String, price: Number }));
 
 odata.set('app', app);
 odata.resources.register({ model: 'books', url: '/books' });
