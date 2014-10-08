@@ -22,9 +22,7 @@ mongoose.model('books', new mongoose.Schema({ title: String, price: Number }));
 odata.set('app', app);
 odata.resources.register({ model: 'books', url: '/books' });
 
-app.listen(3000, function() {
-    console.log('OData service has started.');
-});
+app.listen(3000);
 
 ```
 
