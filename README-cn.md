@@ -21,16 +21,9 @@ mongoose.connect("mongodb://localhost/my-app");
 
 odata.set('app', app);
 
-mongoose.model('books', new Schema({
-    title: String,
-    author: String,
-    price: Number    
-}));
+mongoose.model('books', new Schema({ title: String, price: Number }));
 
-odata.resources.register({
-    model: 'books',
-    url: '/books'
-});
+odata.resources.register({ model: 'books', url: '/books' });
 
 app.listen(3000, function() {
     console.log('OData service has started.');
