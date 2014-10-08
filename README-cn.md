@@ -18,11 +18,9 @@ app.use(express.bodyParser());
 app.use(express.query());
 
 mongoose.connect("mongodb://localhost/my-app");
-
-odata.set('app', app);
-
 mongoose.model('books', new Schema({ title: String, price: Number }));
 
+odata.set('app', app);
 odata.resources.register({ model: 'books', url: '/books' });
 
 app.listen(3000, function() {
