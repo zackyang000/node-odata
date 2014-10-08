@@ -72,11 +72,10 @@ npm install node-odata
 ### 1. resources.register(params);
 
 注册一个OData资源, 可以使用OData格式的请求对其进行读写.
-register a resource for OData that support writing and reading data using the OData formats.
 
-###### Arguments
+###### 参数
 
-params: {object} in the form of
+params: object对象, 详见下表:
 
 | Name          | Type              | Details                             | 
 |---------------|-------------------|-------------------------------------|
@@ -87,11 +86,11 @@ params: {object} in the form of
 | actions       | array (optional)  | 该资源附加的action ([什么是action?](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1))|
 
 
-###### Returns
+###### 返回值
 
 undefined
 
-###### Example
+###### 例
 
 ```
 Book = mongoose.model("books");
@@ -136,7 +135,7 @@ odata.resources.register({
 
 在路由中注册一个function. ([什么是function?](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Functions_1))
 
-###### Arguments
+###### 参数
 
 params: {object} in the form of
 
@@ -148,11 +147,11 @@ params: {object} in the form of
 | handle        | function                         | function的具体实现                    |                    |
 
 
-###### Returns
+###### 返回值
 
 undefined
 
-###### Example
+###### 例
 
 ```
 odata.functions.register({
