@@ -21,7 +21,6 @@ odata.set('db', 'mongodb://localhost/my-app');
 odata.resources.register({ url: '/books', model: { title: String, price: Number } });
 
 app.listen(3000);
-
 ```
 
 Registers the following routes:
