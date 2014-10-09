@@ -1,7 +1,3 @@
-***
-[CHINESE README](https://github.com/TossShinHwa/node-odata/blob/master/README-cn.md)
-***
-
 node-odata
 ==========
 
