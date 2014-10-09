@@ -13,7 +13,8 @@ _options =
 register = (params) ->
   app = _options.app
   url = params.url
-  mongooseModel = mongoose.model(url, params.model)
+  modelName = params.modelName
+  mongooseModel = mongoose.model(modelName || url, params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
 
@@ -32,9 +33,9 @@ register = (params) ->
   for item in actions
     app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
     if item.auth
-      item.auth() && item.handle(req, res, next)
+      item.auth() && item.handle(req, res, next, mongooseModel)
     else
-      item.handle(req, res, next)
+      item.handle(req, res, next, mongooseModel)
 
 
 registerFunction = (params) ->

@@ -92,6 +92,6 @@ The [Open Data Protocol](http://www.odata.org/) (OData) is a data access protoco
 
 ## What's the node-oata
 
-node-odata is a NodeJS's library abide by OData Protocol [v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
+node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
 
 
