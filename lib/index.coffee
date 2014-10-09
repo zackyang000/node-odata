@@ -32,10 +32,10 @@ register = (params) ->
 
   for item in actions
     app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
-    if item.auth
-      item.auth() && item.handle(req, res, next, mongooseModel)
-    else
-      item.handle(req, res, next, mongooseModel)
+      if item.auth
+        item.auth() && item.handle(req, res, next)
+      else
+        item.handle(req, res, next)
 
 
 registerFunction = (params) ->
