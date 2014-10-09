@@ -7,12 +7,13 @@ del = require("./delete")
 
 _options =
   app : undefined
+  db : undefined
   prefix : 'oData'
 
 register = (params) ->
   app = _options.app
   url = params.url
-  mongooseModel = mongoose.model(params.model)
+  mongooseModel = mongoose.model(url, params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
 
@@ -44,8 +45,13 @@ registerFunction = (params) ->
 
 
 set = (key, value) ->
-  _options[key] = value
-
+  if key == 'db'
+    if _options[key]
+      throw new Error("db already set before, you can't set it again.")
+    _options[key] = value
+    mongoose.connect(value)
+  else
+    _options[key] = value
 
 checkAuth = (req, res, auth, method) ->
   for item in auth

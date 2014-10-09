@@ -1,10 +1,13 @@
-﻿{
+{
   "name": "node-odata",
   "version": "0.0.9",
   "private": false,
   "description": "A module for easily create a REST API based on oData protocol",
   "main": "index.js",
-  "author": "Zack <zackyang@outlook.com>",
+  "author": {
+    "name": "Zack",
+    "email": "zackyang@outlook.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/TossShinHwa/node-odata.git"
