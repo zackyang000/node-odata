@@ -20,8 +20,10 @@ odata.resources.register({ url: '/books', modelName: 'Book', model: {
 }});
 
 // import data.
-var Book = odata.mongoose.model('Book');
 data = require('./data.json');
+for(var i = 0; i < data.Book.length; i++){
+  data.Book[i]._id = mongoose.Types.ObjectId();
+}
 fixtures.load(data, mongoose.connection, function(err) {
   module.exports.books = data.Book;
   done = true;
