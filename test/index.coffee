@@ -42,11 +42,11 @@ describe "[basic CRUD]", ->
           price: 19.65,
           publish_date: "2013-09-10",
           title: "Steve Jobs"
-        .expect(201) #todo 修改200为201
+        .expect(201) #todo  修改200为201
         .expect('Content-Type', /json/)
         .end (err, res) ->
           res.body.should.be.have.property('_id')
-          res.body.should.be.have.property('title') #todo 未返回实体
+          res.body.should.be.have.property('title') #todo  未返回实体
           res.body.value[0].title.should.be.equal("Steve Jobs")
           done(err)
 
