@@ -55,11 +55,25 @@ describe "[basic CRUD]", ->
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal("Steve Jobs")
           done()
+    it "should be failed to create a new resource without data", (done) ->
+      request(app)
+        .post("/odata/books")
+        .expect(422, done)
 
   describe "PUT:", ->
-    it "should be successful to edit a exist resource", (done) ->
+    it "should be successful to modify an exist resource", (done) ->
+      done()
+    it "should be failed to modify an not exist resource", (done) ->
+      done()
+    it "should be failed to modify an resource without id", (done) ->
       done()
 
   describe "DELETE:", ->
     it "should be successful to delete a exist resource", (done) ->
+      done()
+    it "should be failed to delete an not exist resource", (done) ->
+      done()
+    it "should be failed to delete an resource without id", (done) ->
+      done()
+    it "should be failed to delete a resource twice", (done) ->
       done()
