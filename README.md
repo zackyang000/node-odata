@@ -12,6 +12,9 @@ var express = require('express'),
     odata = require('node-odata');
 var app = express();
 
+app.use(express.bodyParser());
+app.use(express.query());
+
 odata.set('app', app);
 odata.set('db', 'mongodb://localhost/my-app');
 odata.resources.register({ url: '/books', model: { title: String, price: Number } });

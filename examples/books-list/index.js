@@ -6,6 +6,9 @@ var express = require('express'),
     done;
 var app = express();
 
+app.use(express.bodyParser());
+app.use(express.query());
+
 odata.set('app', app);
 odata.set('db', 'mongodb://localhost/test-books-list');
 

@@ -14,7 +14,8 @@ describe "[basic CRUD]", ->
 
   describe "GET:", ->
     it "should be successful to get all of the resources", (done) ->
-      request(app).get("/odata/books")
+      request(app)
+        .get("/odata/books")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
@@ -24,7 +25,8 @@ describe "[basic CRUD]", ->
           res.body.value[0].title.should.be.equal(books[0].title)
           done()
     it "should be successful to get all of the resources", (done) ->
-      request(app).get("/odata/books/#{books[1]._id}")
+      request(app)
+        .get("/odata/books/#{books[1]._id}")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
@@ -35,7 +37,8 @@ describe "[basic CRUD]", ->
 
   describe "POST:", ->
     it "should be successful to create a new resource", (done) ->
-      request(app).post("/odata/books")
+      request(app)
+        .post("/odata/books")
         .send
           author: "Walter Isaacson",
           description: "FROM THE AUTHOR OF THE BESTSELLING BIOGRAPHIES OF BENJAMIN FRANKLIN AND ALBERT EINSTEIN, THIS IS THE EXCLUSIVE BIOGRAPHY OF STEVE JOBS.",
@@ -50,7 +53,7 @@ describe "[basic CRUD]", ->
           done(err)  if(err)
           res.body.should.be.have.property('_id')
           res.body.should.be.have.property('title')
-          res.body.value[0].title.should.be.equal("Steve Jobs")
+          res.body.title.should.be.equal("Steve Jobs")
           done()
 
   describe "PUT:", ->
