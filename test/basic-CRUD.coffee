@@ -13,30 +13,34 @@ describe "[basic CRUD]", ->
       done()
 
   describe "GET:", ->
-    it "should be successful to get all of the resources", (done) ->
+    it "should get all of the resources", (done) ->
       request(app)
         .get("/odata/books")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          done(err)  if(err)
+          if(err)
+            done(err)
+            return
           res.body.should.be.have.property('value')
           res.body.value.length.should.be.equal(books.length)
           res.body.value[0].title.should.be.equal(books[0].title)
           done()
-    it "should be successful to get all of the resources", (done) ->
+    it "should get one of the resources", (done) ->
       request(app)
         .get("/odata/books/#{books[1]._id}")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          done(err)  if(err)
+          if(err)
+            done(err)
+            return
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal(books[1].title)
           done()
 
   describe "POST:", ->
-    it "should be successful to create a new resource", (done) ->
+    it "should create new resource", (done) ->
       request(app)
         .post("/odata/books")
         .send
@@ -50,30 +54,52 @@ describe "[basic CRUD]", ->
         .expect(201)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          done(err)  if(err)
+          if(err)
+            done(err)
+            return
           res.body.should.be.have.property('_id')
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal("Steve Jobs")
           done()
-    it "should be failed to create a new resource without data", (done) ->
+    it "should not create new resource if post nothing", (done) ->
       request(app)
         .post("/odata/books")
         .expect(422, done)
 
   describe "PUT:", ->
-    it "should be successful to modify an exist resource", (done) ->
-      done()
-    it "should be failed to modify an not exist resource", (done) ->
-      done()
-    it "should be failed to modify an resource without id", (done) ->
+    it "should modify resource if it exist", (done) ->
+      books[2].title = "I'm a new title"
+      request(app)
+        .put("/odata/books/#{books[2]._id}")
+        .send(books[2])
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.should.be.have.property('title')
+          res.body.title.should.be.equal(books[2].title)
+          done()
+    it "should not modify resource if it not exist", (done) ->
+      request(app)
+        .put("/odata/books/000000000000000000000000")
+        .send(books[3])
+        .expect(404, done)
+    it "should not modify resource if id is a wrong format", (done) ->
+      request(app)
+        .put("/odata/books/wrong-id")
+        .send(books[3])
+        .expect(500, done)
+    it "should not modify resource if not use id", (done) ->
       done()
 
   describe "DELETE:", ->
-    it "should be successful to delete a exist resource", (done) ->
+    it "should delete resource if it exist", (done) ->
       done()
-    it "should be failed to delete an not exist resource", (done) ->
+    it "should not delete resource if it not exist", (done) ->
       done()
-    it "should be failed to delete an resource without id", (done) ->
+    it "should not delete resource if not use id", (done) ->
       done()
-    it "should be failed to delete a resource twice", (done) ->
+    it "should not delete a resource twice", (done) ->
       done()
