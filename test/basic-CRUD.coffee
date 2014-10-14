@@ -86,20 +86,38 @@ describe "[basic CRUD]", ->
         .put("/odata/books/000000000000000000000000")
         .send(books[3])
         .expect(404, done)
+    it "should not modify resource if not use id", (done) ->
+      request(app)
+        .put("/odata/books")
+        .send(books[4])
+        .expect(404, done)
     it "should not modify resource if id is a wrong format", (done) ->
       request(app)
-        .put("/odata/books/wrong-id")
-        .send(books[3])
+        .put("/odata/books/put-wrong-id")
+        .send(books[5])
         .expect(500, done)
-    it "should not modify resource if not use id", (done) ->
-      done()
 
   describe "DELETE:", ->
     it "should delete resource if it exist", (done) ->
-      done()
+      request(app)
+        .del("/odata/books/#{books[6]._id}")
+        .expect(204, done)
     it "should not delete resource if it not exist", (done) ->
-      done()
+      request(app)
+        .del("/odata/books/000000000000000000000001")
+        .expect(404, done)
     it "should not delete resource if not use id", (done) ->
-      done()
+      request(app)
+        .del("/odata/books")
+        .expect(404, done)
+    it "should not delete resource if id is a wrong format", (done) ->
+      request(app)
+        .del("/odata/books/del-wrong-id")
+        .expect(500, done)
     it "should not delete a resource twice", (done) ->
-      done()
+      request(app)
+        .del("/odata/books/#{books[7]._id}")
+        .end (err, res) ->
+          request(app)
+            .del("/odata/books/#{books[7]._id}")
+            .expect(404, done)
