@@ -4,5 +4,7 @@ module.exports = (req, res, next, mongooseModel) ->
     return
   entity = new mongooseModel(req.body)
   entity.save (err) ->
-    next(err)  if err
+    if err
+      next(err)
+      return
     res.status(201).jsonp(entity)

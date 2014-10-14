@@ -2,7 +2,9 @@ exports.get = (req, res, next, mongooseModel) ->
   mongooseModel.findOne
     _id: req.params.id
   , (err, entity) ->
-    next(err)  if err
+    if err
+      next(err)
+      return
     next(new Error("Failed to find #{url} [#{req.params.id}]"))  unless entity
     res.jsonp(entity)
 
