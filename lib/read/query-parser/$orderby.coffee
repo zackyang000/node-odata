@@ -7,7 +7,7 @@ module.exports = (query, $orderby) ->
   order = {}
   for item in $orderby.split(',')
     data = item.trim().split(' ')
-    if data.length != 2
+    if data.length > 2
       throw new Error("odata: Syntax error at '#{$orderby}', it's should be like 'ReleaseDate asc, Rating desc'")
-    order[data[0].trim()] = data[1]
+    order[data[0].trim()] = data[1] || 'asc'
   query.sort(order)

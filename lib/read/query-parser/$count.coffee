@@ -9,5 +9,7 @@ module.exports = (resData, mongooseModel, $count, $filter) ->
     require('./$filter')(query, $filter)
     query.count (err, count) ->
       resData['@odata.count'] = count
+  else if $count == 'false'
+    return
   else
     throw new Error('Unknown $count  option, only "true" and "false" are supported.')
