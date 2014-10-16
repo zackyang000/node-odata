@@ -39,6 +39,17 @@ describe "[odata query filter]", ->
           done()
 
   describe "'Greater than'", ->
+    it "should filter items", (done) ->
+      request(app)
+        .get("/odata/books?$filter=title ne '#{books[1].title}'")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.value.should.matchEach( (item) -> item.title != books[1].title)
+          done()
 
   describe "'Greater than or equal'", ->
 
