@@ -29,7 +29,6 @@ register = (params) ->
   app.del "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'delete') && del(req, res, next, mongooseModel)
   app.get "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.get(req, res, next, mongooseModel)
   app.get "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
-
   for item in actions
     app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
       if item.auth

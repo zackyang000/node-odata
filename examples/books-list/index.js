@@ -12,15 +12,43 @@ app.use(express.query());
 odata.set('app', app);
 odata.set('db', 'mongodb://localhost/test-books-list');
 
-odata.resources.register({ url: '/books', modelName: 'Book', model: {
-  author: String,
-  description: String,
-  genre: String,
-  id: String,
-  price: Number,
-  publish_date: Date,
-  title: String
-}});
+odata.resources.register({
+  url: '/books',
+  modelName: 'Book',
+  model: {
+      author: String,
+      description: String,
+      genre: String,
+      id: String,
+      price: Number,
+      publish_date: Date,
+      title: String
+  },
+  actions: [{
+    url: '/50off',
+    handle: function(req, res, next){
+      var Book = mongoose.model("Book");
+      Book.findById(req.params.id, function(err, book){
+        if(err){
+          next(err);
+          return;
+        }
+        book.price = +((book.price/2).toFixed(2));
+        book.save(function(err){
+          res.jsonp(book);
+        })
+      });
+    }
+  }]
+});
+
+odata.functions.register({
+    url: '/license',
+    method: 'GET',
+    handle: function(req, res, next){
+      res.jsonp({license:'MIT'});
+    }
+})
 
 // import data.
 data = require('./data.json');
