@@ -35,26 +35,75 @@ describe "[odata query filter]", ->
           if(err)
             done(err)
             return
-          res.body.value.should.matchEach( (item) -> item.title != books[1].title)
+          res.body.value.should.matchEach((item) -> item.title != books[1].title)
           done()
 
   describe "'Greater than'", ->
     it "should filter items", (done) ->
       request(app)
-        .get("/odata/books?$filter=title ne '#{books[1].title}'")
+        .get("/odata/books?$filter=price gt 36.95")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
           if(err)
             done(err)
             return
-          res.body.value.should.matchEach( (item) -> item.title != books[1].title)
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.price > 36.95)
           done()
 
   describe "'Greater than or equal'", ->
+    it "should filter items", (done) ->
+      request(app)
+        .get("/odata/books?$filter=price ge 36.95")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.price >= 36.95)
+          done()
 
   describe "'Less than'", ->
+    it "should filter items", (done) ->
+      request(app)
+        .get("/odata/books?$filter=price lt 36.95")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.price < 36.95)
+          done()
 
   describe "'Less than or equal'", ->
+    it "should filter items", (done) ->
+      request(app)
+        .get("/odata/books?$filter=price le 36.95")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.price <= 36.95)
+          done()
 
   describe "'Logical and'", ->
+    it "should filter items", (done) ->
+      request(app)
+        .get("/odata/books?$filter=title ne '#{books[1].title}' and price ge 36.95")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end (err, res) ->
+          if(err)
+            done(err)
+            return
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.title != books[1].title && item.price >= 36.95)
+          done()

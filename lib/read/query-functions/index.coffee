@@ -10,5 +10,4 @@ module.exports =
       when 'ge' then operator = '>='
       when 'lt' then operator = '<'
       when 'le' then operator = '<='
-    console.log "this.#{innerKey}.indexof(#{innerValue}) #{operator} #{value}"
     "this.#{innerKey}.indexOf(#{innerValue}) #{operator} #{value}"
