@@ -26,8 +26,10 @@ module.exports = (query, $filter) ->
 
   for item in $filter.split('and')
     conditionArr = item.split(' ').filter (n)->n
-    if conditionArr.length != 3
+    if conditionArr.length < 3
       throw new Error("Syntax error at '#{item}'.")
+    if conditionArr.length > 3
+      conditionArr[2] = conditionArr[2..conditionArr.length].join(' ')
     [key, odataOperator, value] = conditionArr
     value = validator.formatValue(value)
 
