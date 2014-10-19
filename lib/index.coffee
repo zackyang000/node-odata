@@ -43,20 +43,23 @@ register = (params) ->
 
   app.get "/#{_options.prefix}#{url}/:id", (req, res, next) ->
     if checkAuth(req, res, auth, 'get')
-      before.get && before.get(req, res)
-      read.get(req, res, next, mongooseModel, after.get)
+      before.get && before.get.get(req, res)
+      read(req, res, next, mongooseModel, after.get)
 
   app.get "/#{_options.prefix}#{url}", (req, res, next) ->
     if checkAuth(req, res, auth, 'get')
       before.get && before.get(req, res)
       read.getAll(req, res, next, mongooseModel, options, after.get)
 
-  for item in actions
-    app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
-      if item.auth
-        item.auth() && item.handle(req, res, next)
-      else
-        item.handle(req, res, next)
+  for item of actions
+    ((key)->
+      app.post "/#{_options.prefix}#{url}/:id#{key}", (req, res, next) ->
+        if actions[key].auth
+          actions[key].auth() && actions[key].handle(req, res, next)
+        else
+          actions[key].handle(req, res, next)
+    )(item)
+
 
 
 registerFunction = (params) ->
