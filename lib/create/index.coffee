@@ -1,4 +1,4 @@
-module.exports = (req, res, next, mongooseModel) ->
+module.exports = (req, res, next, mongooseModel, cb) ->
   if Object.keys(req.body).length is 0
     res.status(422, 'Your request was understood, but contained invalid parameters').end()
     return
@@ -8,3 +8,4 @@ module.exports = (req, res, next, mongooseModel) ->
       next(err)
       return
     res.status(201).jsonp(entity)
+    cb()  if cb

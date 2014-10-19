@@ -1,4 +1,4 @@
-module.exports = (req, res, next, mongooseModel) ->
+module.exports = (req, res, next, mongooseModel, cb) ->
   mongooseModel.remove
     _id: req.params.id
   , (err, count) ->
@@ -9,3 +9,4 @@ module.exports = (req, res, next, mongooseModel) ->
       res.send(404)
       return
     res.send(204)
+    cb()  if cb

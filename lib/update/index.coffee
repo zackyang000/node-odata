@@ -1,6 +1,6 @@
 _ = require("lodash")
 
-module.exports = (req, res, next, mongooseModel) ->
+module.exports = (req, res, next, mongooseModel, cb) ->
   mongooseModel.findOne
     _id: req.params.id
   , (err, entity) ->
@@ -14,3 +14,4 @@ module.exports = (req, res, next, mongooseModel) ->
     entity.save (err) ->
       next(err)  if err
       res.jsonp(entity)
+      cb()  if cb

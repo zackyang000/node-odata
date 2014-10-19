@@ -1,4 +1,4 @@
-exports.get = (req, res, next, mongooseModel) ->
+exports.get = (req, res, next, mongooseModel, cb) ->
   mongooseModel.findOne
     _id: req.params.id
   , (err, entity) ->
@@ -7,8 +7,9 @@ exports.get = (req, res, next, mongooseModel) ->
       return
     next(new Error("Failed to find #{url} [#{req.params.id}]"))  unless entity
     res.jsonp(entity)
+    cb()  if cb
 
-exports.getAll = (req, res, next, mongooseModel, options) ->
+exports.getAll = (req, res, next, mongooseModel, options, cb) ->
   resData = {}
   require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
 
@@ -26,3 +27,4 @@ exports.getAll = (req, res, next, mongooseModel, options) ->
   query.exec (err, data) ->
     resData.value = data
     res.jsonp resData
+    cb()  if cb

@@ -17,6 +17,8 @@ register = (params) ->
   mongooseModel = mongoose.model(modelName || url, params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
+  after = params.after || []
+  before = params.before || []
 
   auth = []
   for key, value of params.auth
@@ -24,11 +26,31 @@ register = (params) ->
       methods: key.toLowerCase().split(',')
       valid: value
 
-  app.post "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'post') && create(req, res, next, mongooseModel)
-  app.put "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'put') && update(req, res, next, mongooseModel)
-  app.del "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'delete') && del(req, res, next, mongooseModel)
-  app.get "/#{_options.prefix}#{url}/:id", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.get(req, res, next, mongooseModel)
-  app.get "/#{_options.prefix}#{url}", (req, res, next) -> checkAuth(req, res, auth, 'get') && read.getAll(req, res, next, mongooseModel, options)
+  app.post "/#{_options.prefix}#{url}", (req, res, next) ->
+    if checkAuth(req, res, auth, 'post')
+      before.post && before.post(req, res)
+      create(req, res, next, mongooseModel, after.post)
+
+  app.put "/#{_options.prefix}#{url}/:id", (req, res, next) ->
+    if checkAuth(req, res, auth, 'put')
+      before.put && before.put(req, res)
+      update(req, res, next, mongooseModel, after.put)
+
+  app.del "/#{_options.prefix}#{url}/:id", (req, res, next) ->
+    if checkAuth(req, res, auth, 'delete')
+      before.post && before.post(req, res)
+      del(req, res, next, mongooseModel, after.post)
+
+  app.get "/#{_options.prefix}#{url}/:id", (req, res, next) ->
+    if checkAuth(req, res, auth, 'get')
+      before.get && before.get(req, res)
+      read.get(req, res, next, mongooseModel, after.get)
+
+  app.get "/#{_options.prefix}#{url}", (req, res, next) ->
+    if checkAuth(req, res, auth, 'get')
+      before.get && before.get(req, res)
+      read.getAll(req, res, next, mongooseModel, options, after.get)
+
   for item in actions
     app.post "/#{_options.prefix}#{url}/:id#{item.url}", (req, res, next) ->
       if item.auth

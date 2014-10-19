@@ -24,7 +24,6 @@ describe "[basic CRUD]", ->
             return
           res.body.should.be.have.property('value')
           res.body.value.length.should.be.equal(books.length)
-          res.body.value[0].title.should.be.equal(books[0].title)
           done()
     it "should get one of the resources", (done) ->
       request(app)
