@@ -100,7 +100,7 @@ describe "[basic CRUD]", ->
     it "should delete resource if it exist", (done) ->
       request(app)
         .del("/odata/books/#{books[6]._id}")
-        .expect(204, done)
+        .expect(200, done)
     it "should not delete resource if it not exist", (done) ->
       request(app)
         .del("/odata/books/000000000000000000000001")

@@ -4,12 +4,9 @@ module.exports = (req, res, next, mongooseModel, cb) ->
   mongooseModel.findOne
     _id: req.params.id
   , (err, entity) ->
-    if err
-      next(err)
-      return
-    unless entity
-      res.status(404, 'Not Found').end()
-      return
+    return next(err)  if err
+    return res.status(404, 'Not Found').end()  unless entity
+
     entity = _.extend(entity, req.body)
     entity.save (err) ->
       next(err)  if err
