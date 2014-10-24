@@ -24,22 +24,23 @@ odata.resources.register({
       publish_date: Date,
       title: String
   },
-  actions: [{
-    url: '/50off',
-    handle: function(req, res, next){
-      var Book = mongoose.model("Book");
-      Book.findById(req.params.id, function(err, book){
-        if(err){
-          next(err);
-          return;
-        }
-        book.price = +((book.price/2).toFixed(2));
-        book.save(function(err){
-          res.jsonp(book);
-        })
-      });
+  actions: {
+    '/50off': {
+      handle: function(req, res, next){
+        var Book = mongoose.model("Book");
+        Book.findById(req.params.id, function(err, book){
+          if(err){
+            next(err);
+            return;
+          }
+          book.price = +((book.price/2).toFixed(2));
+          book.save(function(err){
+            res.jsonp(book);
+          })
+        });
+      }
     }
-  }]
+  }
 });
 
 odata.functions.register({

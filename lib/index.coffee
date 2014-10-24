@@ -44,21 +44,21 @@ register = (params) ->
   app.get "/#{_options.prefix}#{url}/:id", (req, res, next) ->
     if checkAuth(req, res, auth, 'get')
       before.get && before.get.get(req, res)
-      read(req, res, next, mongooseModel, after.get)
+      read.get(req, res, next, mongooseModel, after.get)
 
   app.get "/#{_options.prefix}#{url}", (req, res, next) ->
     if checkAuth(req, res, auth, 'get')
       before.get && before.get(req, res)
       read.getAll(req, res, next, mongooseModel, options, after.get)
 
-  for item of actions
-    ((key)->
-      app.post "/#{_options.prefix}#{url}/:id#{key}", (req, res, next) ->
-        if actions[key].auth
-          actions[key].auth() && actions[key].handle(req, res, next)
+  for key, value of actions
+    ((key1, value1)->
+      app.post "/#{_options.prefix}#{url}/:id#{key1}", (req, res, next) ->
+        if value1.auth
+          value1.auth() && value1.handle(req, res, next)
         else
-          actions[key].handle(req, res, next)
-    )(item)
+          value1.handle(req, res, next)
+    )(key, value)
 
 
 

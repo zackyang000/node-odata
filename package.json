@@ -26,13 +26,14 @@
   "license": "MIT",
   "dependencies": {
     "coffee-script": "1.7.0",
-    "mongoose": "~3",
-    "lodash": "^2.4.1"
+    "lodash": "^2.4.1",
+    "mongoose": "~3"
   },
   "devDependencies": {
     "mocha": "1.21.4",
     "should": "3.3.2",
     "supertest": "0.14.0",
+    "coffee-coverage": "^0.4.2",
     "sinon": "1.10.3",
     "pow-mongoose-fixtures": "0.3.0",
     "express": "3.2.0"
