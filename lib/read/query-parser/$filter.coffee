@@ -24,7 +24,7 @@ functions = require("../query-functions")
 module.exports = (query, $filter) ->
   return unless $filter
 
-  for item in $filter.split('and')
+  for item in $filter.split(' and ')
     conditionArr = item.split(' ').filter (n)->n
     if conditionArr.length < 3
       throw new Error("Syntax error at '#{item}'.")
