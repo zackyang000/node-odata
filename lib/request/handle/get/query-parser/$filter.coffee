@@ -34,11 +34,9 @@ module.exports = (query, $filter) ->
     value = validator.formatValue(value)
 
     #has query-functions
-    for oDataFunction in ['indexof']
-      if key.indexOf(oDataFunction) is 0
-        condition = functions[oDataFunction](key, odataOperator, value)
-        query.$where(condition)
-        return
+    for oDataFunction in ['indexof', 'year'] when key.indexOf(oDataFunction) is 0
+      query = functions[oDataFunction](query, key, odataOperator, value)
+      return
 
     switch odataOperator
       when 'eq' then query.where(key).equals(value)
