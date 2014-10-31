@@ -1,24 +1,17 @@
-# indexof(CompanyName,'lfreds') eq 1
 
-convertOperator = (odataOperator) ->
-  operator = undefined
-  switch odataOperator
-    when 'eq' then operator = '=='
-    when 'ne' then operator = '!='
-    when 'gt' then operator = '>'
-    when 'ge' then operator = '>='
-    when 'lt' then operator = '<'
-    when 'le' then operator = '<='
-  return operator
 
 module.exports =
+  # indexof(CompanyName,'X') eq 1
   indexof: (query, key, odataOperator, value) ->
-    [innerKey, innerValue] = key.substring(key.indexOf('(')+1, key.indexOf(')')).split(',')
-    operator = convertOperator(odataOperator)
-    return query.$where("this.#{innerKey}.indexOf(#{innerValue}) #{operator} #{value}")
+    [key, target] = key.substring(key.indexOf('(') + 1, key.indexOf(')')).split(',')
 
+    operator = convertToOperator(odataOperator)
+    return query.$where("this.#{key}.indexOf(#{target}) #{operator} #{value}")
+
+  # year(publish_date) eq 2000
   year: (query, key, odataOperator, value) ->
     key = key.substring(key.indexOf('(')+1, key.indexOf(')'))
+    
     start = new Date(+value, 0, 1)
     end = new Date(+value + 1, 0, 1)
 
@@ -34,3 +27,15 @@ module.exports =
       when 'lt' then query.where(key).lt(start)
       when 'le' then query.where(key).lt(end)
     return query
+
+convertToOperator = (odataOperator) ->
+  operator = undefined
+  switch odataOperator
+    when 'eq' then operator = '=='
+    when 'ne' then operator = '!='
+    when 'gt' then operator = '>'
+    when 'ge' then operator = '>='
+    when 'lt' then operator = '<'
+    when 'le' then operator = '<='
+  return operator
+
