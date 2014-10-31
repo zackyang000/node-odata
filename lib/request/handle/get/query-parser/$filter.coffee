@@ -19,7 +19,7 @@ eg.
 ###
 
 _ = require("lodash")
-functions = require("../query-functions")
+functions = require("../query-functions/index")
 
 module.exports = (query, $filter) ->
   return unless $filter

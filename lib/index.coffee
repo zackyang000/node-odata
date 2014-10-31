@@ -1,20 +1,20 @@
 _ = require("lodash")
 mongoose = require('mongoose')
-create = require("./create")
-update = require("./update")
-read = require("./read")
-del = require("./delete")
+create = require("./request/handle/post")
+update = require("./request/handle/put")
+read = require("./request/handle/get")
+del = require("./request/handle/delete")
 
 _options =
   app : undefined
   db : undefined
   prefix : 'oData'
 
-register = (params) ->
+registerResource = (params) ->
   app = _options.app
   url = params.url
-  modelName = params.modelName
-  mongooseModel = mongoose.model(modelName || url, params.model)
+  modelName = params.modelName || url
+  mongooseModel = mongoose.model(modelName, params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
   after = params.after || []
@@ -86,7 +86,7 @@ checkAuth = (req, res, auth, method) ->
   return true
 
 exports.resources =
-  register: register
+  register: registerResource
 exports.functions =
   register: registerFunction
 exports.mongoose = mongoose
