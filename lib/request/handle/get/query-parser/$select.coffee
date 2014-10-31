@@ -5,7 +5,6 @@ module.exports = (query, $select) ->
   return unless $select
 
   list = $select.split(',')
-  item.trim() for item in list
-  unless '_id' in list
-    list.push '-_id'
+  list[i] = item.trim() for item, i in list
+  list.push '-_id'  unless '_id' in list
   query.select(list.join(' '))
