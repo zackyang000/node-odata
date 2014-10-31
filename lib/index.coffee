@@ -1,24 +1,46 @@
 _ = require("lodash")
 mongoose = require('mongoose')
-create = require("./request/handle/post")
-update = require("./request/handle/put")
-read = require("./request/handle/get")
-del = require("./request/handle/delete")
+handlers =
+  create : require("./request/handle/post")
+  update : require("./request/handle/put")
+  del : require("./request/handle/delete")
+  read : require("./request/handle/get").get
+  readAll : require("./request/handle/get").getAll
 
 _options =
   app : undefined
   db : undefined
   prefix : 'oData'
 
+
 registerResource = (params) ->
   app = _options.app
-  url = params.url
-  modelName = params.modelName || url
+  prefix = _options.prefix
+
+  resource = params.url
+  modelName = params.modelName || resource
   mongooseModel = mongoose.model(modelName, params.model)
   options = _.extend(_options, params.options)
   actions = params.actions || []
   after = params.after || []
   before = params.before || []
+
+  routes =
+    'create':
+      method: 'post'
+      url: "/#{prefix}#{resource}"
+    'update':
+      method: 'put'
+      url: "/#{prefix}#{resource}/:id"
+    'del':
+      method: 'del'
+      url: "/#{prefix}#{resource}/:id"
+    'read':
+      method: 'get'
+      url: "/#{prefix}#{resource}/:id"
+    'readAll':
+      method: 'get'
+      url: "/#{prefix}#{resource}"
 
   auth = []
   for key, value of params.auth
@@ -26,39 +48,23 @@ registerResource = (params) ->
       methods: key.toLowerCase().split(',')
       valid: value
 
-  app.post "/#{_options.prefix}#{url}", (req, res, next) ->
-    if checkAuth(req, res, auth, 'post')
-      before.post && before.post(req, res)
-      create(req, res, next, mongooseModel, after.post)
-
-  app.put "/#{_options.prefix}#{url}/:id", (req, res, next) ->
-    if checkAuth(req, res, auth, 'put')
-      before.put && before.put(req, res)
-      update(req, res, next, mongooseModel, after.put)
-
-  app.del "/#{_options.prefix}#{url}/:id", (req, res, next) ->
-    if checkAuth(req, res, auth, 'delete')
-      before.post && before.post(req, res)
-      del(req, res, next, mongooseModel, after.post)
-
-  app.get "/#{_options.prefix}#{url}/:id", (req, res, next) ->
-    if checkAuth(req, res, auth, 'get')
-      before.get && before.get.get(req, res)
-      read.get(req, res, next, mongooseModel, after.get)
-
-  app.get "/#{_options.prefix}#{url}", (req, res, next) ->
-    if checkAuth(req, res, auth, 'get')
-      before.get && before.get(req, res)
-      read.getAll(req, res, next, mongooseModel, options, after.get)
+  for name, route of routes
+    method = route.method
+    url = route.url
+    do (name, method, url) ->
+      app[method] url, (req, res, next) ->
+        if checkAuth(req, res, auth, method)
+          before[method] && before[method](req, res)
+          handlers[name](req, res, next, mongooseModel, after[method], options)
 
   for key, value of actions
-    ((key1, value1)->
-      app.post "/#{_options.prefix}#{url}/:id#{key1}", (req, res, next) ->
-        if value1.auth
-          value1.auth() && value1.handle(req, res, next)
+    do (key, value) ->
+      app.post "/#{prefix}#{resource}/:id#{key}", (req, res, next) ->
+        if value.auth
+          value.auth() && value.handle(req, res, next)
         else
-          value1.handle(req, res, next)
-    )(key, value)
+          value.handle(req, res, next)
+
 
 
 

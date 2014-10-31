@@ -7,7 +7,7 @@ exports.get = (req, res, next, mongooseModel, cb) ->
       res.jsonp(entity)
       cb()  if cb
 
-exports.getAll = (req, res, next, mongooseModel, options, cb) ->
+exports.getAll = (req, res, next, mongooseModel, cb, options) ->
   resData = {}
   require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
 
