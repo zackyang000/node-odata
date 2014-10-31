@@ -1,7 +1,6 @@
 node-odata
 ==========
-
-Create awesome REST APIs based on [OData v4](http://www.odata.org/).
+Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
@@ -83,15 +82,3 @@ npm install node-odata
   * Math Functions (round, floor, ceiling)
 * $metadata generation
 * XML/JSON format
-
-
-## What's the OData
-
-The [Open Data Protocol](http://www.odata.org/) (OData) is a data access protocol built on core protocols like HTTP and commonly accepted methodologies like REST for the web.
-
-
-## What's the node-oata
-
-node-odata is a NodeJS's library abide by [OData Protocol v4.0](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html).
-
-
