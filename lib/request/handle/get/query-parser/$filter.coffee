@@ -25,7 +25,7 @@ module.exports = (query, $filter) ->
   return unless $filter
 
   for item in $filter.split(' and ')
-    conditionArr = item.split(' ').filter (n)->n
+    conditionArr = item.split(' ').filter (n) -> n
     if conditionArr.length < 3
       throw new Error("Syntax error at '#{item}'.")
     if conditionArr.length > 3
@@ -35,7 +35,7 @@ module.exports = (query, $filter) ->
 
     #has query-functions
     for oDataFunction in ['indexof', 'year'] when key.indexOf(oDataFunction) is 0
-      query = functions[oDataFunction](query, key, odataOperator, value)
+      functions[oDataFunction](query, key, odataOperator, value)
       return
 
     switch odataOperator

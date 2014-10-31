@@ -4,14 +4,16 @@ module.exports =
   # indexof(CompanyName,'X') eq 1
   indexof: (query, key, odataOperator, value) ->
     [key, target] = key.substring(key.indexOf('(') + 1, key.indexOf(')')).split(',')
+    [key, target] = [key.trim(), target.trim()]
 
     operator = convertToOperator(odataOperator)
-    return query.$where("this.#{key}.indexOf(#{target}) #{operator} #{value}")
+    query.$where("this.#{key}.indexOf(#{target}) #{operator} #{value}")
+
 
   # year(publish_date) eq 2000
   year: (query, key, odataOperator, value) ->
     key = key.substring(key.indexOf('(')+1, key.indexOf(')'))
-    
+
     start = new Date(+value, 0, 1)
     end = new Date(+value + 1, 0, 1)
 
@@ -26,7 +28,8 @@ module.exports =
       when 'ge' then query.where(key).gte(start)
       when 'lt' then query.where(key).lt(start)
       when 'le' then query.where(key).lt(end)
-    return query
+
+
 
 convertToOperator = (odataOperator) ->
   operator = undefined
