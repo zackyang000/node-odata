@@ -24,6 +24,9 @@ functions = require("../query-functions/index")
 module.exports = (query, $filter) ->
   return unless $filter
 
+  #match(/(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$))/g).map(function a(s){return s.substr(0, s.length - 4)})
+
+
   for item in $filter.split(' and ')
     conditionArr = item.split(' ').filter (n) -> n
     if conditionArr.length < 3
