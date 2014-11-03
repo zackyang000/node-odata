@@ -24,15 +24,18 @@ functions = require("../query-functions/index")
 module.exports = (query, $filter) ->
   return unless $filter
 
-  #match(/(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$))/g).map(function a(s){return s.substr(0, s.length - 4)})
+  SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g
+  SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g
 
+  if stringHelper.has $filter, 'and'
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map (s) -> stringHelper.removeEndOf(s, 'and').trim()
+  else
+    condition = [ $filter.trim() ]
 
-  for item in $filter.split(' and ')
-    conditionArr = item.split(' ').filter (n) -> n
-    if conditionArr.length < 3
+  for item in condition
+    conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) -> s.trim()).filter((n) -> n)
+    if conditionArr.length != 3
       throw new Error("Syntax error at '#{item}'.")
-    if conditionArr.length > 3
-      conditionArr[2] = conditionArr[2..conditionArr.length].join(' ')
     [key, odataOperator, value] = conditionArr
     value = validator.formatValue(value)
 
@@ -51,14 +54,25 @@ module.exports = (query, $filter) ->
       else throw new Error("Incorrect operator at '#{item}'.")
 
 
+
+stringHelper =
+  has : (str, key) ->
+    str.indexOf(key) >= 0
+
+  isBeginWith : (str, key) ->
+    str.indexOf(key) == 0
+
+  isEndWith : (str, key) ->
+    str.lastIndexOf(key) == str.length - key.length
+
+  removeEndOf : (str, key) ->
+    if stringHelper.isEndWith(str, key)
+      return str.substr(0, str.length - key.length)
+    return str
+
 validator =
   formatValue : (value) ->
-    if value == 'true' || value == 'false'
-      return !!value
-    if +value == +value
-      return value
-    if value[0] == "'" and value[value.length - 1]== "'"
-      value = value.slice(1, -1)
-    else
-      throw new Error("Syntax error at '#{value}'.")
-    value
+    return !!value  if value in ['true', 'false']                                                               # Boolean
+    return +value  if +value == +value                                                                          # Number
+    return value.slice(1, -1)  if stringHelper.isBeginWith(value, "'") and stringHelper.isEndWith(value, "'")   # String
+    throw new Error("Syntax error at '#{value}'.")
