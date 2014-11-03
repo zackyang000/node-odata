@@ -19,8 +19,13 @@ module.exports =
       globalQueryLimit = config.get('queryLimit')
 
       resource = params.url
-      modelName = Object.keys(params.model)[0]
-      model = params.model[modelName]
+      modelName = Object.keys(params.model)
+      if modelName.length == 1
+        modelName = modelName[0]
+        model = params.model[modelName]
+      else
+        modelName = resource
+        model = params.model
       mongooseModel = mongoose.model(modelName, model)
       options = _.extend(globalQueryLimit, params.options) || {}
       actions = params.actions || []
