@@ -14,8 +14,8 @@ odata.set('db', 'mongodb://localhost/test-books-list');
 
 odata.resources.register({
   url: '/books',
-  modelName: 'Book',
   model: {
+    Book: {
       author: String,
       description: String,
       genre: String,
@@ -23,6 +23,7 @@ odata.resources.register({
       price: Number,
       publish_date: Date,
       title: String
+    }
   },
   actions: {
     '/50off': {
