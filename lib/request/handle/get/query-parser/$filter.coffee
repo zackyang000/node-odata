@@ -72,7 +72,8 @@ stringHelper =
 
 validator =
   formatValue : (value) ->
-    return !!value  if value in ['true', 'false']                                                               # Boolean
+    return true  if  value == 'true'                                                                            # Boolean
+    return false  if  value == 'false'
     return +value  if +value == +value                                                                          # Number
     return value.slice(1, -1)  if stringHelper.isBeginWith(value, "'") and stringHelper.isEndWith(value, "'")   # String
     throw new Error("Syntax error at '#{value}'.")
