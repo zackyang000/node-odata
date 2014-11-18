@@ -1,6 +1,6 @@
 node-odata
 ==========
-Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).
+Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  Its purpose is to easier to creating APIs, make you more focus on business logic.
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
@@ -42,6 +42,9 @@ Example:
 * GET [/books?$filter=price gt 10](http://books.woshinidezhu.com/odata/books?$filter=price gt 10)
 * ...
 
+## Current State
+
+node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on Express, MongoDB and mongoose yet. The current target is to remove the dependents then add more features.
 
 ## Install
 
