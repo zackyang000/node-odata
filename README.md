@@ -33,14 +33,21 @@ DELETE /odata/books/:id
 
 Use the following OData query:
 
+```
+Example
+GET /books?$select=title, author
+GET /books?$top=3&$skip=2
+GET /books?$orderby=price desc
+GET /books?$filter=price gt 10
+GET ...
+```
 
-Example:
+Try it:
 
-* GET [/books?$select=title, author](http://books.woshinidezhu.com/odata/books?$select=title, author)
-* GET [/books?$top=3&$skip=2](http://books.woshinidezhu.com/odata/books?$top=3&$skip=2)
-* GET [/books?$orderby=price desc](http://books.woshinidezhu.com/odata/books?$orderby=price desc)
-* GET [/books?$filter=price gt 10](http://books.woshinidezhu.com/odata/books?$filter=price gt 10)
-* ...
+* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)
+* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)
+* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)
+* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)
 
 ## Current State
 
