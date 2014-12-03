@@ -10,10 +10,12 @@ test:
 		test/*.coffee
 
 test-cov:
-	@NODE_ENV=test COV_TEST=true ./node_modules/.bin/mocha \
-    --compilers coffee:coffee-script/register \
-    --require test/coverage/env \
-    --reporter html-cov -- test > test/coverage/coverage-reporter.html \
-		test/*.coffee
+	@NODE_ENV=test node node_modules/istanbul/lib/cli.js \
+	cover ./node_modules/mocha/bin/_mocha test/*.coffee -- \
+	--reporter $(REPORTER) \
+	--require coffee-script/register \
+	--compilers coffee:coffee-script/register \
+	--recursive test \
+	--bail
 
-.PHONY: test test-cov
+.PHONY: test-cov
