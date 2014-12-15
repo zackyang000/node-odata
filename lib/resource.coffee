@@ -65,7 +65,7 @@ module.exports =
         do (key, value) ->
           app.post "/#{prefix}#{resource}/:id#{key}", (req, res, next) ->
             if value.auth
-              value.auth() && value.handle(req, res, next)
+              value.auth(req) && value.handle(req, res, next)
             else
               value.handle(req, res, next)
 
