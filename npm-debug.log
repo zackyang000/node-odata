@@ -1,0 +1,119 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/zack/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/Users/zack/.npm/node-odata/0.1.6/package.tgz', '.' ]
+11 verbose tarball /Users/zack/.npm/node-odata/0.1.6/package.tgz
+12 verbose folder .
+13 info prepublish node-odata@0.1.6
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /Users/zack/.npm/1f1177db-tar.lock
+16 silly lockFile 7474220e-npm-node-odata-0-1-6-package-tgz tar:///Users/zack/.npm/node-odata/0.1.6/package.tgz
+17 verbose lock tar:///Users/zack/.npm/node-odata/0.1.6/package.tgz /Users/zack/.npm/7474220e-npm-node-odata-0-1-6-package-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile 7474220e-npm-node-odata-0-1-6-package-tgz tar:///Users/zack/.npm/node-odata/0.1.6/package.tgz
+21 silly lockFile 7474220e-npm-node-odata-0-1-6-package-tgz tar:///Users/zack/.npm/node-odata/0.1.6/package.tgz
+22 silly lockFile f3966401-ack-npm-node-odata-0-1-6-package /Users/zack/.npm/node-odata/0.1.6/package
+23 verbose lock /Users/zack/.npm/node-odata/0.1.6/package /Users/zack/.npm/f3966401-ack-npm-node-odata-0-1-6-package.lock
+24 silly lockFile f3966401-ack-npm-node-odata-0-1-6-package /Users/zack/.npm/node-odata/0.1.6/package
+25 silly lockFile f3966401-ack-npm-node-odata-0-1-6-package /Users/zack/.npm/node-odata/0.1.6/package
+26 silly lockFile 3a52ce78- .
+27 silly lockFile 3a52ce78- .
+28 silly publish { name: 'node-odata',
+28 silly publish   version: '0.1.6',
+28 silly publish   private: false,
+28 silly publish   description: 'A module for easily create a REST API based on oData protocol',
+28 silly publish   main: 'index.js',
+28 silly publish   author: { name: 'Zack', email: 'zackyang@outlook.com' },
+28 silly publish   repository:
+28 silly publish    { type: 'git',
+28 silly publish      url: 'https://github.com/TossShinHwa/node-odata.git' },
+28 silly publish   engines: { node: '0.10.x', npm: '1.4.x' },
+28 silly publish   scripts: { run: 'grunt' },
+28 silly publish   keywords: [ 'OData', 'restful-api' ],
+28 silly publish   license: 'MIT',
+28 silly publish   dependencies:
+28 silly publish    { 'coffee-script': '1.7.0',
+28 silly publish      istanbul: '^0.3.3',
+28 silly publish      lodash: '^2.4.1',
+28 silly publish      mongoose: '~3' },
+28 silly publish   devDependencies:
+28 silly publish    { mocha: '1.21.4',
+28 silly publish      should: '3.3.2',
+28 silly publish      supertest: '0.14.0',
+28 silly publish      'coffee-coverage': '^0.4.2',
+28 silly publish      sinon: '1.10.3',
+28 silly publish      'pow-mongoose-fixtures': '0.3.0',
+28 silly publish      express: '3.2.0' },
+28 silly publish   readme: 'node-odata\n==========\nCreate awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  Its purpose is to easier to creating APIs, make you more focus on business logic.\n\n  [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)\n  [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)\n  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://github.com/TossShinHwa/node-odata/blob/master/LICENSE)\n\n```\nvar express = require(\'express\'),\n    odata = require(\'node-odata\');\nvar app = express();\n\napp.use(express.bodyParser());\napp.use(express.query());\n\nodata.set(\'app\', app);\nodata.set(\'db\', \'mongodb://localhost/my-app\');\nodata.resources.register({ url: \'/books\', model: { title: String, price: Number } });\n\napp.listen(3000);\n```\n\nRegisters the following routes:\n\n```\nGET    /odata/books\nGET    /odata/books/:id\nPOST   /odata/books\nPUT    /odata/books/:id\nDELETE /odata/books/:id\n```\n\nUse the following OData query:\n\n```\nExample\nGET /books?$select=title, author\nGET /books?$top=3&$skip=2\nGET /books?$orderby=price desc\nGET /books?$filter=price gt 10\nGET ...\n```\n\nTry it:\n\n* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)\n* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)\n* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)\n* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)\n\n## Current State\n\nnode-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on Express, MongoDB and mongoose yet. The current target is to remove the dependents then add more features.\n\n## Install\n\n```\nnpm install node-odata\n```\n\n\n## APIs\n\n* [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register(params))\n* [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register(params))\n* [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set(key, value))\n\n## Support OData v4 Feature\n\n* Full CRUD Request\n* $count\n* $filter\n  * Comparison Operators (eq, ne, lt, le, gt, ge)\n  * Logical Operators (and)\n  * String Functions (indexof)\n* $select\n* $top\n* $skip\n* $orderby\n\n\n## Will Be Support OData v4 Feature\n\n* $expand\n* $filter\n  * Comparison Operators (has)\n  * Logical Operators (or, not)\n  * Arithmetic Operators (add, sub, mul, div, mod)\n  * String Functions (contains, endswith, startswith, length, substring, tolower, toupper, trim ,concat)\n  * Date Functions (year, month, day, hour, minute, second, fractionalseconds, date, time, totaloffsetminutes, now, mindatetime, maxdatetime)\n  * Math Functions (round, floor, ceiling)\n* $metadata generation\n* XML/JSON format\n',
+28 silly publish   readmeFilename: 'README.md',
+28 silly publish   gitHead: '1949aed974fca9397237adec938e550edc35e9fc',
+28 silly publish   bugs: { url: 'https://github.com/TossShinHwa/node-odata/issues' },
+28 silly publish   homepage: 'https://github.com/TossShinHwa/node-odata',
+28 silly publish   _id: 'node-odata@0.1.6',
+28 silly publish   _shasum: 'beb072220001910692b522e1967b08b390b9ec17',
+28 silly publish   _from: '.' }
+29 verbose request where is /node-odata
+30 verbose request registry https://registry.npmjs.org/
+31 verbose request id b60d6b46ec395db0
+32 verbose url raw /node-odata
+33 verbose url resolving [ 'https://registry.npmjs.org/', './node-odata' ]
+34 verbose url resolved https://registry.npmjs.org/node-odata
+35 verbose request where is https://registry.npmjs.org/node-odata
+36 info trying registry request attempt 1 at 19:49:30
+37 http PUT https://registry.npmjs.org/node-odata
+38 http 403 https://registry.npmjs.org/node-odata
+39 verbose headers { date: 'Mon, 15 Dec 2014 11:49:31 GMT',
+39 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+39 verbose headers   'content-type': 'application/json',
+39 verbose headers   'cache-control': 'max-age=60',
+39 verbose headers   'content-length': '6464',
+39 verbose headers   'accept-ranges': 'bytes',
+39 verbose headers   via: '1.1 varnish',
+39 verbose headers   'x-served-by': 'cache-hk92-HKG',
+39 verbose headers   'x-cache': 'MISS',
+39 verbose headers   'x-cache-hits': '0',
+39 verbose headers   'x-timer': 'S1418644170.777710,VS0,VE709',
+39 verbose headers   'keep-alive': 'timeout=10, max=50',
+39 verbose headers   connection: 'Keep-Alive' }
+40 error publish Failed PUT 403
+41 error Error: forbidden cannot modify pre-existing version: 0.1.6
+41 error old={"name":"node-odata","version":"0.1.6","private":false,"description":"A module for easily create a REST API based on oData protocol","main":"index.js","author":{"name":"Zack","email":"zackyang@outlook.com"},"repository":{"type":"git","url":"https://github.com/TossShinHwa/node-odata.git"},"engines":{"node":"0.10.x","npm":"1.4.x"},"scripts":{"run":"grunt"},"keywords":["OData","restful-api"],"license":"MIT","dependencies":{"coffee-script":"1.7.0","lodash":"^2.4.1","mongoose":"~3"},"devDependencies":{"mocha":"1.21.4","should":"3.3.2","supertest":"0.14.0","coffee-coverage":"^0.4.2","sinon":"1.10.3","pow-mongoose-fixtures":"0.3.0","express":"3.2.0"},"gitHead":"cbed20e27f0f3213fc0fc2a1875e4eb1ebf0e08e","bugs":{"url":"https://github.com/TossShinHwa/node-odata/issues"},"homepage":"https://github.com/TossShinHwa/node-odata","_id":"node-odata@0.1.6","_shasum":"2d74cf0c9a8b64329048848642aefe9de539ef3e","_from":".","_npmVersion":"1.4.28","_npmUser":{"name":"zackyang","email":"zackyang@outlook.com"},"maintainers":[{"name":"zackyang","email":"zackyang@outlook.com"}],"dist":{"shasum":"2d74cf0c9a8b64329048848642aefe9de539ef3e","tarball":"http://registry.npmjs.org/node-odata/-/node-odata-0.1.6.tgz"}}
+41 error new={"name":"node-odata","version":"0.1.6","private":false,"description":"A module for easily create a REST API based on oData protocol","main":"index.js","author":{"name":"Zack","email":"zackyang@outlook.com"},"repository":{"type":"git","url":"https://github.com/TossShinHwa/node-odata.git"},"engines":{"node":"0.10.x","npm":"1.4.x"},"scripts":{"run":"grunt"},"keywords":["OData","restful-api"],"license":"MIT","dependencies":{"coffee-script":"1.7.0","istanbul":"^0.3.3","lodash":"^2.4.1","mongoose":"~3"},"devDependencies":{"mocha":"1.21.4","should":"3.3.2","supertest":"0.14.0","coffee-coverage":"^0.4.2","sinon":"1.10.3","pow-mongoose-fixtures":"0.3.0","express":"3.2.0"},"readme":"node-odata\u000a==========\u000aCreate awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  Its purpose is to easier to creating APIs, make you more focus on business logic.\u000a\u000a  [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)\u000a  [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)\u000a  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://github.com/TossShinHwa/node-odata/blob/master/LICENSE)\u000a\u000a```\u000avar express = require('express'),\u000a    odata = require('node-odata');\u000avar app = express();\u000a\u000aapp.use(express.bodyParser());\u000aapp.use(express.query());\u000a\u000aodata.set('app', app);\u000aodata.set('db', 'mongodb://localhost/my-app');\u000aodata.resources.register({ url: '/books', model: { title: String, price: Number } });\u000a\u000aapp.listen(3000);\u000a```\u000a\u000aRegisters the following routes:\u000a\u000a```\u000aGET    /odata/books\u000aGET    /odata/books/:id\u000aPOST   /odata/books\u000aPUT    /odata/books/:id\u000aDELETE /odata/books/:id\u000a```\u000a\u000aUse the following OData query:\u000a\u000a```\u000aExample\u000aGET /books?$select=title, author\u000aGET /books?$top=3&$skip=2\u000aGET /books?$orderby=price desc\u000aGET /books?$filter=price gt 10\u000aGET ...\u000a```\u000a\u000aTry it:\u000a\u000a* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)\u000a* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)\u000a* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)\u000a* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)\u000a\u000a## Current State\u000a\u000anode-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on Express, MongoDB and mongoose yet. The current target is to remove the dependents then add more features.\u000a\u000a## Install\u000a\u000a```\u000anpm install node-odata\u000a```\u000a\u000a\u000a## APIs\u000a\u000a* [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register(params))\u000a* [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register(params))\u000a* [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set(key, value))\u000a\u000a## Support OData v4 Feature\u000a\u000a* Full CRUD Request\u000a* $count\u000a* $filter\u000a  * Comparison Operators (eq, ne, lt, le, gt, ge)\u000a  * Logical Operators (and)\u000a  * String Functions (indexof)\u000a* $select\u000a* $top\u000a* $skip\u000a* $orderby\u000a\u000a\u000a## Will Be Support OData v4 Feature\u000a\u000a* $expand\u000a* $filter\u000a  * Comparison Operators (has)\u000a  * Logical Operators (or, not)\u000a  * Arithmetic Operators (add, sub, mul, div, mod)\u000a  * String Functions (contains, endswith, startswith, length, substring, tolower, toupper, trim ,concat)\u000a  * Date Functions (year, month, day, hour, minute, second, fractionalseconds, date, time, totaloffsetminutes, now, mindatetime, maxdatetime)\u000a  * Math Functions (round, floor, ceiling)\u000a* $metadata generation\u000a* XML/JSON format\u000a","readmeFilename":"README.md","gitHead":"1949aed974fca9397237adec938e550edc35e9fc","bugs":{"url":"https://github.com/TossShinHwa/node-odata/issues"},"homepage":"https://github.com/TossShinHwa/node-odata","_id":"node-odata@0.1.6","_shasum":"beb072220001910692b522e1967b08b390b9ec17","_from":".","_npmVersion":"1.4.28","_npmUser":{"name":"zackyang","email":"zackyang@outlook.com"},"maintainers":[{"name":"zackyang","email":"zackyang@outlook.com"}],"dist":{"shasum":"beb072220001910692b522e1967b08b390b9ec17","tarball":"http://registry.npmjs.org/node-odata/-/node-odata-0.1.6.tgz"}}: node-odata
+41 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:308:14)
+41 error     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:246:65)
+41 error     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:236:22)
+41 error     at Request.emit (events.js:98:17)
+41 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1142:14)
+41 error     at Request.emit (events.js:117:20)
+41 error     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1096:12)
+41 error     at IncomingMessage.emit (events.js:117:20)
+41 error     at _stream_readable.js:943:16
+41 error     at process._tickCallback (node.js:419:13)
+42 error If you need help, you may report this *entire* log,
+42 error including the npm and node versions, at:
+42 error     <http://github.com/npm/npm/issues>
+43 error System Darwin 14.0.0
+44 error command "node" "/usr/local/bin/npm" "publish"
+45 error cwd /Users/zack/Dropbox/github/node-odata
+46 error node -v v0.10.33
+47 error npm -v 1.4.28
+48 verbose exit [ 1, true ]
