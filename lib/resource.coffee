@@ -22,27 +22,27 @@ module.exports =
           method: 'post'
           url: "/#{prefix}#{resource}"
           controller: require './request/handle/post'
-          config: rest.post || rest.create
+          config: rest.post || rest.create || {}
         'update':
           method: 'put'
           url: "/#{prefix}#{resource}/:id"
           controller: require './request/handle/put'
-          config: rest.put || rest.update
+          config: rest.put || rest.update || {}
         'del':
           method: 'del'
           url: "/#{prefix}#{resource}/:id"
           controller: require './request/handle/delete'
-          config: rest.delete || rest.del
+          config: rest.delete || rest.del || {}
         'read':
           method: 'get'
           url: "/#{prefix}#{resource}/:id"
           controller: require('./request/handle/get').get
-          config: rest.get || rest.read
+          config: rest.get || rest.read || {}
         'readAll':
           method: 'get'
           url: "/#{prefix}#{resource}"
           controller: require('./request/handle/get').getAll
-          config: rest.getAll
+          config: rest.getAll || {}
 
       auth = []
       for key, value of params.auth
