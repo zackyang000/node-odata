@@ -2,6 +2,7 @@ _ = require 'lodash'
 mongoose = require 'mongoose'
 config = require './config'
 
+
 module.exports =
     register: (params) ->
       app = config.get('app')
@@ -9,18 +10,11 @@ module.exports =
       globalQueryLimit = config.get('queryLimit')
 
       resource = params.url
-      modelName = Object.keys(params.model)
+      model = params.model
 
-      if modelName.length == 1 and typeof params.model[modelName[0]] == 'object'
-        modelName = modelName[0]
-        model = params.model[modelName]
-      else
-        modelName = resource
-        model = params.model
-      mongooseModel = mongoose.model(modelName, model)
+      mongooseModel = mongoose.model(resource, model)
       options = _.extend(globalQueryLimit, params.options) || {}
-      after = params.after || []
-      before = params.before || []
+      rest = params.rest || {}
       actions = params.actions || []
 
       routes =
@@ -28,22 +22,27 @@ module.exports =
           method: 'post'
           url: "/#{prefix}#{resource}"
           controller: require './request/handle/post'
+          config: rest.post || rest.create
         'update':
           method: 'put'
           url: "/#{prefix}#{resource}/:id"
           controller: require './request/handle/put'
+          config: rest.put || rest.update
         'del':
           method: 'del'
           url: "/#{prefix}#{resource}/:id"
           controller: require './request/handle/delete'
+          config: rest.delete || rest.del
         'read':
           method: 'get'
           url: "/#{prefix}#{resource}/:id"
           controller: require('./request/handle/get').get
+          config: rest.get || rest.read
         'readAll':
           method: 'get'
           url: "/#{prefix}#{resource}"
           controller: require('./request/handle/get').getAll
+          config: rest.getAll
 
       auth = []
       for key, value of params.auth
@@ -58,8 +57,8 @@ module.exports =
         do (name, method, url, controller) ->
           app[method] url, (req, res, next) ->
             if checkAuth(req, res, auth, method)
-              before[method] && before[method](req, res)
-              controller(req, res, next, mongooseModel, after[method], options)
+              route.config.before && route.config.before(req, res)
+              controller(req, res, next, mongooseModel, route.config.after, options)
 
       for key, value of actions
         do (key, value) ->
