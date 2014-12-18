@@ -63,10 +63,8 @@ module.exports =
       for key, value of actions
         do (key, value) ->
           app.post "/#{prefix}#{resource}/:id#{key}", (req, res, next) ->
-            if value.auth
-              value.auth(req) && value.handle(req, res, next)
-            else
-              value.handle(req, res, next)
+            value.auth && value.auth(req) && value(req, res, next)
+            value.auth || value(req, res, next)
 
 checkAuth = (req, res, auth, method) ->
   for item in auth
