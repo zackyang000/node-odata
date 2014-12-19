@@ -44,31 +44,24 @@ module.exports =
           controller: require('./request/handle/get').getAll
           config: rest.getAll || {}
 
-      auth = []
-      for key, value of params.auth
-        auth.push
-          methods: key.toLowerCase().split(',')
-          valid: value
-
       for name, route of routes
         method = route.method
         url = route.url
         controller = route.controller
         do (name, method, url, controller) ->
           app[method] url, (req, res, next) ->
-            if checkAuth(req, res, auth, method)
+            if checkAuth(config.auth, req, res)
               route.config.before && route.config.before(req, res)
               controller(req, res, next, mongooseModel, route.config.after, options)
 
-      for key, value of actions
-        do (key, value) ->
-          app.post "/#{prefix}#{resource}/:id#{key}", (req, res, next) ->
-            value.auth && value.auth(req) && value(req, res, next)
-            value.auth || value(req, res, next)
+      for url, action of actions
+        do (url, action) ->
+          app.post "/#{prefix}#{resource}/:id#{url}", (req, res, next) ->
+            if checkAuth(action.auth)
+              action(req, res, next)
 
-checkAuth = (req, res, auth, method) ->
-  for item in auth
-    if method in item.methods && !item.valid(req)
-      res.send 401
-      return false
+checkAuth = (auth, req, res) ->
+  if auth && !auth(req)
+    res.send 401
+    return false
   return true
