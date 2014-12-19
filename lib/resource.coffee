@@ -45,14 +45,11 @@ module.exports =
           config: rest.getAll || {}
 
       for name, route of routes
-        method = route.method
-        url = route.url
-        controller = route.controller
-        do (name, method, url, controller) ->
-          app[method] url, (req, res, next) ->
-            if checkAuth(config.auth, req, res)
+        do (name, route) ->
+          app[route.method] route.url, (req, res, next) ->
+            if checkAuth(route.config.auth, req, res)
               route.config.before && route.config.before(req, res)
-              controller(req, res, next, mongooseModel, route.config.after, options)
+              route.controller(req, res, next, mongooseModel, route.config.after, options)
 
       for url, action of actions
         do (url, action) ->
