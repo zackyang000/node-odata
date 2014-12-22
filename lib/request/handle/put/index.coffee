@@ -10,5 +10,5 @@ module.exports = (req, res, next, mongooseModel, cb) ->
     entity = _.extend(entity, req.body)
     entity.save (err) ->
       next(err)  if err
-      res.jsonp(newEntity)
+      res.jsonp(entity)
       cb(entity, oldEntity)  if cb
