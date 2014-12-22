@@ -6,7 +6,7 @@ module.exports =
         return next(err)  if err
         next(new Error("Failed to find #{url} [#{req.params.id}]"))  unless entity
         res.jsonp(entity)
-        cb()  if cb
+        cb(entity)  if cb
 
   getAll : (req, res, next, mongooseModel, cb, options) ->
     resData = {}
@@ -26,4 +26,4 @@ module.exports =
     query.exec (err, data) ->
       resData.value = data
       res.jsonp resData
-      cb()  if cb
+      cb(resData)  if cb

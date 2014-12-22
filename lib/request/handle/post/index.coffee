@@ -6,4 +6,4 @@ module.exports = (req, res, next, mongooseModel, cb) ->
     return next(err)  if err
 
     res.status(201).jsonp(entity)
-    cb()  if cb
+    cb(entity)  if cb

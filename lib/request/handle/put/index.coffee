@@ -7,8 +7,8 @@ module.exports = (req, res, next, mongooseModel, cb) ->
     return next(err)  if err
     return res.status(404, 'Not Found').end()  unless entity
 
-    entity = _.extend(entity, req.body)
-    entity.save (err) ->
+    newEntity = _.extend(entity, req.body)
+    newEntity.save (err) ->
       next(err)  if err
-      res.jsonp(entity)
-      cb()  if cb
+      res.jsonp(newEntity)
+      cb(newEntity, entity)  if cb

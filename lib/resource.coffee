@@ -42,7 +42,7 @@ module.exports =
           method: 'get'
           url: "/#{prefix}#{resource}"
           controller: require('./request/handle/get').getAll
-          config: rest.getAll || {}
+          config: rest.getAll || rest.readAll || {}
 
       for name, route of routes
         do (name, route) ->
