@@ -2,9 +2,9 @@ mongoose = require 'mongoose'
 
 
 _options =
-  app : undefined  # app express instants
-  db : undefined   # mongoDB address
-  prefix : 'oData' # api url prefix
+  app : undefined   # app express instants
+  db : undefined    # mongoDB address
+  prefix : '/oData' # api url prefix
 
 module.exports =
   get: (key) ->

@@ -20,27 +20,27 @@ module.exports =
       routes =
         'create':
           method: 'post'
-          url: "/#{prefix}#{resource}"
+          url: "#{prefix}#{resource}"
           controller: require './request/handle/post'
           config: rest.post || rest.create || {}
         'update':
           method: 'put'
-          url: "/#{prefix}#{resource}/:id"
+          url: "#{prefix}#{resource}/:id"
           controller: require './request/handle/put'
           config: rest.put || rest.update || {}
         'del':
           method: 'del'
-          url: "/#{prefix}#{resource}/:id"
+          url: "#{prefix}#{resource}/:id"
           controller: require './request/handle/delete'
           config: rest.delete || rest.del || {}
         'read':
           method: 'get'
-          url: "/#{prefix}#{resource}/:id"
+          url: "#{prefix}#{resource}/:id"
           controller: require('./request/handle/get').get
           config: rest.get || rest.read || {}
         'readAll':
           method: 'get'
-          url: "/#{prefix}#{resource}"
+          url: "#{prefix}#{resource}"
           controller: require('./request/handle/get').getAll
           config: rest.getAll || rest.readAll || {}
 
@@ -53,7 +53,7 @@ module.exports =
 
       for url, action of actions
         do (url, action) ->
-          app.post "/#{prefix}#{resource}/:id#{url}", (req, res, next) ->
+          app.post "#{prefix}#{resource}/:id#{url}", (req, res, next) ->
             if checkAuth(action.auth)
               action(req, res, next)
 
