@@ -60,13 +60,13 @@ npm install node-odata
 ```
 
 
-## APIs
+## API Docs
 
 * [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register(params))
 * [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register(params))
 * [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set(key, value))
 
-## Feature
+## Support Feature
 
 * [x] Full CRUD Support
 * [x] $count
