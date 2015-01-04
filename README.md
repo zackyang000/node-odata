@@ -101,7 +101,7 @@ npm install node-odata
   	* [ ] mul
   	* [ ] div
   	* [ ] mod
-  * [ ] Date Functions (, , , , , , , , , , , , )
+  * [ ] Date Functions
   	* [x] year
   	* [ ] month
   	* [ ] day
