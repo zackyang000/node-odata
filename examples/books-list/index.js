@@ -27,7 +27,7 @@ odata.resources.register({
   model: bookInfo,
   actions: {
     '/50off': function(req, res, next){
-      repository = mongoose.model('/books');
+      repository = mongoose.model('books');
       repository.findById(req.params.id, function(err, book){
         book.price = +(book.price / 2).toFixed(2);
         book.save(function(err){
@@ -51,7 +51,7 @@ data = require('./data.json');
 for(var i = 0; i < data.length; i++){
   data[i]._id = mongoose.Types.ObjectId();
 }
-fixtures.load({ '/books': data }, mongoose.connection, function(err) {
+fixtures.load({ 'books': data }, mongoose.connection, function(err) {
   module.exports.books = data;
   done = true;
   if(callback) callback();
