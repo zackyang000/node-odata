@@ -66,29 +66,67 @@ npm install node-odata
 * [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register(params))
 * [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set(key, value))
 
-## Support OData v4 Feature
+## Feature
 
-* [x] Full CRUD Request
+* [x] Full CRUD Support
 * [x] $count
 * [x] $filter
-  * Comparison Operators (eq, ne, lt, le, gt, ge)
-  * Logical Operators (and)
-  * String Functions (indexof)
+  * [x] Comparison Operators
+  	* [x] eq
+  	* [x] ne
+  	* [x] lt
+  	* [x] le
+  	* [x] gt
+  	* [x] ge
+  * [ ] Logical Operators
+  	* [x] and
+  	* [ ] or
+  	* [ ] not
+  * [ ] Comparison Operators
+    * [ ] has
+  * [ ] String Functions
+  	* [x] indexof
+  	* [ ] contains
+  	* [ ] endswith
+  	* [ ] startswith
+  	* [ ] length
+  	* [ ] substring
+  	* [ ] tolower
+  	* [ ] toupper
+  	* [ ] trim
+  	* [ ] concat
+  * [ ] Arithmetic Operators
+  	* [ ] add
+  	* [ ] sub
+  	* [ ] mul
+  	* [ ] div
+  	* [ ] mod
+  * [ ] Date Functions (, , , , , , , , , , , , )
+  	* [x] year
+  	* [ ] month
+  	* [ ] day
+  	* [ ] hour
+  	* [ ] minute
+  	* [ ] second
+  	* [ ] fractionalseconds
+  	* [ ] date
+  	* [ ] time
+  	* [ ] totaloffsetminutes
+  	* [ ] now
+  	* [ ] mindatetime
+  	* [ ] maxdatetime
+  * [ ] Math Functions
+  	* [ ] round
+  	* [ ] floor
+  	* [ ] ceiling
 * [x] $select
 * [x] $top
 * [x] $skip
 * [x] $orderby
-
-
-## Will Be Support OData v4 Feature
-
 * [ ] $expand
-* $filter
-  * Comparison Operators (has)
-  * Logical Operators (or, not)
-  * Arithmetic Operators (add, sub, mul, div, mod)
-  * String Functions (contains, endswith, startswith, length, substring, tolower, toupper, trim ,concat)
-  * Date Functions (year, month, day, hour, minute, second, fractionalseconds, date, time, totaloffsetminutes, now, mindatetime, maxdatetime)
-  * Math Functions (round, floor, ceiling)
-* $metadata generation
-* XML/JSON format
+* [x] $metadata generation
+* [ ] XML/JSON format
+
+
+
+
