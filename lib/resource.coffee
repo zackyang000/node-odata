@@ -11,7 +11,11 @@ module.exports =
 
       resource = params.url
       resource = params.url[1..]  if params.url.indexOf('/') is 0
+      if resource.indexOf('/') >= 0
+        throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
       model = params.model
+
+      metadata.add resource, model
 
       mongooseModel = mongoose.model(resource, model)
       options = _.extend(globalQueryLimit, params.options) || {}

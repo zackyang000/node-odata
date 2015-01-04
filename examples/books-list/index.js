@@ -19,7 +19,10 @@ var bookInfo = {
   id: String,
   price: Number,
   publish_date: Date,
-  title: String
+  title: {
+    type: String,
+    description: 'Name of the book.'
+  }
 }
 
 odata.resources.register({
