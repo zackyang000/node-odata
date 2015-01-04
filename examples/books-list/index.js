@@ -12,34 +12,28 @@ app.use(express.query());
 odata.set('app', app);
 odata.set('db', 'mongodb://localhost/test-books-list');
 
+var bookInfo = {
+  author: String,
+  description: String,
+  genre: String,
+  id: String,
+  price: Number,
+  publish_date: Date,
+  title: String
+}
+
 odata.resources.register({
   url: '/books',
-  model: {
-    Book: {
-      author: String,
-      description: String,
-      genre: String,
-      id: String,
-      price: Number,
-      publish_date: Date,
-      title: String
-    }
-  },
+  model: bookInfo,
   actions: {
-    '/50off': {
-      handle: function(req, res, next){
-        var Book = mongoose.model("Book");
-        Book.findById(req.params.id, function(err, book){
-          if(err){
-            next(err);
-            return;
-          }
-          book.price = +((book.price/2).toFixed(2));
-          book.save(function(err){
-            res.jsonp(book);
-          })
+    '/50off': function(req, res, next){
+      repository = mongoose.model('/books');
+      repository.findById(req.params.id, function(err, book){
+        book.price = +(book.price / 2).toFixed(2);
+        book.save(function(err){
+          res.jsonp(book);
         });
-      }
+      });
     }
   }
 });
@@ -54,11 +48,11 @@ odata.functions.register({
 
 // import data.
 data = require('./data.json');
-for(var i = 0; i < data.Book.length; i++){
-  data.Book[i]._id = mongoose.Types.ObjectId();
+for(var i = 0; i < data.length; i++){
+  data[i]._id = mongoose.Types.ObjectId();
 }
-fixtures.load(data, mongoose.connection, function(err) {
-  module.exports.books = data.Book;
+fixtures.load({ '/books': data }, mongoose.connection, function(err) {
+  module.exports.books = data;
   done = true;
   if(callback) callback();
 });

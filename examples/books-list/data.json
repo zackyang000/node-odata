@@ -1,5 +1,4 @@
-{
-  "Book": [
+[
   {
     "author": "Gambardella, Matthew",
     "description": "An in-depth look at creating applications \n with XML.",
@@ -109,4 +108,3 @@
     "title": "Visual Studio 7: A Comprehensive Guide"
   }
 ]
-}
