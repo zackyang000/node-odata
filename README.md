@@ -68,21 +68,21 @@ npm install node-odata
 
 ## Support OData v4 Feature
 
-* Full CRUD Request
-* $count
-* $filter
+* [x] Full CRUD Request
+* [x] $count
+* [x] $filter
   * Comparison Operators (eq, ne, lt, le, gt, ge)
   * Logical Operators (and)
   * String Functions (indexof)
-* $select
-* $top
-* $skip
-* $orderby
+* [x] $select
+* [x] $top
+* [x] $skip
+* [x] $orderby
 
 
 ## Will Be Support OData v4 Feature
 
-* $expand
+* [ ] $expand
 * $filter
   * Comparison Operators (has)
   * Logical Operators (or, not)
