@@ -2,6 +2,7 @@ _ = require 'lodash'
 mongoose = require 'mongoose'
 config = require './config'
 metadata = require './metadata'
+parser = require './model/parser'
 
 module.exports =
     register: (params) ->
@@ -15,9 +16,10 @@ module.exports =
         throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
       model = params.model
 
-      metadata.add resource, model
+      metadataModel = parser.toMetadata(resource, model)
+      #metadata.add(metadataModel)
 
-      mongooseModel = convertToMongoose(resource, model)
+      mongooseModel = parser.toMongoose(resource, model)
       options = _.extend(globalQueryLimit, params.options) || {}
       rest = params.rest || {}
       actions = params.actions || []
@@ -61,13 +63,6 @@ module.exports =
           app.post "#{prefix}/#{resource}/:id#{url}", (req, res, next) ->
             if checkAuth(action.auth)
               action(req, res, next)
-
-convertToMongoose = (name, model) ->
-  # todo
-  for name of model
-    field = model[name]
-    console.log field
-  return mongoose.model(name, model)
 
 
 checkAuth = (auth, req, res) ->

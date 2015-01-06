@@ -22,9 +22,27 @@ var bookInfo = {
   title: {
     type: String,
     description: 'Name of the book.'
-  }
+  },
+  test: {
+    a: String,
+    b: {
+      b1: String
+    }
+  },
+  test2: [{a: String, b:String, c:{c1: String, c2: [{ d: Number}]}}],
+  test3: [{a: [String], b: String}]
+}
+/*
+test data:
+
+{
+"author": "zxczxczxc",
+"test": {"a":"ccccc"},
+"test2": [ {"a":"123", "c":{"c1":123, "c2": [{"d":1},{"d":2},{"d":3}]}} ],
+"test3": [{"a":["a","b","c"],"b":"abc"},{"a":["a1","b1","c1"],"b":"abc1"}]
 }
 
+*/
 odata.resources.register({
   url: '/books',
   model: bookInfo,
