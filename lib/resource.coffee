@@ -16,10 +16,11 @@ module.exports =
         throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
       model = params.model
 
-      metadataModel = parser.toMetadata(resource, model)
-      #metadata.add(metadataModel)
+      metadataModel = parser.toMetadata(model)
+      metadata.add(resource, metadataModel)
 
-      mongooseModel = parser.toMongoose(resource, model)
+      mongooseModel = mongoose.model resource, parser.toMongoose(model)
+
       options = _.extend(globalQueryLimit, params.options) || {}
       rest = params.rest || {}
       actions = params.actions || []
