@@ -4,6 +4,10 @@ isField = (obj) ->
   return true  if typeof obj is 'function'
   if typeof obj is 'object'
     if obj.type and typeof obj.type is 'function'
+      # 检测该 obj 下其它字段, 如果有除了 type 以外是 function 类型的字段, 表明该 obj 不是基本类型
+      for name of obj
+        if name != 'type' and typeof obj[name] is 'function'
+          return false
       return true
 
 isArray = (obj) ->
