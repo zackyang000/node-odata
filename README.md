@@ -7,18 +7,19 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://github.com/TossShinHwa/node-odata/blob/master/LICENSE)
 
 ```
-var express = require('express'),
-    odata = require('node-odata');
-var app = express();
+var odata = require('node-odata');
 
-app.use(express.bodyParser());
-app.use(express.query());
-
-odata.set('app', app);
 odata.set('db', 'mongodb://localhost/my-app');
-odata.resources.register({ url: '/books', model: { title: String, price: Number } });
 
-app.listen(3000);
+odata.resources.register({
+    url: '/books',
+    model: {
+        title: String,
+        price: Number
+    }
+});
+
+odata.listen(3000);
 ```
 
 Registers the following routes:
@@ -51,7 +52,7 @@ Try it:
 
 ## Current State
 
-node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on Express, MongoDB and mongoose yet. The current target is to remove the dependents then add more features.
+node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
 
 ## Install
 
@@ -124,7 +125,7 @@ npm install node-odata
 * [x] $skip
 * [x] $orderby
 * [ ] $expand
-* [x] $metadata generation
+* [x] $metadata generation (Nonstandard)
 * [ ] XML/JSON format
 
 
