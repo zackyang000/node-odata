@@ -1,13 +1,12 @@
 config = require './../config'
-
+parser = require './parser'
 entitiesList = []
 entitiesDetail = {}
 
 add = (resource, entity) ->
   entitiesList.push resource
-  entitiesDetail[resource] = entity
+  entitiesDetail[resource] = parser.toMetadata entity
   build()
-
 
 
 build = (entity) ->

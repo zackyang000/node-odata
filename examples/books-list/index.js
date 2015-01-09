@@ -1,15 +1,9 @@
-var express = require('express'),
-    odata = require('../../index'),
+var odata = require('../../index'),
     mongoose = odata.mongoose,
     fixtures = require('pow-mongoose-fixtures'),
     callback,
     done;
-var app = express();
 
-app.use(express.bodyParser());
-app.use(express.query());
-
-odata.set('app', app);
 odata.set('db', 'mongodb://localhost/test-books-list');
 
 var bookInfo = {
@@ -79,12 +73,12 @@ fixtures.load({ 'books': data }, mongoose.connection, function(err) {
 });
 
 // start server
-app.listen(3000, function(){
+odata.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/books');
 });
 
 // for mocha-test
-module.exports.app = app;
+module.exports.app = odata._app;
 module.exports.ready = function(cb){
   callback = cb;
   if(done) callback();

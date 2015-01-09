@@ -2,7 +2,6 @@ _ = require 'lodash'
 mongoose = require 'mongoose'
 config = require './config'
 metadata = require './metadata'
-parser = require './model/parser'
 
 module.exports =
     register: (params) ->
@@ -16,10 +15,9 @@ module.exports =
         throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
       model = params.model
 
-      metadataModel = parser.toMetadata(model)
-      metadata.add(resource, metadataModel)
+      metadata.add(resource, model)
 
-      mongooseModel = mongoose.model resource, parser.toMongoose(model)
+      mongooseModel = mongoose.model resource, model
 
       options = _.extend(globalQueryLimit, params.options) || {}
       rest = params.rest || {}

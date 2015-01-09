@@ -4,7 +4,7 @@ isField = (obj) ->
   return true  if typeof obj is 'function'
   if typeof obj is 'object'
     if obj.type and typeof obj.type is 'function'
-      # 检测该 obj 下其它字段, 如果有除了 type 以外是 function 类型的字段, 表明该 obj 不是基本类型
+      # 检测该 obj 下字段, 如果有除了 type 以外是 function 类型的字段, 表明该 obj 不是基本类型
       for name of obj
         if name != 'type' and typeof obj[name] is 'function'
           return false
@@ -21,19 +21,8 @@ isObject = (obj) ->
 
 
 module.exports =
-  toMongoose: (obj) ->
-    convert = (obj, name) ->
-      if isComplexArray(obj[name])
-        convert(obj[name][0], childName) for childName of obj[name][0]
-        obj[name] = [new mongoose.Schema(obj[name][0])]
-      else if isObject(obj[name])
-        convert(obj[name], childName) for childName of obj[name]
-    convert obj: obj, 'obj'
-    return obj
-
-
   toMetadata: (obj) ->
-    convert = (obj, name) ->
+    convert = (obj, name, root) ->
       LEN = 'function '.length
       if isField(obj[name])
         if typeof obj[name] is 'function'
@@ -50,5 +39,6 @@ module.exports =
       else if isObject(obj[name])
         convert(obj[name], childName)  for childName of obj[name]
 
-    convert obj: obj, 'obj'
+    convert obj: obj, 'obj', true
+
     return obj
