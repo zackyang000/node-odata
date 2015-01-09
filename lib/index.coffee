@@ -10,7 +10,10 @@ module.exports.mongoose = require 'mongoose'
 app = express()
 app.use express.bodyParser()
 app.use express.query()
+app.use express.methodOverride()
+
 config.set('app', app)
 module.exports._app = app
+module.exports._express = express
 module.exports.listen = () -> app.listen.apply(app, arguments)
 module.exports.use = () -> app.use.apply(app, arguments)
