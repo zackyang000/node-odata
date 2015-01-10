@@ -18,18 +18,71 @@ node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并
 
 反观 OData 社区, 目前 node-odata 是唯一一款基于 NodeJS 的 OData 实现. 与其它编译型语言的 OData 实现相比, 它运行更加高效, 部署更加方便, 编写更加简单 (最短只需3行代码即可初始化一个 OData 服务).
 
-# Installation
-
-# Guide
-
-## Quick Start
+## 当前状态
 
 
-# API Reference
+# 1) 安装
 
-## OData Resource
+node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](http://www.mongodb.org/), 在安装了依赖项之后, 运行以下命令即可:
 
-## OData Function
+    $ npm install node-odata
 
-## OData Setting
 
+# 2) 运行
+
+## 2.1 创建服务
+
+安装完成后, 新建 *index.js* 文件并输入:
+
+    var odata = require('node-odata');
+
+    odata.set('db', 'mongodb://localhost/my-app');
+
+    odata.resources.register({
+        url: '/books',
+        model: {
+            title: String,
+            price: Number
+        }
+    });
+
+    odata.listen(3000);
+
+保存后运行以下命令即可启动 OData 服务:
+
+    $ node index.js
+    
+它将自动注册以下路由:
+
+    GET    /odata/books
+    GET    /odata/books/:id
+    POST   /odata/books
+    PUT    /odata/books/:id
+    DELETE /odata/books/:id
+
+## 2.2 访问服务
+
+你可以使用 REST 风格的 HTTP 请求来对资源进行增删查改操作.
+
+### 新增
+
+### 修改
+
+### 查询
+
+### 删除
+
+
+# 3) API
+
+## resources.register
+
+## functions.register
+
+## config
+
+# 4) 使用 OData 查询
+
+# 5) 进阶指南
+
+# 6) 已支持的 OData 特性
