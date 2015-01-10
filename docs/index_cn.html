@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>node-odata Documentation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="header">
+    <h1>node-odata Documentation</h1>
+</div>
+
+    <div id="sidebar">
+<ul>
+  <li><div><a href="#installation">Installation</a></div></li>
+  <li><div><a href="#guide">Guide</a></div>
+  <ul>
+    <li><div><a href="#quick-start">Quick Start</a></div></li>
+  </ul></li>
+  <li><div><a href="#api-reference">API Reference</a></div>
+  <ul>
+    <li><div><a href="#odata-resource">OData Resource</a></div></li>
+    <li><div><a href="#odata-function">OData Function</a></div></li>
+    <li><div><a href="#odata-setting">OData Setting</a></div></li>
+  </ul></li>
+</ul>
+
+    </div>
+    <div id="content">
+
+<h1>关于 node-odata</h1>
+<div class="intro">
+
+
+<p>node-odata 可以让你创建 REST API, 并能使用 <a href="http://www.odata.org/">OData</a> 协议的查询格式进行数据的筛选. 让你可以更方便的创建 API, 更专注于业务逻辑.</p>
+
+<h2>什么是 OData 协议?</h2>
+
+<p>OData 全称开放数据协议(Open Data Protocol), 是一个用于 web 的数据访问协议. OData 提供了一个统一的 CRUD (create, read, update, and delete) 操作来查询和维护数据集.</p>
+
+<h2>为什么使用 node-odata?</h2>
+
+<p>node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API. </p>
+
+<p>在常规的 REST 框架中, 仅仅提供了 REST 风格的 CRUD 操作. 开发者不的不对每一个资源都手动添加一些公共功能, 如排序/分页等, 甚至在复杂的业务场景中, 开发者不的不一次次根据业务需求制定一些特定的复杂查询, 这都极大的浪费了人力资源. OData数据访问协议很好的解决了这一问题. 它定义了$filter, $orderby, $select等一系列关键字来进行统一的筛选, 排序, 分页等操作. 极大的减轻了开发者的负担, 提高了生产力.</p>
+
+<p>反观 OData 社区, 目前 node-odata 是唯一一款基于 NodeJS 的 OData 实现. 与其它编译型语言的 OData 实现相比, 它运行更加高效, 部署更加方便, 编写更加简单 (最短只需3行代码即可初始化一个 OData 服务).</p>
+
+
+</div>
+<h1 id="installation">Installation</h1>
+
+<h1 id="guide">Guide</h1>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<h1 id="api-reference">API Reference</h1>
+
+<h2 id="odata-resource">OData Resource</h2>
+
+<h2 id="odata-function">OData Function</h2>
+
+<h2 id="odata-setting">OData Setting</h2>
+
+    </div> <!-- #content -->
+<script type="text/javascript" charset="utf-8">
+$(function() {
+    var headerHeight = $("#header").height();
+
+    var sections = $("#content h1[id], #content h2[id]");
+    var sectionOffsets = [];
+    var slack = 100;  // Give the section scroll some slack (in pixels).
+    sections.each(function(elem) {
+        sectionOffsets.push($(this).offset().top - headerHeight - slack);
+    });
+
+    var currSectionIdx = -1;
+    function getSectionIdx(scrollDistance) {
+        if (scrollDistance < sectionOffsets[0]) {
+            return -1;
+        } else {
+            for (var id = sectionOffsets.length; id > 0; id--) {
+                if (scrollDistance > sectionOffsets[id - 1]) {
+                    return id - 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    /** {{{ http://code.activestate.com/recipes/577787/ (r2) */
+    _slugify_strip_re = /[^\w\s-]/g;
+    _slugify_hyphenate_re = /[-\s]+/g;
+    function slugify(s) {
+      s = s.replace(_slugify_strip_re, '').trim().toLowerCase();
+      s = s.replace(_slugify_hyphenate_re, '-');
+      return s;
+    }
+    /** end of http://code.activestate.com/recipes/577787/ }}} */
+
+    /* See <https://github.com/trentm/restdown/issues/11>. */
+    function safechars(s) {
+      return s.replace(_slugify_strip_re, '');
+    }
+
+    $("#content").scroll(function() {
+        var scrollDistance = $("#content").scrollTop();
+        var sectionIdx = getSectionIdx(scrollDistance);
+
+        if (sectionIdx !== currSectionIdx) {
+            $("#sidebar li>div").removeClass("current");
+            currSectionIdx = sectionIdx;
+            if (currSectionIdx >= 0) {
+                var heading = $(sections[currSectionIdx]).text();
+                var possibleAnchors = [
+                    slugify(heading), // h1 or non-method h2
+                    heading.replace(/ /g, '-'), // h2 method, just name or just endpoint
+                    heading.slice(0, heading.lastIndexOf(' (')).trimRight().replace(/ /g, '-'), // h2 method, name and endpoint
+                ];
+                for (var i=0; i < possibleAnchors.length; i++) {
+                    var anchor = safechars(possibleAnchors[i]);
+                    try {
+                        $("#sidebar a[href=#" + anchor + "]").parent().addClass("current");
+                    } catch (e) {
+                        /* Ignore error if no such element. */
+                        console.log(e)
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
