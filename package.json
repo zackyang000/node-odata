@@ -1,6 +1,6 @@
 {
   "name": "node-odata",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": false,
   "description": "A module for easily create a REST API based on oData protocol",
   "main": "index.js",
@@ -28,7 +28,8 @@
     "coffee-script": "1.7.0",
     "istanbul": "^0.3.3",
     "lodash": "^2.4.1",
-    "mongoose": "~3"
+    "mongoose": "~3",
+    "express": "3.2.0"
   },
   "devDependencies": {
     "mocha": "1.21.4",
@@ -36,7 +37,6 @@
     "supertest": "0.14.0",
     "coffee-coverage": "^0.4.2",
     "sinon": "1.10.3",
-    "pow-mongoose-fixtures": "0.3.0",
-    "express": "3.2.0"
+    "pow-mongoose-fixtures": "0.3.0"
   }
 }
