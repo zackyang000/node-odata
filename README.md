@@ -43,12 +43,7 @@ GET /books?$filter=price gt 10
 GET ...
 ```
 
-Try it:
 
-* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)
-* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)
-* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)
-* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)
 
 ## Current State
 
@@ -66,6 +61,16 @@ npm install node-odata
 * [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register(params))
 * [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register(params))
 * [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set(key, value))
+
+## Demo
+
+[Live](http://books.zackyang.com/odata/books) and try it:
+
+* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)
+* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)
+* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)
+* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)
+
 
 ## Support Feature
 
@@ -129,5 +134,10 @@ npm install node-odata
 * [ ] XML/JSON format
 
 
+## CONTRIBUTING
 
+We always welcome contributions to help make node-odata better. Please feel free to contribute to this project.
 
+## LICENSE
+
+node-odata is licensed under the MIT license. See [LICENSE](LICENSE) for more information.
