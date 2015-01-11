@@ -14,20 +14,42 @@
     <div id="sidebar">
 <ul>
   <li><div><a href="#1">1) 安装</a></div></li>
-  <li><div><a href="#2">2) 运行</a></div>
+  <li><div><a href="#2">2) 快速开始</a></div>
   <ul>
     <li><div><a href="#21">2.1 创建服务</a></div></li>
-    <li><div><a href="#22">2.2 访问服务</a></div></li>
+    <li><div><a href="#22">2.2 运行服务</a></div></li>
   </ul></li>
-  <li><div><a href="#3-api">3) API</a></div>
+  <li><div><a href="#3">3) 使用服务</a></div>
   <ul>
-    <li><div><a href="#resourcesregister">resources.register</a></div></li>
-    <li><div><a href="#functionsregister">functions.register</a></div></li>
-    <li><div><a href="#config">config</a></div></li>
+    <li><div><a href="#31">3.1 新增</a></div></li>
+    <li><div><a href="#32">3.2 修改</a></div></li>
+    <li><div><a href="#33">3.3 查询</a></div></li>
+    <li><div><a href="#34">3.4 删除</a></div></li>
   </ul></li>
-  <li><div><a href="#4-odata">4) 使用 OData 查询</a></div></li>
-  <li><div><a href="#5">5) 进阶指南</a></div></li>
-  <li><div><a href="#6-odata">6) 已支持的 OData 特性</a></div></li>
+  <li><div><a href="#4-odata">4) OData 查询</a></div>
+  <ul>
+    <li><div><a href="#41-filter">4.1 $filter</a></div></li>
+    <li><div><a href="#42-filter">4.2 $filter 进阶</a></div></li>
+    <li><div><a href="#43-top">4.3 $top</a></div></li>
+    <li><div><a href="#44-skip">4.4 $skip</a></div></li>
+    <li><div><a href="#45-orderby">4.5 $orderby</a></div></li>
+    <li><div><a href="#46-metadata">4.6 metadata</a></div></li>
+  </ul></li>
+  <li><div><a href="#5-api">5) API</a></div>
+  <ul>
+    <li><div><a href="#51-resourcesregister">5.1 resources.register</a></div></li>
+    <li><div><a href="#52-functionsregister">5.2 functions.register</a></div></li>
+    <li><div><a href="#53-config">5.3 config</a></div></li>
+  </ul></li>
+  <li><div><a href="#6">6) 进阶指南</a></div>
+  <ul>
+    <li><div><a href="#61-resource">6.1 构建复杂的 Resource</a></div></li>
+    <li><div><a href="#62">6.2 隐藏特定字段</a></div></li>
+    <li><div><a href="#63">6.3 权限验证</a></div></li>
+    <li><div><a href="#64">6.4 错误处理</a></div></li>
+    <li><div><a href="#65">6.5 日志记录</a></div></li>
+  </ul></li>
+  <li><div><a href="#7-odata">7) 尚未支持的 OData 特性</a></div></li>
 </ul>
 
     </div>
@@ -53,6 +75,8 @@
 
 <h2>当前状态</h2>
 
+<p>node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 CoffeeScript 编写. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.</p>
+
 
 </div>
 <h1 id="1">1) 安装</h1>
@@ -62,7 +86,9 @@
 <pre class="shell"><code>npm install node-odata
 </code></pre>
 
-<h1 id="2">2) 运行</h1>
+<h1 id="2">2) 快速开始</h1>
+
+<p>这里我们讲创建并运行一个最简单的 OData 服务.</p>
 
 <h2 id="21">2.1 创建服务</h2>
 
@@ -83,7 +109,9 @@ odata.resources.register({
 odata.listen(3000);
 </code></pre>
 
-<p>保存后运行以下命令即可启动 OData 服务:</p>
+<h2 id="22">2.2 运行服务</h2>
+
+<p>保存后输入以下命令即可启动 OData 服务:</p>
 
 <pre class="shell"><code>node index.js
 </code></pre>
@@ -97,31 +125,137 @@ PUT    /odata/books/:id
 DELETE /odata/books/:id
 </code></pre>
 
-<h2 id="22">2.2 访问服务</h2>
+<h1 id="3">3) 使用服务</h1>
 
-<p>你可以使用 REST 风格的 HTTP 请求来对资源进行增删查改操作.</p>
+<p>你可以使用 <a href="http://zh.wikipedia.org/wiki/REST">REST</a> 风格的 HTTP 请求来对资源进行增删查改操作.</p>
 
-<h3>新增</h3>
+<h2 id="31">3.1 新增</h2>
 
-<h3 id="-2">修改</h3>
+<p>使用 <code>POST /odata/resource</code> 插入新的数据, 他将返回 resource 的最新状态.</p>
 
-<h3 id="-3">查询</h3>
+<pre class="shell"><code>curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Content-Length: 97
+Date: Sun, 11 Jan 2015 01:46:57 GMT
+Connection: keep-alive
 
-<h3 id="-4">删除</h3>
+{
+  "__v": 0,
+  "title": "title of book",
+  "price": 19.99,
+  "_id": "54b1d6117d0b3d6d5255bc30"
+}
+</code></pre>
 
-<h1 id="3-api">3) API</h1>
+<h2 id="32">3.2 修改</h2>
 
-<h2 id="resourcesregister">resources.register</h2>
+<p>使用 <code>PUT /odata/resource/:id</code> 修改已有的数据, 他将返回 resource 修改后的状态.</p>
 
-<h2 id="functionsregister">functions.register</h2>
+<pre class="shell"><code>curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 96
+Date: Sun, 11 Jan 2015 01:50:11 GMT
+Connection: keep-alive
 
-<h2 id="config">config</h2>
+{
+  "_id": "54b1d6117d0b3d6d5255bc30",
+  "title": "title of book",
+  "price": 9.99,
+  "__v": 0
+}
+</code></pre>
 
-<h1 id="4-odata">4) 使用 OData 查询</h1>
+<h2 id="33">3.3 查询</h2>
 
-<h1 id="5">5) 进阶指南</h1>
+<p>使用 <code>GET /odata/resource</code> 查询 resource 列表, 其结果将以数组的形式将返回在 value 对象中.</p>
 
-<h1 id="6-odata">6) 已支持的 OData 特性</h1>
+<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/books
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 402
+Date: Sun, 11 Jan 2015 01:52:49 GMT
+Connection: keep-alive
+
+{
+  "value": [
+    {
+      "_id": "54b1d6117d0b3d6d5255bc30",
+      "title": "title of book",
+      "price": 9.99,
+      "__v": 0
+    }
+  ]
+}
+</code></pre>
+
+<p>使用 <code>GET /odata/resource/:id</code> 查询特定 resource.</p>
+
+<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 96
+Date: Sun, 11 Jan 2015 01:54:49 GMT
+Connection: keep-alive
+
+{
+  "_id": "54b1d6117d0b3d6d5255bc30",
+  "title": "title of book",
+  "price": 9.99,
+  "__v": 0
+}
+</code></pre>
+
+<h2 id="34">3.4 删除</h2>
+
+<p>使用 <code>DELETE /odata/resource/:id</code> 删除指定 resource.</p>
+
+<pre class="shell"><code>curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 2
+Date: Sun, 11 Jan 2015 01:56:21 GMT
+Connection: keep-alive
+
+OK
+</code></pre>
+
+<h1 id="4-odata">4) OData 查询</h1>
+
+<h2 id="41-filter">4.1 $filter</h2>
+
+<h2 id="42-filter">4.2 $filter 进阶</h2>
+
+<h2 id="43-top">4.3 $top</h2>
+
+<h2 id="44-skip">4.4 $skip</h2>
+
+<h2 id="45-orderby">4.5 $orderby</h2>
+
+<h2 id="46-metadata">4.6 metadata</h2>
+
+<h1 id="5-api">5) API</h1>
+
+<h2 id="51-resourcesregister">5.1 resources.register</h2>
+
+<h2 id="52-functionsregister">5.2 functions.register</h2>
+
+<h2 id="53-config">5.3 config</h2>
+
+<h1 id="6">6) 进阶指南</h1>
+
+<h2 id="61-resource">6.1 构建复杂的 Resource</h2>
+
+<h2 id="62">6.2 隐藏特定字段</h2>
+
+<h2 id="63">6.3 权限验证</h2>
+
+<h2 id="64">6.4 错误处理</h2>
+
+<h2 id="65">6.5 日志记录</h2>
+
+<h1 id="7-odata">7) 尚未支持的 OData 特性</h1>
 
     </div> <!-- #content -->
 <script type="text/javascript" charset="utf-8">

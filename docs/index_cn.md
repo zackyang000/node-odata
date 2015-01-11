@@ -20,6 +20,7 @@ node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并
 
 ## 当前状态
 
+node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 CoffeeScript 编写. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.
 
 # 1) 安装
 
@@ -28,7 +29,9 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
     $ npm install node-odata
 
 
-# 2) 运行
+# 2) 快速开始
+
+这里我们讲创建并运行一个最简单的 OData 服务.
 
 ## 2.1 创建服务
 
@@ -48,7 +51,9 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
     odata.listen(3000);
 
-保存后运行以下命令即可启动 OData 服务:
+## 2.2 运行服务
+
+保存后输入以下命令即可启动 OData 服务:
 
     $ node index.js
     
@@ -60,29 +65,129 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
     PUT    /odata/books/:id
     DELETE /odata/books/:id
 
-## 2.2 访问服务
+# 3) 使用服务
 
-你可以使用 REST 风格的 HTTP 请求来对资源进行增删查改操作.
+你可以使用 [REST](http://zh.wikipedia.org/wiki/REST) 风格的 HTTP 请求来对资源进行增删查改操作.
 
-### 新增
+## 3.1 新增
 
-### 修改
+使用 `POST /odata/resource` 插入新的数据, 他将返回 resource 的最新状态.
 
-### 查询
+    $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
+    HTTP/1.1 201 Created
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 97
+    Date: Sun, 11 Jan 2015 01:46:57 GMT
+    Connection: keep-alive
 
-### 删除
+    {
+      "__v": 0,
+      "title": "title of book",
+      "price": 19.99,
+      "_id": "54b1d6117d0b3d6d5255bc30"
+    }
 
+## 3.2 修改
 
-# 3) API
+使用 `PUT /odata/resource/:id` 修改已有的数据, 他将返回 resource 修改后的状态.
 
-## resources.register
+    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 96
+    Date: Sun, 11 Jan 2015 01:50:11 GMT
+    Connection: keep-alive
 
-## functions.register
+    {
+      "_id": "54b1d6117d0b3d6d5255bc30",
+      "title": "title of book",
+      "price": 9.99,
+      "__v": 0
+    }
 
-## config
+## 3.3 查询
 
-# 4) 使用 OData 查询
+使用 `GET /odata/resource` 查询 resource 列表, 其结果将以数组的形式将返回在 value 对象中.
 
-# 5) 进阶指南
+    $ curl -i -X GET http://127.0.0.1:3000/odata/books
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 402
+    Date: Sun, 11 Jan 2015 01:52:49 GMT
+    Connection: keep-alive
 
-# 6) 已支持的 OData 特性
+    {
+      "value": [
+        {
+          "_id": "54b1d6117d0b3d6d5255bc30",
+          "title": "title of book",
+          "price": 9.99,
+          "__v": 0
+        }
+      ]
+    }
+
+使用 `GET /odata/resource/:id` 查询特定 resource.
+
+    $ curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 96
+    Date: Sun, 11 Jan 2015 01:54:49 GMT
+    Connection: keep-alive
+
+    {
+      "_id": "54b1d6117d0b3d6d5255bc30",
+      "title": "title of book",
+      "price": 9.99,
+      "__v": 0
+    }
+
+## 3.4 删除
+
+使用 `DELETE /odata/resource/:id` 删除指定 resource.
+
+    $ curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    HTTP/1.1 200 OK
+    Content-Type: text/plain
+    Content-Length: 2
+    Date: Sun, 11 Jan 2015 01:56:21 GMT
+    Connection: keep-alive
+
+    OK
+
+# 4) OData 查询
+
+## 4.1 $filter
+
+## 4.2 $filter 进阶
+
+## 4.3 $top
+
+## 4.4 $skip
+
+## 4.5 $orderby
+
+## 4.6 metadata
+
+# 5) API
+
+## 5.1 resources.register
+
+## 5.2 functions.register
+
+## 5.3 config
+
+# 6) 进阶指南
+
+## 6.1 构建复杂的 Resource
+
+## 6.2 隐藏特定字段
+
+## 6.3 权限验证
+
+## 6.4 错误处理
+
+## 6.5 日志记录
+
+# 7) 尚未支持的 OData 特性
