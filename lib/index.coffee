@@ -12,6 +12,10 @@ app.use express.bodyParser()
 app.use express.query()
 app.use express.methodOverride()
 
+app.use (req, res, next) ->
+  res.removeHeader("X-Powered-By")
+  next()
+
 config.set('app', app)
 module.exports._app = app
 module.exports._express = express
