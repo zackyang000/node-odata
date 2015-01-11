@@ -1,5 +1,6 @@
 ---
 title: node-odata Documentation
+markdown2extras: wiki-tables
 ---
 
 # 关于 node-odata
@@ -158,17 +159,107 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 # 4) OData 查询
 
+本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 它们都有相同的 ($) 字符作为前缀. 每一个查询条件只能指定一次
+
 ## 4.1 $filter
 
-## 4.2 $filter 进阶
+`$filter` 关键字可以对返回的数据集进行筛选.
+
+如: 返回价格低于 10 元的书单列表
+
+	http://host/odata/books?$filter=price lt 10.00
+
+下方表格中列出了 node-odata 已支持的操作符:
+
+|| **操作符**    || **描述** || **列子** ||
+|| **比较操作符** || || ||
+|| eq           || 等于 (Equal)                       || genre eq  'Fantasy'      ||
+|| ne           || 不等于 (Not equal)                 || author ne 'Kevin Kelly' ||
+|| gt           || 大于 (Greater than)                || price gt 20             ||
+|| ge           || 大于等于 (Greater than or equal)   || price ge 10             ||
+|| lt           || 小于 (Less than)                   || price lt 20            ||
+|| le           || 小于等于 (Less than or equal)      || price le 100            ||
+|| **逻辑操作符** || || ||
+|| and          || 逻辑与 (Logical and)               || Price le 200 and Price gt 3.5 ||
+
+node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
+
+|| **函数**    || **列子** ||
+|| **字符串函数** || ||
+|| indexof    || indexof(description,'.NET') gt 0 ||
+|| **日期函数** || ||
+|| year       || year(publish_date) eq 2000 ||
+
+*Note: 更多地操作符和函数将在未来实现. OData 协议中定义的所有操作符和函数请参考[这里](http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398301).
+
+## 4.2 $orderby
+
+`$orderby` 关键字可以使返回的数据依据集合中特定字段进行排序.
+
+他可以使用逗号分隔以实现多重排序.
+
+表达式可以以 `asc` 或 `desc` 结尾用于表示升序或降序. 如果不提供, 默认则为 `asc`.
+
+如: 根据书的发行日期从老到新排序, 然后在根据书的价格从高到低排序.
+
+	http://host/odata/books?$orderby=publish_date asc, price desc
 
 ## 4.3 $top
 
+`$top` 关键字用于限制返回集合的条数.
+
+如: 从书单中返回前5本书
+
+	http://host/odata/books?$top=5
+
 ## 4.4 $skip
 
-## 4.5 $orderby
+`$skip` 关键字用于排除结果中的前 n 条记录, 返回的数据集将从第 n+1 条的位置开始.
+
+如: 返回书单中第6条和第6条以后的数据
+
+	http://host/odata/books?$skip=6
+	
+当 $top 和 $skip 同时使用时, 无论它们在 URL 中的顺序如何, $skip 总是会优先执行. 你可以用它们实现分页功能.
+
+如: 返回第3到第7条数据
+
+	http://host/odata/books?$top=5&$skip=2
+
+## 4.5 $count
+
+当指定 `$count` 关键字的值为 `true` 的时候, 它将返回当前查询数据集的总条数.
+
+`$count` 关键字将忽略 `$top` 和 `skip` 的过滤条件, 它的结果只受 `$filter` 的影响.
+
+如: 返回书单列表, 并包含总条数数量
+
+	http://host/odata/books?$count=true
 
 ## 4.6 metadata
+
+为了更方便的让客户端调用, node-odata 实现了一套非标准的 metadata 特性. 可以让客户端通过 URL 就能了解到 OData 服务中 Resource 的数据结构.
+
+|| **URL**                               || **描述**                            ||
+|| http://host/odata/                    || 列出当前 OData 服务所有可用的 Resource ||
+|| http://host/odata/__metadata          || 列出所有 Resource 的数据结构          ||
+|| http://host/odata/__metadata/resource || 列出指定 Resource 的数据结构          ||
+
+如:
+
+    $ curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books 
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 65
+    Date: Sun, 11 Jan 2015 08:41:44 GMT
+    Connection: keep-alive
+
+    {
+      "books": {
+        "title": "String",
+        "price": "Number"
+      }
+    }
 
 # 5) API
 

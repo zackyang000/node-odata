@@ -29,10 +29,10 @@
   <li><div><a href="#4-odata">4) OData 查询</a></div>
   <ul>
     <li><div><a href="#41-filter">4.1 $filter</a></div></li>
-    <li><div><a href="#42-filter">4.2 $filter 进阶</a></div></li>
+    <li><div><a href="#42-orderby">4.2 $orderby</a></div></li>
     <li><div><a href="#43-top">4.3 $top</a></div></li>
     <li><div><a href="#44-skip">4.4 $skip</a></div></li>
-    <li><div><a href="#45-orderby">4.5 $orderby</a></div></li>
+    <li><div><a href="#45-count">4.5 $count</a></div></li>
     <li><div><a href="#46-metadata">4.6 metadata</a></div></li>
   </ul></li>
   <li><div><a href="#5-api">5) API</a></div>
@@ -223,17 +223,126 @@ OK
 
 <h1 id="4-odata">4) OData 查询</h1>
 
+<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 它们都有相同的 ($) 字符作为前缀. 每一个查询条件只能指定一次</p>
+
 <h2 id="41-filter">4.1 $filter</h2>
 
-<h2 id="42-filter">4.2 $filter 进阶</h2>
+<p><code>$filter</code> 关键字可以对返回的数据集进行筛选.</p>
+
+<p>如: 返回价格低于 10 元的书单列表</p>
+
+<pre><code>http://host/odata/books?$filter=price lt 10.00
+</code></pre>
+
+<p>下方表格中列出了 node-odata 已支持的操作符:</p>
+
+<table>
+<tbody>
+<tr><td><strong>操作符</strong></td><td><strong>描述</strong></td><td><strong>列子</strong></td></tr>
+<tr><td><strong>比较操作符</strong></td><td></td><td></td></tr>
+<tr><td>eq</td><td>等于 (Equal)</td><td>genre eq  'Fantasy'</td></tr>
+<tr><td>ne</td><td>不等于 (Not equal)</td><td>author ne 'Kevin Kelly'</td></tr>
+<tr><td>gt</td><td>大于 (Greater than)</td><td>price gt 20</td></tr>
+<tr><td>ge</td><td>大于等于 (Greater than or equal)</td><td>price ge 10</td></tr>
+<tr><td>lt</td><td>小于 (Less than)</td><td>price lt 20</td></tr>
+<tr><td>le</td><td>小于等于 (Less than or equal)</td><td>price le 100</td></tr>
+<tr><td><strong>逻辑操作符</strong></td><td></td><td></td></tr>
+<tr><td>and</td><td>逻辑与 (Logical and)</td><td>Price le 200 and Price gt 3.5</td></tr>
+</tbody>
+</table>
+
+<p>node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:</p>
+
+<table>
+<tbody>
+<tr><td><strong>函数</strong></td><td><strong>列子</strong></td></tr>
+<tr><td><strong>字符串函数</strong></td><td></td></tr>
+<tr><td>indexof</td><td>indexof(description,'.NET') gt 0</td></tr>
+<tr><td><strong>日期函数</strong></td><td></td></tr>
+<tr><td>year</td><td>year(publish_date) eq 2000</td></tr>
+</tbody>
+</table>
+
+<p>*Note: 更多地操作符和函数将在未来实现. OData 协议中定义的所有操作符和函数请参考<a href="http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398301">这里</a>.</p>
+
+<h2 id="42-orderby">4.2 $orderby</h2>
+
+<p><code>$orderby</code> 关键字可以使返回的数据依据集合中特定字段进行排序.</p>
+
+<p>他可以使用逗号分隔以实现多重排序.</p>
+
+<p>表达式可以以 <code>asc</code> 或 <code>desc</code> 结尾用于表示升序或降序. 如果不提供, 默认则为 <code>asc</code>.</p>
+
+<p>如: 根据书的发行日期从老到新排序, 然后在根据书的价格从高到低排序.</p>
+
+<pre><code>http://host/odata/books?$orderby=publish_date asc, price desc
+</code></pre>
 
 <h2 id="43-top">4.3 $top</h2>
 
+<p><code>$top</code> 关键字用于限制返回集合的条数.</p>
+
+<p>如: 从书单中返回前5本书</p>
+
+<pre><code>http://host/odata/books?$top=5
+</code></pre>
+
 <h2 id="44-skip">4.4 $skip</h2>
 
-<h2 id="45-orderby">4.5 $orderby</h2>
+<p><code>$skip</code> 关键字用于排除结果中的前 n 条记录, 返回的数据集将从第 n+1 条的位置开始.</p>
+
+<p>如: 返回书单中第6条和第6条以后的数据</p>
+
+<pre><code>http://host/odata/books?$skip=6
+</code></pre>
+
+<p>当 $top 和 $skip 同时使用时, 无论它们在 URL 中的顺序如何, $skip 总是会优先执行. 你可以用它们实现分页功能.</p>
+
+<p>如: 返回第3到第7条数据</p>
+
+<pre><code>http://host/odata/books?$top=5&amp;$skip=2
+</code></pre>
+
+<h2 id="45-count">4.5 $count</h2>
+
+<p>当指定 <code>$count</code> 关键字的值为 <code>true</code> 的时候, 它将返回当前查询数据集的总条数.</p>
+
+<p><code>$count</code> 关键字将忽略 <code>$top</code> 和 <code>skip</code> 的过滤条件, 它的结果只受 <code>$filter</code> 的影响.</p>
+
+<p>如: 返回书单列表, 并包含总条数数量</p>
+
+<pre><code>http://host/odata/books?$count=true
+</code></pre>
 
 <h2 id="46-metadata">4.6 metadata</h2>
+
+<p>为了更方便的让客户端调用, node-odata 实现了一套非标准的 metadata 特性. 可以让客户端通过 URL 就能了解到 OData 服务中 Resource 的数据结构.</p>
+
+<table>
+<tbody>
+<tr><td><strong>URL</strong></td><td><strong>描述</strong></td></tr>
+<tr><td>http://host/odata/</td><td>列出当前 OData 服务所有可用的 Resource</td></tr>
+<tr><td>http://host/odata/__metadata</td><td>列出所有 Resource 的数据结构</td></tr>
+<tr><td>http://host/odata/__metadata/resource</td><td>列出指定 Resource 的数据结构</td></tr>
+</tbody>
+</table>
+
+<p>如:</p>
+
+<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books 
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 65
+Date: Sun, 11 Jan 2015 08:41:44 GMT
+Connection: keep-alive
+
+{
+  "books": {
+    "title": "String",
+    "price": "Number"
+  }
+}
+</code></pre>
 
 <h1 id="5-api">5) API</h1>
 
