@@ -48,8 +48,9 @@
     <li><div><a href="#63">6.3 权限验证</a></div></li>
     <li><div><a href="#64">6.4 错误处理</a></div></li>
     <li><div><a href="#65">6.5 日志记录</a></div></li>
+    <li><div><a href="#66">6.6 高级查询</a></div></li>
   </ul></li>
-  <li><div><a href="#7-odata">7) 尚未支持的 OData 特性</a></div></li>
+  <li><div><a href="#7-odata">7) 尚未支持的 OData 特性列表</a></div></li>
 </ul>
 
     </div>
@@ -59,7 +60,7 @@
 <div class="intro">
 
 
-<p>node-odata 可以让你创建 REST API, 并能使用 <a href="http://www.odata.org/">OData</a> 协议的查询格式进行数据的筛选. 让你可以更方便的创建 API, 更专注于业务逻辑.</p>
+<p>node-odata 可以让你轻松创建 REST API, 并能使用 <a href="http://www.odata.org/">OData</a> 协议的格式进行数据的查询. 它让你可以更方便的创建 API 服务, 使你更专注于业务逻辑的处理.</p>
 
 <h2>什么是 OData 协议?</h2>
 
@@ -223,7 +224,9 @@ OK
 
 <h1 id="4-odata">4) OData 查询</h1>
 
-<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 它们都有相同的 ($) 字符作为前缀. 每一个查询条件只能指定一次</p>
+<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀. </p>
+
+<p>每个关键字只能指定一次.</p>
 
 <h2 id="41-filter">4.1 $filter</h2>
 
@@ -346,11 +349,188 @@ Connection: keep-alive
 
 <h1 id="5-api">5) API</h1>
 
+<p>本节讲介绍 node-odata 提供的 API.</p>
+
 <h2 id="51-resourcesregister">5.1 resources.register</h2>
+
+<p>在 OData 服务中注册一个 Resource, 使其可以使用基于 OData 的 REST API 进行增删查改.</p>
+
+<h3>参数</h3>
+
+<p>params: 复杂对象, 具体字段如下所示:</p>
+
+<table>
+<tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Details</strong></td></tr>
+<tr><td>url</td><td>string</td><td>Resource 的 URL 地址</td></tr>
+<tr><td>model</td><td>object</td><td>Resource 的数据结构定义</td></tr>
+<tr><td>rest</td><td>object (optional)</td><td>针对 REST API 的配置项, 详见 example</td></tr>
+<tr><td>actions</td><td>object (optional)</td><td>配置 OData Action (<a href="http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1">什么是 Action</a>), 用于实现复杂请求, 详见 example</td></tr>
+<tr><td>options</td><td>object (optional)</td><td>设置 REST API 的默认行为, 如最大查询条数/默认排序方式等, 详见 example</td></tr>
+</tbody>
+</table>
+
+<h3 id="example">example</h3>
+
+<p>*注意: 除了 url 和 model 以外, 其它都是可选参数</p>
+
+<p>odata.resources.register({
+    // Resource URL注册为 /book
+    url: 'book',</p>
+
+<pre><code>// Resource 的数据结构定义
+// 可选类型包括: String, Number, Date, Boolean, Array
+model: {
+  author: String,
+  description: String,
+  genre: String,
+  id: String,
+  price: Number,
+  publish_date: Date,
+  title: String
+},
+
+// 针对 REST API 的配置项
+rest: {
+  // 当进行 GET /resource/:id 获取特定资源时时:
+  get: {
+    // 授权验证, 若返回 false, 则客户端将得到 401
+    auth: function (req) {},
+
+    // 在请求之前的 handle (同步, 将阻塞请求)
+    before: function (req, res) {},
+
+    //在请求完成之后的 handle (异步, response 返回后继续执行)
+    after: function (entity) {}
+  },
+
+  // 在进行 GET /resource 获取资源列表时:
+  getAll: {
+    // 授权验证, 若返回 false, 则客户端将得到 401
+    auth: function (req) {},
+
+    // 在请求之前的 handle (同步, 将阻塞请求)
+    before: function (req, res) {},
+
+    //在请求完成之后的 handle (异步, response 返回后继续执行)
+    after: function (entities) {}
+  },
+
+  post: {
+    // 授权验证, 若返回 false, 则客户端将得到 401
+    auth: function (req) {},
+
+    // 在请求之前的 handle (同步, 将阻塞请求)
+    before: function (req, res) {},
+
+    //在请求完成之后的 handle (异步, response 返回后继续执行)
+    after: function (entity) {}
+  },
+
+  put: {
+    // 授权验证, 若返回 false, 则客户端将得到 401
+    auth: function (req) {},
+
+    // 在请求之前的 handle (同步, 将阻塞请求)
+    before: function (req, res) {},
+
+    //在请求完成之后的 handle (异步, response 返回后继续执行)
+    after: function (newEntity, oldEntity) {}
+  },
+
+  del: {
+    // 授权验证, 若返回 false, 则客户端将得到 401
+    auth: function (req) {},
+
+    // 在请求之前的 handle (同步, 将阻塞请求)
+    before: function (req, res) {},
+
+    //在请求完成之后的 handle (异步, response 返回后继续执行)
+    after: function () {}
+  }
+},
+
+// 配置 OData Action
+actions: {
+  // key 为 action url, value 是该 action 的 handle
+  // 这里注册了一个 50-off 来处理将书的价格修改为半价
+  // 请求方式为 POST /resource/:id/50-off
+  "50-off": function(req, res, next) {
+    repository = mongoose.model('books');
+    repository.findById(req.params.id, function(err, book){
+      book.price = +(book.price / 2).toFixed(2);
+      book.save(function(err){
+        res.jsonp(book);
+      });
+    });
+  }
+}
+
+// 设置 REST API 的默认行为
+options: {
+  // 默认排序字段, 默认为 undefined
+  orderby: 'date desc'
+
+  // 最大允许跳过的行数, 默认为不限制
+  maxSkip: 10000
+
+  // 最大允许一次返回的条数, 默认为不限制
+  maxTop: 100
+}
+</code></pre>
+
+<p>});</p>
 
 <h2 id="52-functionsregister">5.2 functions.register</h2>
 
+<p>在 OData 中注册一个 WEB API, 用于处理自定义的逻辑.</p>
+
+<h3 id="-2">参数</h3>
+
+<table>
+<tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Details</strong></td></tr>
+<tr><td>url</td><td>string</td><td>WEB API 的 URL 地址</td></tr>
+<tr><td>method</td><td>["POST", "PUT", "GET", "DELETE"]</td><td>请求方式</td></tr>
+<tr><td>handle</td><td>function</td><td>具体处理逻辑</td></tr>
+<tr><td>auth</td><td>function (optional)</td><td>权限验证</td></tr>
+</tbody>
+</table>
+
+<h4 id="example-2">Example</h4>
+
+<p>odata.functions.register({
+    // WEB API 的 URL
+    // 这里注册了一个 URL '/server-time' 用于获取服务器时间
+    url: '/server-time',</p>
+
+<pre><code>// WEB API 的 HTTP Method
+// 接受的值包括: "POST", "PUT", "GET", "DELETE"
+method: 'GET',
+
+// 具体业务逻辑处理
+handle: function(req, res, next) {
+  return res.json({
+    date: new Date()
+  });
+}
+</code></pre>
+
+<p>});</p>
+
 <h2 id="53-config">5.3 config</h2>
+
+<p>用于对 node-odata 进行一些基本配置.</p>
+
+<table>
+<tbody>
+<tr><td><strong>Allow Key</strong></td><td><strong>Value Type</strong></td><td><strong>Details</strong></td></tr>
+<tr><td>db</td><td>string</td><td>mongoDB 数据库地址</td></tr>
+<tr><td>prefix</td><td>string</td><td>配置 URL 前缀, 默认为 '/odata'</td></tr>
+<tr><td>maxTop</td><td>int</td><td>设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖</td></tr>
+<tr><td>maxSkip</td><td>int</td><td>设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖</td></tr>
+</tbody>
+</table>
 
 <h1 id="6">6) 进阶指南</h1>
 
@@ -364,7 +544,9 @@ Connection: keep-alive
 
 <h2 id="65">6.5 日志记录</h2>
 
-<h1 id="7-odata">7) 尚未支持的 OData 特性</h1>
+<h2 id="66">6.6 高级查询</h2>
+
+<h1 id="7-odata">7) 尚未支持的 OData 特性列表</h1>
 
     </div> <!-- #content -->
 <script type="text/javascript" charset="utf-8">
