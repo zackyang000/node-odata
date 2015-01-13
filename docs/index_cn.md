@@ -5,7 +5,7 @@ markdown2extras: wiki-tables
 
 # 关于 node-odata
 
-node-odata 可以让你创建 REST API, 并能使用 [OData](http://www.odata.org/) 协议的查询格式进行数据的筛选. 让你可以更方便的创建 API, 更专注于业务逻辑.
+node-odata 可以让你轻松创建 REST API, 并能使用 [OData](http://www.odata.org/) 协议的格式进行数据的查询. 它让你可以更方便的创建 API 服务, 使你更专注于业务逻辑的处理.
 
 ## 什么是 OData 协议?
 
@@ -159,7 +159,9 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 # 4) OData 查询
 
-本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 它们都有相同的 ($) 字符作为前缀. 每一个查询条件只能指定一次
+本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀. 
+
+每个关键字只能指定一次.
 
 ## 4.1 $filter
 
@@ -263,7 +265,26 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 # 5) API
 
+本节讲介绍 node-odata 提供的 API.
+
 ## 5.1 resources.register
+
+在 OData 服务中注册一个 Resource, 使其可以使用基于 OData 的 REST API 进行增删查改.
+
+### 参数
+
+params: 复杂对象, 具体字段如下表所示:
+
+|| **Name**                               || **Type**                            || **Details** ||
+|| url      || string || Resource 的 URL 地址 ||
+|| model    || object || Resource 的结构定义 ||
+|| rest     || object (optional) || 针对 REST API 调用时的配置项, 详见下表 ||
+|| actions  || object (optional) || 配置 OData Action ([什么是 Action](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1)), 用于实现复杂请求, 详见下表 ||
+|| options  || object (optional) || 设置 REST API 的默认行为, 如最大查询条数, 默认排序方式等 ||
+
+下表中将详细说明 rest, actions 和 options 参数:
+
+
 
 ## 5.2 functions.register
 
@@ -280,5 +301,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 ## 6.4 错误处理
 
 ## 6.5 日志记录
+
+## 6.6 高级查询
 
 # 7) 尚未支持的 OData 特性
