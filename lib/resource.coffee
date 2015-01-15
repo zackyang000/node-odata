@@ -17,7 +17,7 @@ module.exports =
 
       metadata.add(resource, model)
 
-      mongooseModel = mongoose.model resource, model
+      mongooseModel = mongoose.model resource, new mongoose.Schema(model, versionKey: false)
 
       options = _.extend(globalQueryLimit, params.options) || {}
       rest = params.rest || {}
