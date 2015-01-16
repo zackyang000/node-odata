@@ -1,6 +1,6 @@
-REPORTER = dot
+REPORTER = dot #spec
 
-check: test test-cov
+check: test
 
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
@@ -10,12 +10,10 @@ test:
 		test/*.coffee
 
 test-cov:
-	@NODE_ENV=test node node_modules/istanbul/lib/cli.js \
-	cover ./node_modules/mocha/bin/_mocha test/*.coffee -- \
+	@NODE_ENV=test node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
+	./node_modules/mocha/bin/_mocha test/*.coffee -- \
 	--reporter $(REPORTER) \
 	--require coffee-script/register \
-	--compilers coffee:coffee-script/register \
-	--recursive test \
-	--bail
+	test/*.coffee \
 
-.PHONY: test-cov
+.PHONY: test

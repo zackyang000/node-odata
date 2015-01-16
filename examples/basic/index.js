@@ -4,7 +4,7 @@ var odata = require('../../index'),
     callback,
     done;
 
-odata.set('db', 'mongodb://localhost/test-books-list');
+odata.set('db', 'mongodb://localhost/odata-full');
 
 var bookInfo = {
   author: String,
@@ -13,10 +13,7 @@ var bookInfo = {
   id: String,
   price: Number,
   publish_date: Date,
-  title: {
-    type: String,
-    description: 'Name of the book.'
-  },
+  title: String,
   test: {
     a: String,
     b: {
@@ -42,8 +39,7 @@ odata.resources.register({
   model: bookInfo,
   actions: {
     '/50off': function(req, res, next){
-      repository = mongoose.model('books');
-      repository.findById(req.params.id, function(err, book){
+      mongoose.model('books').findById(req.params.id, function(err, book){
         book.price = +(book.price / 2).toFixed(2);
         book.save(function(err){
           res.jsonp(book);
@@ -61,25 +57,6 @@ odata.functions.register({
     }
 })
 
-// import data.
-data = require('./data.json');
-for(var i = 0; i < data.length; i++){
-  data[i]._id = mongoose.Types.ObjectId();
-}
-fixtures.load({ 'books': data }, mongoose.connection, function(err) {
-  module.exports.books = data;
-  done = true;
-  if(callback) callback();
-});
-
-// start server
 odata.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/books');
 });
-
-// for mocha-test
-module.exports.app = odata._app;
-module.exports.ready = function(cb){
-  callback = cb;
-  if(done) callback();
-}

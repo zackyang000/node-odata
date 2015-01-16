@@ -2,15 +2,18 @@ should = require("should")
 request = require("supertest")
 sinon = require("sinon")
 
-example = require("../examples/books-list")
-app = example.app
+require("../examples/basic")
+support = require('./support')
+app = undefined
 books = undefined
 
 describe "[odata query filter functions]", ->
   before (done) ->
-    example.ready ->
-      books = example.books
+    support.ready ->
+      app = support.app
+      books = support.books
       done()
+
   describe "'indexof'", ->
     it "should filter items", (done) ->
       request(app)
