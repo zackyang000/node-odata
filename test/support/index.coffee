@@ -1,4 +1,4 @@
-odata = require("../../index")
+odata = require("../../")
 mongoose = odata.mongoose
 fixtures = require("pow-mongoose-fixtures")
 callback = undefined

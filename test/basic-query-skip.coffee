@@ -1,6 +1,5 @@
 should = require("should")
 request = require("supertest")
-sinon = require("sinon")
 
 require("../examples/basic")
 support = require('./support')
