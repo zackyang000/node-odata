@@ -41,7 +41,7 @@ describe "[odata query select]", ->
         done()
   it "should select multiple field with blank space", (done) ->
     request(app)
-      .get("/odata/books?$select=price,     title")
+      .get("/odata/books?$select=price,   title")
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
