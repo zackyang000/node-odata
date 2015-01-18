@@ -4,7 +4,7 @@ module.exports =
       _id: req.params.id
     , (err, entity) ->
         return next(err)  if err
-        next(new Error("Failed to find #{url} [#{req.params.id}]"))  unless entity
+        next(new Error("Failed to find [#{req.params.id}]"))  unless entity
         res.jsonp(entity)
         cb(entity)  if cb
 
