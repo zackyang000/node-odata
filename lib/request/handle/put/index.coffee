@@ -5,7 +5,7 @@ module.exports = (req, res, next, mongooseModel, cb) ->
     _id: req.params.id
   , (err, entity) ->
     return next(err)  if err
-    return res.status(404, 'Not Found').end()  unless entity
+    return res.status(404, 'Not Found').send('Not Found').end()  unless entity
     oldEntity = JSON.parse(JSON.stringify(entity))
     entity = _.extend(entity, req.body)
     entity.save (err) ->

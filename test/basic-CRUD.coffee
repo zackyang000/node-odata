@@ -95,7 +95,7 @@ describe "[basic CRUD]", ->
       request(app)
         .put("/odata/books/put-wrong-id")
         .send(books[5])
-        .expect(500, done)
+        .expect(404, done)
 
   describe "DELETE:", ->
     it "should delete resource if it exist", (done) ->
@@ -113,7 +113,7 @@ describe "[basic CRUD]", ->
     it "should not delete resource if id is a wrong format", (done) ->
       request(app)
         .del("/odata/books/del-wrong-id")
-        .expect(500, done)
+        .expect(404, done)
     it "should not delete a resource twice", (done) ->
       request(app)
         .del("/odata/books/#{books[7]._id}")

@@ -4,7 +4,7 @@ module.exports =
       _id: req.params.id
     , (err, entity) ->
         return next(err)  if err
-        next(new Error("Failed to find [#{req.params.id}]"))  unless entity
+        return res.status(404, 'Not Found').send('Not Found').end()  unless entity
         res.jsonp(entity)
         cb(entity)  if cb
 
