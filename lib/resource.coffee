@@ -2,6 +2,7 @@ _ = require 'lodash'
 mongoose = require 'mongoose'
 config = require './config'
 metadata = require './metadata'
+id = require './mongodb/idPlugin'
 
 module.exports =
     register: (params) ->
@@ -16,8 +17,9 @@ module.exports =
       model = params.model
 
       metadata.add(resource, model)
-
-      mongooseModel = mongoose.model resource, new mongoose.Schema(model, versionKey: false)
+      schema = new mongoose.Schema(model, { _id: false, versionKey: false})
+      schema.plugin(id)
+      mongooseModel = mongoose.model resource, schema
 
       options = _.extend(globalQueryLimit, params.options) || {}
       rest = params.rest || {}
