@@ -1,5 +1,6 @@
 odata = require("../../")
 mongoose = odata.mongoose
+uuid = require 'node-uuid'
 fixtures = require("pow-mongoose-fixtures")
 callback = undefined
 done = undefined
@@ -8,7 +9,7 @@ done = undefined
 #import data.
 data = require("./data.json")
 for item in data
-  item._id = mongoose.Types.ObjectId()
+  item._id = uuid.v4()
 fixtures.load books: data, mongoose.connection, (err) ->
   module.exports.app = odata._app
   module.exports.books = data
