@@ -3,7 +3,7 @@ REPORTER = dot #spec
 check: test
 
 test:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		--compilers coffee:coffee-script/register \
