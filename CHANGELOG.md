@@ -8,7 +8,7 @@
 
 ## Bugs
 
-- Build-in query function\'s keyword can\'t use in field of resource or get error when this field. ([#9](https://github.com/TossShinHwa/node-odata/issues/9))
+- Build-in query function's keyword can't use in field of resource or get error when this field. ([#9](https://github.com/TossShinHwa/node-odata/issues/9))
 
 # 0.2.0 (2015-01-04)
 
