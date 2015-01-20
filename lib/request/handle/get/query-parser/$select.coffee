@@ -10,6 +10,7 @@ module.exports = (query, $select) ->
   selectFields = { _id: 0 }
   for item in Object.keys(query.model.schema.tree)
     if item in list
+      item = '_id'  if item is 'id'
       selectFields[item] = 1
 
   ###

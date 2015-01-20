@@ -6,7 +6,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "[odata query top]", ->
+describe "odata query top", ->
   before (done) ->
     support.ready ->
       app = support.app

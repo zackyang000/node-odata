@@ -6,7 +6,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "[odata action]", ->
+describe "odata action", ->
   before (done) ->
     support.ready ->
       app = support.app
@@ -15,7 +15,7 @@ describe "[odata action]", ->
 
   it "should work", (done) ->
     request(app)
-      .post("/odata/books/#{books[10]._id}/50off")
+      .post("/odata/books/#{books[10].id}/50off")
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->

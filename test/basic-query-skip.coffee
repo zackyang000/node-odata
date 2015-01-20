@@ -6,7 +6,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "[odata query skip]", ->
+describe "odata query skip", ->
   before (done) ->
     support.ready ->
       app = support.app

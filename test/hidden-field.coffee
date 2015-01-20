@@ -4,7 +4,7 @@ request = require("supertest")
 require("../examples/hidden-field")
 app = require('../')._app
 
-describe "[hidden-field]", ->
+describe "hidden-field", ->
   before (done) ->
       done()
 
@@ -19,7 +19,7 @@ describe "[hidden-field]", ->
       .end (err, res) ->
         return done(err)  if(err)
         request(app)
-          .get("/odata/users/#{res.body._id}")
+          .get("/odata/users/#{res.body.id}")
           .expect(200)
           .end (err, res) ->
             res.body.should.be.have.property('name')

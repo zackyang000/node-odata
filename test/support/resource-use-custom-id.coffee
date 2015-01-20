@@ -3,8 +3,8 @@ odata = require '../../index'
 odata.set('db', 'mongodb://localhost/odata-test')
 
 odata.resources.register
-    url: '/resource-use-function-keyword'
+    url: '/resource-use-custom-id'
     model:
-        year: Number
+        id: Number
 
-odata.listen 30002
+odata.listen 30001

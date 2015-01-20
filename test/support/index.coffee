@@ -8,13 +8,12 @@ done = undefined
 
 #import data.
 data = require("./data.json")
-for item in data
-  item._id = uuid.v4()
 fixtures.load books: data, mongoose.connection, (err) ->
-  module.exports.app = odata._app
-  module.exports.books = data
-  done = true
-  callback()  if callback
+  mongoose.model('books').find().exec (err, data) ->
+    module.exports.app = odata._app
+    module.exports.books = data
+    done = true
+    callback()  if callback
 
 module.exports.ready = (cb) ->
   callback = cb

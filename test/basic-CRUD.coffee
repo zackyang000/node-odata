@@ -6,7 +6,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "[basic CRUD]", ->
+describe "basic CRUD", ->
   before (done) ->
     support.ready ->
       app = support.app
@@ -28,7 +28,7 @@ describe "[basic CRUD]", ->
           done()
     it "should get one of the resources", (done) ->
       request(app)
-        .get("/odata/books/#{books[1]._id}")
+        .get("/odata/books/#{books[1].id}")
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
@@ -47,7 +47,6 @@ describe "[basic CRUD]", ->
           author: "Walter Isaacson",
           description: "FROM THE AUTHOR OF THE BESTSELLING BIOGRAPHIES OF BENJAMIN FRANKLIN AND ALBERT EINSTEIN, THIS IS THE EXCLUSIVE BIOGRAPHY OF STEVE JOBS.",
           genre: "Computer",
-          id: "xx999",
           price: 19.65,
           publish_date: "2013-09-10",
           title: "Steve Jobs"
@@ -57,7 +56,7 @@ describe "[basic CRUD]", ->
           if(err)
             done(err)
             return
-          res.body.should.be.have.property('_id')
+          res.body.should.be.have.property('id')
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal("Steve Jobs")
           done()
@@ -70,7 +69,7 @@ describe "[basic CRUD]", ->
     it "should modify resource if it exist", (done) ->
       books[2].title = "I'm a new title"
       request(app)
-        .put("/odata/books/#{books[2]._id}")
+        .put("/odata/books/#{books[2].id}")
         .send(books[2])
         .expect(200)
         .expect('Content-Type', /json/)
@@ -100,7 +99,7 @@ describe "[basic CRUD]", ->
   describe "DELETE:", ->
     it "should delete resource if it exist", (done) ->
       request(app)
-        .del("/odata/books/#{books[6]._id}")
+        .del("/odata/books/#{books[6].id}")
         .expect(200, done)
     it "should not delete resource if it not exist", (done) ->
       request(app)
@@ -116,8 +115,8 @@ describe "[basic CRUD]", ->
         .expect(404, done)
     it "should not delete a resource twice", (done) ->
       request(app)
-        .del("/odata/books/#{books[7]._id}")
+        .del("/odata/books/#{books[7].id}")
         .end (err, res) ->
           request(app)
-            .del("/odata/books/#{books[7]._id}")
+            .del("/odata/books/#{books[7].id}")
             .expect(404, done)

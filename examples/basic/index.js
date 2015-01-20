@@ -10,7 +10,6 @@ var bookInfo = {
   author: String,
   description: String,
   genre: String,
-  id: String,
   price: Number,
   publish_date: Date,
   title: String
