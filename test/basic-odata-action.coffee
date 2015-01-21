@@ -19,8 +19,6 @@ describe "odata action", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.price.should.be.equal(+((books[10].price/2).toFixed(2)))
         done()

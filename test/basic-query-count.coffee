@@ -19,9 +19,7 @@ describe "odata query count", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.have.property('@odata.count')
         res.body.should.be.have.property('value')
         res.body['@odata.count'].should.be.equal(res.body.value.length)
@@ -32,9 +30,7 @@ describe "odata query count", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.not.have.property('@odata.count')
         done()
   it "should 500 when $count isn't 'true' or 'false'", (done) ->

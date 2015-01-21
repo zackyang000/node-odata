@@ -19,9 +19,7 @@ describe "odata query orderby", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.have.property('value')
         for item, i in res.body.value
           nextItem = res.body.value[i+1]
@@ -34,9 +32,7 @@ describe "odata query orderby", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.have.property('value')
         for item, i in res.body.value
           nextItem = res.body.value[i+1]
@@ -49,9 +45,7 @@ describe "odata query orderby", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.have.property('value')
         for item, i in res.body.value
           nextItem = res.body.value[i+1]
@@ -64,9 +58,7 @@ describe "odata query orderby", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.should.be.have.property('value')
         for item, i in res.body.value
           nextItem = res.body.value[i+1]

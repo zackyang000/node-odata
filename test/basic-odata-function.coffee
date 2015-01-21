@@ -19,8 +19,6 @@ describe "odata function", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.license.should.be.equal('MIT')
         done()

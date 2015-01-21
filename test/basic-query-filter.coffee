@@ -20,9 +20,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.be.equal(1)
           res.body.value[0].title.should.be.equal(books[1].title)
           done()
@@ -32,9 +30,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.be.equal(1)
           res.body.value[0].title.should.be.equal(books[1].title)
           done()
@@ -44,9 +40,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.be.equal(1)
           res.body.value[0].title.should.be.equal(books[1].title)
           done()
@@ -56,9 +50,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.be.equal(1)
           res.body.value[0].title.should.be.equal(books[1].title)
           done()
@@ -70,9 +62,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.should.matchEach((item) -> item.title != books[1].title)
           done()
 
@@ -83,9 +73,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.price > 36.95)
           done()
@@ -97,9 +85,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.price >= 36.95)
           done()
@@ -111,9 +97,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.price < 36.95)
           done()
@@ -125,9 +109,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.price <= 36.95)
           done()
@@ -139,9 +121,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.title != books[1].title && item.price >= 36.95)
           done()
@@ -151,9 +131,7 @@ describe "odata query filter", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.value.length.should.greaterThan(0)
           res.body.value.should.matchEach((item) -> item.title != books[1].title && item.price >= 36.95)
           done()

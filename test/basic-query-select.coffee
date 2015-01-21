@@ -19,9 +19,7 @@ describe "odata query select", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.value[0].should.be.have.property('price')
         res.body.value[0].should.be.not.have.property('title')
         res.body.value[0].should.be.not.have.property('id')
@@ -32,9 +30,7 @@ describe "odata query select", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.value[0].should.be.have.property('price')
         res.body.value[0].should.be.have.property('title')
         res.body.value[0].should.be.not.have.property('id')
@@ -45,9 +41,7 @@ describe "odata query select", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.value[0].should.be.have.property('price')
         res.body.value[0].should.be.have.property('title')
         res.body.value[0].should.be.not.have.property('id')
@@ -58,9 +52,7 @@ describe "odata query select", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
-        if(err)
-          done(err)
-          return
+        return done(err)  if(err)
         res.body.value[0].should.be.have.property('price')
         res.body.value[0].should.be.have.property('title')
         res.body.value[0].should.be.have.property('id')

@@ -20,9 +20,7 @@ describe "basic CRUD", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.should.be.have.property('value')
           res.body.value.length.should.be.equal(books.length)
           done()
@@ -32,9 +30,7 @@ describe "basic CRUD", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal(books[1].title)
           done()
@@ -53,9 +49,7 @@ describe "basic CRUD", ->
         .expect(201)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.should.be.have.property('id')
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal("Steve Jobs")
@@ -74,9 +68,7 @@ describe "basic CRUD", ->
         .expect(200)
         .expect('Content-Type', /json/)
         .end (err, res) ->
-          if(err)
-            done(err)
-            return
+          return done(err)  if(err)
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal(books[2].title)
           done()
