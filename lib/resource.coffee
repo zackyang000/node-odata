@@ -17,7 +17,7 @@ module.exports =
       model = params.model
 
       metadata.add(resource, model)
-      schema = new mongoose.Schema(model, { _id: false, versionKey: false})
+      schema = new mongoose.Schema(model, { _id: false, versionKey: false, collection: resource })
       schema.plugin(id)
       mongooseModel = mongoose.model resource, schema
 
