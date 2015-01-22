@@ -2,7 +2,7 @@
 
 ## Features
 
-- Support use complex objects to define resource.
+- Support the use of complex objects to define resource.
 - Remove mongoose field: `__v`. ([#6](https://github.com/TossShinHwa/node-odata/issues/6))
 - Edit field `_id` to `id`. ([#5](https://github.com/TossShinHwa/node-odata/issues/5))
 
