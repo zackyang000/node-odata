@@ -8,7 +8,7 @@ module.exports = exports = (schema, options) ->
         type: String
         unique: true
 
-  # copy _id to id.
+  # display value of _id when request id.
   unless schema.paths.id
     schema.virtual('id').get -> this._id
     schema.set 'toObject', virtuals: true
