@@ -7,7 +7,7 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
   [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
 
-```
+```JavaScript
 var odata = require('node-odata');
 
 odata.set('db', 'mongodb://localhost/my-app');
