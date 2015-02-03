@@ -13,7 +13,7 @@ OData 全称开放数据协议(Open Data Protocol), 是一个用于 web 的数�
 
 ## 为什么使用 node-odata?
 
-node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API. 
+node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API.
 
 在常规的 REST 框架中, 仅仅提供了 REST 风格的 CRUD 操作. 开发者不的不对每一个资源都手动添加一些公共功能, 如排序/分页等, 甚至在复杂的业务场景中, 开发者不的不一次次根据业务需求制定一些特定的复杂查询, 这都极大的浪费了人力资源. OData数据访问协议很好的解决了这一问题. 它定义了$filter, $orderby, $select等一系列关键字来进行统一的筛选, 排序, 分页等操作. 极大的减轻了开发者的负担, 提高了生产力.
 
@@ -57,7 +57,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 保存后输入以下命令即可启动 OData 服务:
 
     $ node index.js
-    
+
 它将自动注册以下路由:
 
     GET    /odata/books
@@ -159,7 +159,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 # 4) OData 查询
 
-本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀. 
+本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.
 
 每个关键字只能指定一次.
 
@@ -221,7 +221,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 如: 返回书单中第6条和第6条以后的数据
 
 	http://host/odata/books?$skip=6
-	
+
 当 $top 和 $skip 同时使用时, 无论它们在 URL 中的顺序如何, $skip 总是会优先执行. 你可以用它们实现分页功能.
 
 如: 返回第3到第7条数据
@@ -249,7 +249,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 如:
 
-    $ curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books 
+    $ curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
     Content-Length: 65
@@ -282,7 +282,7 @@ params: 复杂对象, 具体字段如下所示:
 || actions  || object (optional) || 配置 OData Action ([什么是 Action](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1)), 用于实现复杂请求, 详见 example ||
 || options  || object (optional) || 设置 REST API 的默认行为, 如最大查询条数/默认排序方式等, 详见 example ||
 
-### example 
+### example
 
 *注意: 除了 url 和 model 以外, 其它都是可选参数
 
@@ -382,7 +382,7 @@ params: 复杂对象, 具体字段如下所示:
     options: {
       // 默认排序字段, 默认为 undefined
       orderby: 'date desc'
-      
+
       // 最大允许跳过的行数, 默认为不限制
       maxSkip: 10000
 
@@ -390,7 +390,7 @@ params: 复杂对象, 具体字段如下所示:
       maxTop: 100
     }
   });
-  
+
 
 ## 5.2 functions.register
 
@@ -436,17 +436,19 @@ params: 复杂对象, 具体字段如下所示:
 
 # 6) 进阶指南
 
-## 6.1 构建复杂的 Resource
+## 6.1 中间件支持
 
-## 6.2 隐藏特定字段
+## 6.2 构建复杂的 Resource
 
-## 6.3 权限验证
+## 6.3 隐藏指定字段
 
-## 6.4 错误处理
+## 6.4 权限验证
 
-## 6.5 日志记录
+## 6.5 错误处理
 
-## 6.6 高级查询
+## 6.6 日志记录
+
+## 6.7 高级查询
 
 # 7) 尚未支持的 OData 特性列表
 
