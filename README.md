@@ -137,7 +137,6 @@ npm install node-odata
 * [x] $orderby
 * [ ] $expand
 * [x] $metadata generation (Nonstandard)
-* [ ] XML/JSON format
 
 
 ## CONTRIBUTING
