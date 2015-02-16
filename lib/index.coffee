@@ -17,6 +17,7 @@ app.use (req, res, next) ->
   next()
 
 config.set('app', app)
+
 module.exports._app = app
 module.exports._express = express
 module.exports.listen = () -> app.listen.apply(app, arguments)
