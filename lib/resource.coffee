@@ -27,6 +27,7 @@ module.exports =
       actions = params.actions || []
 
       resource = "#{prefix}/#{resource}"
+
       routes =
         'create':
           method: 'post'
@@ -66,7 +67,6 @@ module.exports =
           app.post "#{resource}/:id#{url}", (req, res, next) ->
             if checkAuth(action.auth)
               action(req, res, next)
-
 
 checkAuth = (auth, req, res) ->
   if auth && !auth(req)
