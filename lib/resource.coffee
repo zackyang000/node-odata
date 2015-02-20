@@ -6,32 +6,27 @@ id = require './mongodb/idPlugin'
 
 module.exports =
     register: (params) ->
-      defaultParams =
-        options: config.get('queryLimit') || {}
-        rest: {}
-        actions: {}
-
-      params = _.extend(defaultParams, params)
+      app = config.get('app')
+      prefix = config.get('prefix')
+      globalQueryLimit = config.get('queryLimit')
 
       params.url = params.url[1..]  if params.url.indexOf('/') is 0
       if params.url.indexOf('/') >= 0
         throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
 
-      app = config.get 'app'
-      prefix = config.get 'prefix'
       resource = params.url
       model = params.model
-      options = params.options
-      rest = params.rest
-      actions = params.actions
 
       metadata.add(resource, model)
       schema = new mongoose.Schema(model, { _id: false, versionKey: false, collection: resource })
       schema.plugin(id)
       mongooseModel = mongoose.model resource, schema
 
-      resource = "#{prefix}/#{resource}"
+      options = _.extend(globalQueryLimit, params.options) || {}
+      rest = params.rest || {}
+      actions = params.actions || []
 
+      resource = "#{prefix}/#{resource}"
       routes =
         'create':
           method: 'post'
