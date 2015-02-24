@@ -45,7 +45,6 @@ GET ...
 ```
 
 
-
 ## Current State
 
 node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
@@ -63,10 +62,12 @@ npm install node-odata
 * [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register)
 * [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set)
 
+
 ## Docs
 
 - ENGLISH DOCUMENTATION (coming soon...)
 - [中文文档](http://tossshinhwa.github.io/node-odata/cn/)
+
 
 ## Demo
 
@@ -142,6 +143,7 @@ npm install node-odata
 ## CONTRIBUTING
 
 We always welcome contributions to help make node-odata better. Please feel free to contribute to this project.
+
 
 ## LICENSE
 

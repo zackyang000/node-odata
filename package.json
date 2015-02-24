@@ -21,7 +21,8 @@
   },
   "keywords": [
     "OData",
-    "restful-api"
+    "REST",
+    "RESTful"
   ],
   "license": "MIT",
   "dependencies": {
