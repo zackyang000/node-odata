@@ -26,19 +26,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "coffee-script": "1.7.0",
-    "istanbul": "^0.3.3",
-    "lodash": "^2.4.1",
-    "mongoose": "~3",
+    "coffee-script": "1.9.1",
+    "lodash": "3.6.0",
+    "mongoose": "4.0.1",
     "express": "3.2.0",
-    "node-uuid": "1.4.2"
+    "node-uuid": "1.4.3"
   },
   "devDependencies": {
-    "mocha": "1.21.4",
-    "should": "3.3.2",
-    "supertest": "0.14.0",
-    "coffee-coverage": "^0.4.2",
-    "sinon": "1.10.3",
+    "mocha": "2.2.1",
+    "should": "5.2.0",
+    "supertest": "0.15.0",
+    "istanbul": "0.3.13",
+    "coffee-coverage": "0.4.5",
+    "sinon": "1.14.1",
     "pow-mongoose-fixtures": "0.3.0"
   }
 }
