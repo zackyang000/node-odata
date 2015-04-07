@@ -3,6 +3,7 @@ mongoose = require 'mongoose'
 config = require './config'
 resources = require './resource'
 functions = require './function'
+metadata = require './metadata'
 
 
 createODataService = ->
@@ -27,6 +28,9 @@ createODataService = ->
   server.get = config.get
   server.set = config.set
   server.mongoose = mongoose
+
+  # todo: 注册路由应在 listen 之后, 放在这里只是暂时为了在没有注册 resource 的时候能访问空的 metadata
+  metadata.build()
 
   return server
   

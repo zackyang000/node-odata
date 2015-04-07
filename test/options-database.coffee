@@ -1,20 +1,21 @@
 should = require("should")
 request = require("supertest")
 odata = require '../'
-
 app = undefined
 
 describe 'database config', ->
-  before (done) ->
+  it "should 200 when set correct connection string", (done) ->
     server = odata()
     server.set('db', 'mongodb://localhost/odata-test')
-    server.resources.register
-      url: 'db'
-      model: {}
     app = server._app
-    done()
-
-  it "should 200 when set correct connection string", (done) ->
     request(app)
-      .get("/odata/db")
+      .get("/odata")
+      .expect(200, done)
+
+  it "should 500 when set wrong connection string", (done) ->
+    server = odata()
+    server.set('db', 'mongodb://localhost/odata-test')
+    app = server._app
+    request(app)
+      .get("/odata")
       .expect(200, done)

@@ -28,3 +28,4 @@ build = (entity) ->
 
 module.exports =
   add: add
+  build: build
