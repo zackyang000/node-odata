@@ -1,7 +1,6 @@
 should = require("should")
 request = require("supertest")
 
-require("../examples/basic")
 support = require('./support')
 app = undefined
 books = undefined

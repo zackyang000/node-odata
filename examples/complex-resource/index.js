@@ -1,10 +1,7 @@
-var odata = require('../../index'),
-    mongoose = odata.mongoose,
-    fixtures = require('pow-mongoose-fixtures'),
-    callback,
-    done;
+var odata = require('../../');
 
-odata.set('db', 'mongodb://localhost/odata-test');
+server = odata();
+server.set('db', 'mongodb://localhost/odata-test');
 
 var order = {
   custom: {
@@ -21,11 +18,13 @@ var order = {
   }]
 }
 
-odata.resources.register({
+server.resources.register({
   url: '/orders',
   model: orderInfo
 });
 
-odata.listen(3000, function(){
+server.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/orders');
 });
+
+module.exports = server;

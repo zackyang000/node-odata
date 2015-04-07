@@ -1,7 +1,6 @@
 should = require("should")
 request = require("supertest")
 
-require("../examples/basic")
 support = require('./support')
 app = undefined
 books = undefined
@@ -19,6 +18,7 @@ describe "odata query skip", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
+        return done(err)  if(err)
         firstBook = res.body.value[0]
         request(app)
           .get("/odata/books?$skip=1")
@@ -33,6 +33,7 @@ describe "odata query skip", ->
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
+        return done(err)  if(err)
         res.body.value.length.should.be.equal(0)
         done()
   it "should 500 when skip not a number", (done) ->

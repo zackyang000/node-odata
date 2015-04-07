@@ -5,8 +5,8 @@ app = undefined
 describe "Resource special conditions", ->
   describe "use function keyword", ->
     before (done) ->
-      require './support/resource-use-function-keyword'
-      app = require('../')._app
+      server = require './support/resource-use-function-keyword'
+      app = server._app
       done()
     it "should work when $filter it", (done) ->
       request(app)
@@ -28,8 +28,8 @@ describe "Resource special conditions", ->
 
   describe "use custom id", ->
     before (done) ->
-      require './support/resource-use-custom-id'
-      app = require('../')._app
+      server = require './support/resource-use-custom-id'
+      app = server._app
       done()
     it "should work", (done) ->
       request(app)

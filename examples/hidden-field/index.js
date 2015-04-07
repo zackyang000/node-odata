@@ -1,8 +1,9 @@
-var odata = require('../../index');
+var odata = require('../../');
 
-odata.set('db', 'mongodb://localhost/odata-test');
+server = odata();
+server.set('db', 'mongodb://localhost/odata-test');
 
-odata.resources.register({
+server.resources.register({
     url: '/users',
     model: {
         name: String,
@@ -13,6 +14,8 @@ odata.resources.register({
     }
 });
 
-odata.listen(3000, function(){
+server.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/users');
 });
+
+module.exports = server;

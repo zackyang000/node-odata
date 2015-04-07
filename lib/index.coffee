@@ -1,24 +1,36 @@
 express = require 'express'
+mongoose = require 'mongoose'
 config = require './config'
+resources = require './resource'
+functions = require './function'
 
-module.exports.resources = require './resource'
-module.exports.functions = require './function'
-module.exports.get = config.get
-module.exports.set = config.set
-module.exports.mongoose = require 'mongoose'
 
-app = express()
-app.use express.bodyParser()
-app.use express.query()
-app.use express.methodOverride()
+createODataService = ->
+  app = express()
+  app.use express.bodyParser()
+  app.use express.query()
+  app.use express.methodOverride()
 
-app.use (req, res, next) ->
-  res.removeHeader("X-Powered-By")
-  next()
+  app.use (req, res, next) ->
+    res.removeHeader("X-Powered-By")
+    next()
 
-config.set('app', app)
+  config.set('app', app)
+  
+  server = {}
 
-module.exports._app = app
-module.exports._express = express
-module.exports.listen = () -> app.listen.apply(app, arguments)
-module.exports.use = () -> app.use.apply(app, arguments)
+  server._app = app
+  server.listen = () -> app.listen.apply(app, arguments)
+  server.use = () -> app.use.apply(app, arguments)
+  server.resources = resources
+  server.functions = functions
+  server.get = config.get
+  server.set = config.set
+  server.mongoose = mongoose
+
+  return server
+  
+
+module.exports = createODataService
+
+module.exports.express = express

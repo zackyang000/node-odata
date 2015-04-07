@@ -1,10 +1,7 @@
-var odata = require('../../index'),
-    mongoose = odata.mongoose,
-    fixtures = require('pow-mongoose-fixtures'),
-    callback,
-    done;
+var odata = require('../../');
 
-odata.set('db', 'mongodb://localhost/odata-test');
+server = odata();
+server.set('db', 'mongodb://localhost/odata-test');
 
 var bookInfo = {
   author: String,
@@ -15,11 +12,12 @@ var bookInfo = {
   title: String
 }
 
-odata.resources.register({
+server.resources.register({
   url: '/books',
   model: bookInfo,
   actions: {
     '/50off': function(req, res, next){
+      var mongoose = server.mongoose;
       mongoose.model('books').findById(req.params.id, function(err, book){
         book.price = +(book.price / 2).toFixed(2);
         book.save(function(err){
@@ -30,7 +28,7 @@ odata.resources.register({
   }
 });
 
-odata.functions.register({
+server.functions.register({
     url: '/license',
     method: 'GET',
     handle: function(req, res, next){
@@ -38,6 +36,8 @@ odata.functions.register({
     }
 })
 
-odata.listen(3000, function(){
+server.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/books');
 });
+
+module.exports = server;

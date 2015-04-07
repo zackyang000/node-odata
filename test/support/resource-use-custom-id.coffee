@@ -1,10 +1,11 @@
 odata = require '../../index'
 
-odata.set('db', 'mongodb://localhost/odata-test')
+server = odata()
+server.set('db', 'mongodb://localhost/odata-test')
 
-odata.resources.register
-    url: '/resource-use-custom-id'
-    model:
-        id: Number
+server.resources.register
+  url: '/resource-use-custom-id'
+  model:
+    id: Number
 
-odata.listen 30001
+module.exports = server

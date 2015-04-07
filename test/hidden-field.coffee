@@ -1,12 +1,12 @@
 should = require("should")
 request = require("supertest")
 
-require("../examples/hidden-field")
-app = require('../')._app
+server = require("../examples/hidden-field")
+app = server._app
 
 describe "hidden-field", ->
   before (done) ->
-      done()
+    done()
 
   it "should work when get entity", (done) ->
     request(app)
@@ -15,13 +15,13 @@ describe "hidden-field", ->
         name: "zack"
         password: "123"
       .expect(201)
-      .expect('Content-Type', /json/)
       .end (err, res) ->
         return done(err)  if(err)
         request(app)
           .get("/odata/users/#{res.body.id}")
           .expect(200)
           .end (err, res) ->
+            return done(err)  if(err)
             res.body.should.be.have.property('name')
             res.body.name.should.be.equal('zack')
             res.body.should.be.not.have.property('password')
@@ -32,6 +32,7 @@ describe "hidden-field", ->
       .get("/odata/users")
       .expect(200)
       .end (err, res) ->
+        return done(err)  if(err)
         res.body.value[0].should.be.have.property('name')
         res.body.value[0].name.should.be.equal('zack')
         res.body.value[0].should.be.not.have.property('password')
