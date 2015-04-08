@@ -1,10 +1,10 @@
 var odata = require("../../");
 var fixtures = require("pow-mongoose-fixtures");
 
-var server = require('../basic/')
+var server = require('../basic/');
 
 //import data.
-data = require("../../test/support/data.json")
-fixtures.load({books: data}, server.mongoose.connection)
+data = require("../../test/support/data.json");
+fixtures.load({books: data}, server.mongoose.connection);
 
 module.exports = server;

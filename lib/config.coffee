@@ -4,6 +4,9 @@ _options =
   app : undefined   # app express instants
   db : undefined    # mongoDB address
   prefix : '/oData' # api url prefix
+  queryLimit:
+    maxTop: undefined
+    maxSkip: undefined
 
 module.exports =
   get: (key) ->

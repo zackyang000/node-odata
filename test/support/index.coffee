@@ -1,5 +1,6 @@
 odata = require("../../")
 fixtures = require("pow-mongoose-fixtures")
+data = require("./data.json")
 callback = undefined
 done = undefined
 
@@ -34,14 +35,12 @@ server.functions.register
       res.jsonp({license:'MIT'})
 
 #import data.
-data = require("./data.json")
-fixtures.load books: data, mongoose.connection, (err) ->
-  mongoose.model('books').find().exec (err, data) ->
-    module.exports.app = server._app
-    module.exports.books = data
-    done = true
-    callback()  if callback
+load = (callback) ->
+  fixtures.load books: data, mongoose.connection, (err) ->
+    mongoose.model('books').find().exec (err, data) ->
+      module.exports.server = server
+      module.exports.app = server._app
+      module.exports.books = data
+      callback()  if callback
 
-module.exports.ready = (cb) ->
-  callback = cb
-  callback()  if done
+module.exports.ready = load

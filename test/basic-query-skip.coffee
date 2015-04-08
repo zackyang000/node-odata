@@ -36,11 +36,19 @@ describe "odata query skip", ->
         return done(err)  if(err)
         res.body.value.length.should.be.equal(0)
         done()
-  it "should 500 when skip not a number", (done) ->
+  it "should ignore when skip not a number", (done) ->
     request(app)
       .get("/odata/books?$skip=not-a-number")
-      .expect(500, done)
-  it "should 500 when skip not a positive number", (done) ->
+      .expect(200)
+      .end (err, res) ->
+        return done(err)  if(err)
+        res.body.value.length.should.be.equal(books.length)
+        done()
+  it "should ignore when skip not a positive number", (done) ->
     request(app)
       .get("/odata/books?$skip=-1")
-      .expect(500, done)
+      .expect(200)
+      .end (err, res) ->
+        return done(err)  if(err)
+        res.body.value.length.should.be.equal(books.length)
+        done()

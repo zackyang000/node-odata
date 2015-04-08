@@ -8,7 +8,6 @@ module.exports =
     register: (params) ->
       app = config.get('app')
       prefix = config.get('prefix')
-      globalQueryLimit = config.get('queryLimit')
 
       params.url = params.url[1..]  if params.url.indexOf('/') is 0
       if params.url.indexOf('/') >= 0
@@ -22,7 +21,7 @@ module.exports =
       schema.plugin(id)
       mongooseModel = mongoose.model resource, schema
 
-      options = _.extend(globalQueryLimit, params.options) || {}
+      options = params.options || {}
       rest = params.rest || {}
       actions = params.actions || []
 
