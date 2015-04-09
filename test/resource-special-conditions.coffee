@@ -14,7 +14,6 @@ describe "Resource special conditions", ->
         .send
           year: 2015
         .expect(201)
-        .expect('Content-Type', /json/)
         .end (err, res) ->
           return done(err)  if(err)
           request(app)
@@ -37,7 +36,6 @@ describe "Resource special conditions", ->
         .send
           id: 100
         .expect(201)
-        .expect('Content-Type', /json/)
         .end (err, res) ->
           return done(err)  if(err)
           request(app)
