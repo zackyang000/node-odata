@@ -1,30 +1,25 @@
 config = require './../config'
 parser = require './parser'
-entitiesList = []
-entitiesDetail = {}
+entities = {}
 
-add = (resource, entity) ->
-  entitiesList.push resource
-  entitiesDetail[resource] = parser.toMetadata entity
-  build()
-
+add = (name, model) ->
+  entities[name] = model
 
 build = (entity) ->
   app = config.get('app')
   prefix = config.get('prefix')
 
   app.get prefix || '/', (req, res, next) ->
-    res.json resources: entitiesList
+    resources = {}
+    Object.keys(entities).map (name) ->
+      resources[name] = "http://#{req.headers.host}#{prefix}/__metadata/#{name}"
+    res.json resources: resources
 
-  app.get "#{prefix}/__metadata", (req, res, next) ->
-    res.json entitiesDetail
-
-  for entity of entitiesDetail
-    app.get "#{prefix}/__metadata/#{entity}", (req, res, next) ->
+  Object.keys(entities).map (name) ->
+    app.get "#{prefix}/__metadata/#{name}", (req, res, next) ->
       data = {}
-      data[entity] = entitiesDetail[entity]
+      data[name] = parser.toMetadata entities[name]
       res.json data
-
 
 module.exports =
   add: add
