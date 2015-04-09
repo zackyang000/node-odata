@@ -35,4 +35,4 @@ createODataService = ->
 
 module.exports = createODataService
 module.exports.express = express
-module.exports.express = mongoose
+module.exports.mongoose = mongoose
