@@ -8,7 +8,7 @@
 
 - The maxTop and maxSkip of global-limit in options is not work. ([#14](https://github.com/TossShinHwa/node-odata/issues/14))
 
-# 0.3.x (2015-01-20)
+# 0.3.0 (2015-01-20)
 
 ## Features
 
@@ -20,14 +20,14 @@
 
 - Build-in query function's keyword can't use in field of resource or get error when this field. ([#9](https://github.com/TossShinHwa/node-odata/issues/9))
 
-# 0.2.x (2015-01-04)
+# 0.2.0 (2015-01-04)
 
 ## Features
 
 - Improved regist resource's API.
 - Wrap 'Express' module.
 
-# 0.1.x (2014-10-16)
+# 0.1.0 (2014-10-16)
 
 ## Features
 
@@ -36,7 +36,7 @@
 - Added example.
 - Added test case.
 
-# 0.0.x (2014-10-05)
+# 0.0.1 (2014-10-05)
 
 ## Features
 
