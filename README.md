@@ -12,9 +12,11 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
 ```JavaScript
 var odata = require('node-odata');
 
-odata.set('db', 'mongodb://localhost/my-app');
+var server = odata();
 
-odata.resources.register({
+server.set('db', 'mongodb://localhost/my-app');
+
+server.resources.register({
     url: '/books',
     model: {
         title: String,
@@ -22,7 +24,7 @@ odata.resources.register({
     }
 });
 
-odata.listen(3000);
+server.listen(3000);
 ```
 
 Registers the following routes:
