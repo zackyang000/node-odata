@@ -1,3 +1,13 @@
+# 0.4.0 (2015-04-09)
+
+## Features
+
+- Optimized initialization method: odata -> odata()
+
+## Bugs
+
+- The maxTop and maxSkip of global-limit in options is not work. ([#14](https://github.com/TossShinHwa/node-odata/issues/14))
+
 # 0.3.x (2015-01-20)
 
 ## Features
