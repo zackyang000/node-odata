@@ -1,5 +1,5 @@
 _ = require("lodash")
-config = require '../../../../config'
+config = require '../../../config'
 
 # ?$skip=10
 # ->

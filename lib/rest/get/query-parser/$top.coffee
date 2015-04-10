@@ -1,5 +1,5 @@
 _ = require("lodash")
-config = require '../../../../config'
+config = require '../../../config'
 SYSTEM_MAX_TOP = 1000000
 
 # ?$top=10

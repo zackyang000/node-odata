@@ -2,7 +2,9 @@ config = require './../config'
 parser = require './parser'
 entities = {}
 
-add = (name, model) ->
+register = (params) ->
+  name = params.url
+  model = params.model
   entities[name] = model
 
 build = (entity) ->
@@ -22,5 +24,5 @@ build = (entity) ->
       res.json data
 
 module.exports =
-  add: add
+  register: register
   build: build
