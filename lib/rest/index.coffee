@@ -1,58 +1,46 @@
 _ = require 'lodash'
-mongoose = require 'mongoose'
 
 config = require './../config'
-metadata = require './../metadata'
-id = require './../mongodb/idPlugin'
-
+model = require './../model'
 
 module.exports =
     register: (params) ->
       app = config.get('app')
       prefix = config.get('prefix')
 
-      params.url = params.url[1..]  if params.url.indexOf('/') is 0
-      if params.url.indexOf('/') >= 0
-        throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.")
-
-      resource = params.url
-      model = params.model
-
-      schema = new mongoose.Schema(model, { _id: false, versionKey: false, collection: resource })
-      schema.plugin(id)
-      mongooseModel = mongoose.model resource, schema
-
       options = params.options || {}
       rest = params.rest || {}
       actions = params.actions || []
 
-      resource = "#{prefix}/#{resource}"
+      resourceURL = "#{prefix}/#{params.url}"
       routes =
         'create':
           method: 'post'
-          url: "#{resource}"
+          url: "#{resourceURL}"
           controller: require './post'
           config: rest.post || rest.create || {}
         'update':
           method: 'put'
-          url: "#{resource}/:id"
+          url: "#{resourceURL}/:id"
           controller: require './put'
           config: rest.put || rest.update || {}
         'del':
           method: 'del'
-          url: "#{resource}/:id"
+          url: "#{resourceURL}/:id"
           controller: require './delete'
           config: rest.delete || rest.del || {}
         'read':
           method: 'get'
-          url: "#{resource}/:id"
+          url: "#{resourceURL}/:id"
           controller: require('./get').get
           config: rest.get || rest.read || {}
         'readAll':
           method: 'get'
-          url: "#{resource}"
+          url: "#{resourceURL}"
           controller: require('./get').getAll
           config: rest.getAll || rest.readAll || {}
+
+      mongooseModel = model.get(params.url)
 
       for name, route of routes
         do (name, route) ->
@@ -63,9 +51,10 @@ module.exports =
 
       for url, action of actions
         do (url, action) ->
-          app.post "#{resource}/:id#{url}", (req, res, next) ->
+          app.post "#{resourceURL}/:id#{url}", (req, res, next) ->
             if checkAuth(action.auth)
               action(req, res, next)
+
 
 checkAuth = (auth, req, res) ->
   if auth && !auth(req)
