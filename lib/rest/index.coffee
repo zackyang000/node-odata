@@ -1,8 +1,10 @@
 _ = require 'lodash'
 mongoose = require 'mongoose'
+
 config = require './../config'
 metadata = require './../metadata'
 id = require './../mongodb/idPlugin'
+
 
 module.exports =
     register: (params) ->
@@ -70,4 +72,3 @@ checkAuth = (auth, req, res) ->
     res.send 401
     return false
   return true
-

@@ -1,8 +1,9 @@
 express = require 'express'
 mongoose = require 'mongoose'
+
 config = require './config'
-resources = require './resource'
-functions = require './function'
+resources = require './resources'
+functions = require './functions'
 metadata = require './metadata'
 
 
@@ -24,7 +25,8 @@ createODataService = ->
   server.listen = () ->
     metadata.build()
     app.listen.apply(app, arguments)
-  server.use = () -> app.use.apply(app, arguments)
+  server.use = () ->
+    app.use.apply(app, arguments)
   server.resources = resources
   server.functions = functions
   server.get = config.get
