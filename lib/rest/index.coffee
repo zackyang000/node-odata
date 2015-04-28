@@ -47,7 +47,7 @@ module.exports =
           app[route.method] route.url, (req, res, next) ->
             if checkAuth(route.config.auth, req, res)
               route.config.before && route.config.before(req, res)
-              route.controller(req, res, next, mongooseModel, route.config.after, options)
+              route.controller(req, res, next, mongooseModel, options).then route.config.after
 
       for url, action of actions
         do (url, action) ->

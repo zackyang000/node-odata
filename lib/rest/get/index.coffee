@@ -1,29 +1,47 @@
 module.exports =
-  get : (req, res, next, mongooseModel, cb) ->
-    mongooseModel.findOne
-      _id: req.params.id
-    , (err, entity) ->
-        return next(err)  if err
-        return res.status(404, 'Not Found').send('Not Found').end()  unless entity
+  get : (req, res, next, mongooseModel) ->
+    new Promise (resolve, reject) ->
+      mongooseModel.findOne
+        _id: req.params.id
+      , (err, entity) ->
+        if err
+          next err
+          return reject err
+
+        unless entity
+          res.status(404).send('Not Found').end()
+          return reject '404'
+
         res.jsonp(entity)
-        cb(entity)  if cb
+        return resolve entity
 
-  getAll : (req, res, next, mongooseModel, cb, options) ->
-    resData = {}
-    require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
+  getAll : (req, res, next, mongooseModel, options) ->
+    new Promise (resolve, reject) ->
+      resData = {}
 
-    query = mongooseModel.find()
-    require('./query-parser/$filter')(query, req.query['$filter'])
-    require('./query-parser/$orderby')(query, req.query['$orderby'] || options.orderby)
-    require('./query-parser/$skip')(query, req.query['$skip'], options.maxSkip)
-    require('./query-parser/$top')(query, req.query['$top'], options.maxTop)
-    require('./query-parser/$select')(query, req.query['$select'])
+      query = mongooseModel.find()
 
-    # todo
-    # $expand=Customers/Orders
-    # $search
+      errHandle = (err) ->
+        next err
 
-    query.exec (err, data) ->
-      resData.value = data
-      res.jsonp resData
-      cb(resData)  if cb
+      if err =require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
+        return errHandle err
+      if err = require('./query-parser/$filter')(query, req.query['$filter'])
+        return errHandle err
+      if err = require('./query-parser/$orderby')(query, req.query['$orderby'] || options.orderby)
+        return errHandle err
+      if err = require('./query-parser/$skip')(query, req.query['$skip'], options.maxSkip)
+        return errHandle err
+      if err = require('./query-parser/$top')(query, req.query['$top'], options.maxTop)
+        return errHandle err
+      if err = require('./query-parser/$select')(query, req.query['$select'])
+        return errHandle err
+
+      # todo
+      # $expand=Customers/Orders
+      # $search
+
+      query.exec (err, data) ->
+        resData.value = data
+        res.jsonp resData
+        return resolve()

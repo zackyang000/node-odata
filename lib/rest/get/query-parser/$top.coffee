@@ -9,3 +9,4 @@ module.exports = (query, top, maxTop) ->
   top =  _.min([SYSTEM_MAX_TOP, config.get('maxTop'), maxTop, top])
   top = SYSTEM_MAX_TOP  if top < 0
   query.limit(top)
+  return

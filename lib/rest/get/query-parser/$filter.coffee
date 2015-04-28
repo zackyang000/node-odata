@@ -35,7 +35,7 @@ module.exports = (query, $filter) ->
   for item in condition
     conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) -> s.trim()).filter((n) -> n)
     if conditionArr.length != 3
-      throw new Error("Syntax error at '#{item}'.")
+      return new Error("Syntax error at '#{item}'.")
     [key, odataOperator, value] = conditionArr
     value = validator.formatValue(value)
 
@@ -51,7 +51,9 @@ module.exports = (query, $filter) ->
       when 'ge' then query.where(key).gte(value)
       when 'lt' then query.where(key).lt(value)
       when 'le' then query.where(key).lte(value)
-      else throw new Error("Incorrect operator at '#{item}'.")
+      else return new Error("Incorrect operator at '#{item}'.")
+
+  return
 
 
 
@@ -76,4 +78,4 @@ validator =
     return false  if  value == 'false'
     return +value  if +value == +value                                                                          # Number
     return value.slice(1, -1)  if stringHelper.isBeginWith(value, "'") and stringHelper.isEndWith(value, "'")   # String
-    throw new Error("Syntax error at '#{value}'.")
+    return new Error("Syntax error at '#{value}'.")

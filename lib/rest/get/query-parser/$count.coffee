@@ -12,4 +12,5 @@ module.exports = (resData, mongooseModel, $count, $filter) ->
   else if $count == 'false'
     return
   else
-    throw new Error('Unknown $count  option, only "true" and "false" are supported.')
+    return new Error('Unknown $count option, only "true" and "false" are supported.')
+  return

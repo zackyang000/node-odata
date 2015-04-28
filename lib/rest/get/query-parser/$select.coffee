@@ -27,3 +27,4 @@ module.exports = (query, $select) ->
   ###
 
   query.select(selectFields)
+  return
