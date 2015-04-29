@@ -5,12 +5,10 @@ module.exports =
         _id: req.params.id
       , (err, entity) ->
         if err
-          next err
           return reject err
 
         unless entity
-          res.status(404).send('Not Found').end()
-          return reject '404'
+          return reject status: 404, body: 'Not Found'
 
         res.jsonp(entity)
         return resolve entity
@@ -22,7 +20,7 @@ module.exports =
       query = mongooseModel.find()
 
       errHandle = (err) ->
-        next err
+        return reject err
 
       if err =require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
         return errHandle err

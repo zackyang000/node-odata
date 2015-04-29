@@ -45,9 +45,16 @@ module.exports =
       for name, route of routes
         do (name, route) ->
           app[route.method] route.url, (req, res, next) ->
-            if checkAuth(route.config.auth, req, res)
+            if checkAuth(route.config.auth, req)
               route.config.before && route.config.before(req, res)
-              route.controller(req, res, next, mongooseModel, options).then route.config.after
+              route.controller(req, res, next, mongooseModel, options).then route.config.after, (err) ->
+                if err.status
+                  console.log err.status
+                  res.status(err.status).send(err.body || '').end()
+                else
+                  next err
+            else
+              res.send 401
 
       for url, action of actions
         do (url, action) ->
@@ -56,8 +63,7 @@ module.exports =
               action(req, res, next)
 
 
-checkAuth = (auth, req, res) ->
-  if auth && !auth(req)
-    res.send 401
-    return false
-  return true
+checkAuth = (auth, req) ->
+  unless auth
+    return true
+  return auth(req)
