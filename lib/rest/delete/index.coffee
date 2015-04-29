@@ -1,4 +1,4 @@
-module.exports = (req, res, next, mongooseModel) ->
+module.exports = (req, mongooseModel) ->
   new Promise (resolve, reject) ->
     mongooseModel.remove
       _id: req.params.id
@@ -7,7 +7,6 @@ module.exports = (req, res, next, mongooseModel) ->
         return reject err
 
       if JSON.parse(result).n is 0
-        return reject status: 404, body: 'Not Found'
+        return reject status: 404, text: 'Not Found'
 
-      res.send(200).end()
       return resolve()

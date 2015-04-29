@@ -1,6 +1,6 @@
 _ = require("lodash")
 
-module.exports = (req, res, next, mongooseModel) ->
+module.exports = (req, mongooseModel) ->
   new Promise (resolve, reject) ->
     mongooseModel.findOne
       _id: req.params.id
@@ -9,13 +9,12 @@ module.exports = (req, res, next, mongooseModel) ->
         return reject err
 
       unless entity
-        return reject status: 404, body: 'Not Found'
+        return reject status: 404, text: 'Not Found'
 
-      oldEntity = JSON.parse(JSON.stringify(entity))
+      originEntity = JSON.parse(JSON.stringify(entity))
       entity = _.extend(entity, req.body)
       entity.save (err) ->
         if err
           return reject err
 
-        res.jsonp(entity)
-        return resolve entity
+        return resolve entity: entity, originEntity: originEntity

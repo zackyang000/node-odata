@@ -1,5 +1,5 @@
 module.exports =
-  get : (req, res, next, mongooseModel) ->
+  get : (req, mongooseModel) ->
     new Promise (resolve, reject) ->
       mongooseModel.findOne
         _id: req.params.id
@@ -8,12 +8,11 @@ module.exports =
           return reject err
 
         unless entity
-          return reject status: 404, body: 'Not Found'
+          return reject status: 404, text: 'Not Found'
 
-        res.jsonp(entity)
-        return resolve entity
+        return resolve entity: entity
 
-  getAll : (req, res, next, mongooseModel, options) ->
+  getAll : (req, mongooseModel, options) ->
     new Promise (resolve, reject) ->
       resData = {}
 
@@ -41,5 +40,4 @@ module.exports =
 
       query.exec (err, data) ->
         resData.value = data
-        res.jsonp resData
-        return resolve()
+        return resolve entity: resData

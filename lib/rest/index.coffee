@@ -46,15 +46,22 @@ module.exports =
         do (name, route) ->
           app[route.method] route.url, (req, res, next) ->
             if checkAuth(route.config.auth, req)
-              route.config.before && route.config.before(req, res)
-              route.controller(req, res, next, mongooseModel, options).then route.config.after, (err) ->
+              route.controller(req, mongooseModel, options).then (result = {}) ->
+                res.status result.status || 200
+                if result.text
+                  res.send result.text
+                else if result.entity
+                  res.jsonp result.entity
+                else
+                  res.end()
+                route.config.after(result.entity, result.originEntity)
+              , (err) ->
                 if err.status
-                  console.log err.status
-                  res.status(err.status).send(err.body || '').end()
+                  res.status(err.status).send(err.text || '')
                 else
                   next err
             else
-              res.send 401
+              res.status(401).end()
 
       for url, action of actions
         do (url, action) ->
