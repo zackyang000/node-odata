@@ -39,10 +39,10 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 安装完成后, 新建 *index.js* 文件并输入:
 
     var odata = require('node-odata');
-    
+
     var server = odata('mongodb://localhost/my-app');
 
-    odata.resources.register({
+    server.resources.register({
         url: '/books',
         model: {
             title: String,
@@ -50,7 +50,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
         }
     });
 
-    odata.listen(3000);
+    server.listen(3000);
 
 ## 2.2 运行服务
 
