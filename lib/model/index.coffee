@@ -1,5 +1,5 @@
 mongoose = require 'mongoose'
-id = require './../mongodb/idPlugin'
+id = require './idPlugin'
 
 register = (name, model) ->
   schema = new mongoose.Schema model,

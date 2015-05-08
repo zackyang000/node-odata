@@ -7,7 +7,7 @@ functions = require './functions'
 metadata = require './metadata'
 
 
-createODataService = ->
+createService = (db, prefix) ->
   app = express()
   app.use express.bodyParser()
   app.use express.query()
@@ -18,23 +18,31 @@ createODataService = ->
     next()
 
   config.set('app', app)
+  config.set('db', db)  if db
+  config.set('db', prefix)  if prefix
   
   server = {}
 
-  server._app = app
   server.listen = () ->
     metadata.build()
     app.listen.apply(app, arguments)
+
   server.use = () ->
     app.use.apply(app, arguments)
+
+  server.config =
+    get : config.get
+    set : config.set
+
   server.resources = resources
   server.functions = functions
-  server.get = config.get
-  server.set = config.set
+
+  server._app = app
+
   server.mongoose = mongoose
 
   return server
 
-module.exports = createODataService
+module.exports = createService
 module.exports.express = express
 module.exports.mongoose = mongoose

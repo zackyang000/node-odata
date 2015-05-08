@@ -1,7 +1,6 @@
 var odata = require('../../');
 
-server = odata();
-server.set('db', 'mongodb://localhost/odata-test');
+server = odata('mongodb://localhost/odata-test');
 
 server.resources.register({
     url: '/users',

@@ -4,8 +4,7 @@ data = require("./data.json")
 callback = undefined
 done = undefined
 
-server = odata()
-server.set('db', 'mongodb://localhost/odata-test')
+server = odata('mongodb://localhost/odata-test')
 
 mongoose = server.mongoose
 

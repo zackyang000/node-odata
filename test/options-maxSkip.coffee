@@ -15,11 +15,11 @@ describe "options of maxSkip", ->
       done()
 
   after (done) ->
-    server.set 'maxSkip', undefined
+    server.config.set 'maxSkip', undefined
     done()
 
   it "should use global-limit if it is minimum between global-limit and query-limit", (done) ->
-    server.set 'maxSkip', 2
+    server.config.set 'maxSkip', 2
     request(app)
       .get("/odata/books?$skip=3")
       .end (err, res) ->
@@ -28,7 +28,7 @@ describe "options of maxSkip", ->
         done()
 
   it "should use query-limit if it is minimum between global-limit and query-limit", (done) ->
-    server.set 'maxSkip', 4
+    server.config.set 'maxSkip', 4
     request(app)
       .get("/odata/books?$skip=3")
       .end (err, res) ->

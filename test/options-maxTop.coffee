@@ -15,11 +15,11 @@ describe "options of maxTop", ->
       done()
 
   after (done) ->
-    server.set 'maxTop', undefined
+    server.config.set 'maxTop', undefined
     done()
 
   it "should work", (done) ->
-    server.set 'maxTop', 1
+    server.config.set 'maxTop', 1
     request(app)
       .get("/odata/books")
       .end (err, res) ->
@@ -28,7 +28,7 @@ describe "options of maxTop", ->
         done()
 
   it "should use global-limit if it is minimum between global-limit and query-limit", (done) ->
-    server.set 'maxTop', 2
+    server.config.set 'maxTop', 2
     request(app)
       .get("/odata/books?$top=3")
       .end (err, res) ->
@@ -37,7 +37,7 @@ describe "options of maxTop", ->
         done()
 
   it "should use query-limit if it is minimum between global-limit and query-limit", (done) ->
-    server.set 'maxTop', 4
+    server.config.set 'maxTop', 4
     request(app)
       .get("/odata/books?$top=3")
       .end (err, res) ->
