@@ -35,11 +35,20 @@ createService = (db, prefix) ->
     set : config.set
 
   server.resources = resources
-  server.functions = functions
 
   server._app = app
 
   server.mongoose = mongoose
+
+  # functions
+  server.functions = functions
+  ['get', 'put', 'del', 'post'].map (method) ->
+    server[method] = (url, handle, auth) ->
+      functions.register
+        url: url
+        method: method
+        handle: handle
+        auth: auth
 
   return server
 

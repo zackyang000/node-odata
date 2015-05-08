@@ -27,13 +27,9 @@ server.resources.register({
   }
 });
 
-server.functions.register({
-    url: '/license',
-    method: 'GET',
-    handle: function(req, res, next){
-      res.jsonp({license:'MIT'});
-    }
-})
+server.get('/license', function(req, res, next){
+    res.jsonp({license:'MIT'});
+});
 
 server.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/odata/books');

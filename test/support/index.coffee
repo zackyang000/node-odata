@@ -27,11 +27,8 @@ server.resources.register
         book.save (err) ->
           res.jsonp(book)
 
-server.functions.register
-    url: '/license',
-    method: 'GET',
-    handle: (req, res, next) ->
-      res.jsonp({license:'MIT'})
+server.get '/license', (req, res, next) ->
+    res.jsonp({license:'MIT'})
 
 #import data.
 load = (callback) ->
