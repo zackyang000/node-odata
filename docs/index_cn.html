@@ -43,12 +43,13 @@
   </ul></li>
   <li><div><a href="#6">6) 进阶指南</a></div>
   <ul>
-    <li><div><a href="#61-resource">6.1 构建复杂的 Resource</a></div></li>
-    <li><div><a href="#62">6.2 隐藏特定字段</a></div></li>
-    <li><div><a href="#63">6.3 权限验证</a></div></li>
-    <li><div><a href="#64">6.4 错误处理</a></div></li>
-    <li><div><a href="#65">6.5 日志记录</a></div></li>
-    <li><div><a href="#66">6.6 高级查询</a></div></li>
+    <li><div><a href="#61">6.1 中间件支持</a></div></li>
+    <li><div><a href="#62-resource">6.2 构建复杂的 Resource</a></div></li>
+    <li><div><a href="#63">6.3 隐藏指定字段</a></div></li>
+    <li><div><a href="#64">6.4 权限验证</a></div></li>
+    <li><div><a href="#65">6.5 错误处理</a></div></li>
+    <li><div><a href="#66">6.6 日志记录</a></div></li>
+    <li><div><a href="#67">6.7 高级查询</a></div></li>
   </ul></li>
   <li><div><a href="#7-odata">7) 尚未支持的 OData 特性列表</a></div></li>
 </ul>
@@ -68,7 +69,7 @@
 
 <h2>为什么使用 node-odata?</h2>
 
-<p>node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API. </p>
+<p>node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API.</p>
 
 <p>在常规的 REST 框架中, 仅仅提供了 REST 风格的 CRUD 操作. 开发者不的不对每一个资源都手动添加一些公共功能, 如排序/分页等, 甚至在复杂的业务场景中, 开发者不的不一次次根据业务需求制定一些特定的复杂查询, 这都极大的浪费了人力资源. OData数据访问协议很好的解决了这一问题. 它定义了$filter, $orderby, $select等一系列关键字来进行统一的筛选, 排序, 分页等操作. 极大的减轻了开发者的负担, 提高了生产力.</p>
 
@@ -97,7 +98,7 @@
 
 <pre><code>var odata = require('node-odata');
 
-odata.set('db', 'mongodb://localhost/my-app');
+var server = odata('mongodb://localhost/my-app');
 
 odata.resources.register({
     url: '/books',
@@ -224,7 +225,7 @@ OK
 
 <h1 id="4-odata">4) OData 查询</h1>
 
-<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀. </p>
+<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.</p>
 
 <p>每个关键字只能指定一次.</p>
 
@@ -332,7 +333,7 @@ OK
 
 <p>如:</p>
 
-<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books 
+<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 Content-Length: 65
@@ -518,6 +519,15 @@ handle: function(req, res, next) {
 
 <p>});</p>
 
+<h4 id="api">简化的 API</h4>
+
+<p>您也可以使用简化后的 API 达到相同效果:</p>
+
+<p>odata.get(url, handle, auth);
+   odata.put(url, handle, auth);
+   odata.post(url, handle, auth);
+   odata.del(url, handle, auth);</p>
+
 <h2 id="53-config">5.3 config</h2>
 
 <p>用于对 node-odata 进行一些基本配置.</p>
@@ -525,8 +535,8 @@ handle: function(req, res, next) {
 <table>
 <tbody>
 <tr><td><strong>Allow Key</strong></td><td><strong>Value Type</strong></td><td><strong>Details</strong></td></tr>
-<tr><td>db</td><td>string</td><td>mongoDB 数据库地址</td></tr>
-<tr><td>prefix</td><td>string</td><td>配置 URL 前缀, 默认为 '/odata'</td></tr>
+<tr><td>db</td><td>string</td><td>重新配置 mongoDB 数据库地址</td></tr>
+<tr><td>prefix</td><td>string</td><td>重新配置 URL 前缀, 默认为 '/odata'</td></tr>
 <tr><td>maxTop</td><td>int</td><td>设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖</td></tr>
 <tr><td>maxSkip</td><td>int</td><td>设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖</td></tr>
 </tbody>
@@ -534,17 +544,21 @@ handle: function(req, res, next) {
 
 <h1 id="6">6) 进阶指南</h1>
 
-<h2 id="61-resource">6.1 构建复杂的 Resource</h2>
+<h2 id="61">6.1 中间件支持</h2>
 
-<h2 id="62">6.2 隐藏特定字段</h2>
+<p>使用 <code>odata.use</code> 添加中间件.</p>
 
-<h2 id="63">6.3 权限验证</h2>
+<h2 id="62-resource">6.2 构建复杂的 Resource</h2>
 
-<h2 id="64">6.4 错误处理</h2>
+<h2 id="63">6.3 隐藏指定字段</h2>
 
-<h2 id="65">6.5 日志记录</h2>
+<h2 id="64">6.4 权限验证</h2>
 
-<h2 id="66">6.6 高级查询</h2>
+<h2 id="65">6.5 错误处理</h2>
+
+<h2 id="66">6.6 日志记录</h2>
+
+<h2 id="67">6.7 高级查询</h2>
 
 <h1 id="7-odata">7) 尚未支持的 OData 特性列表</h1>
 

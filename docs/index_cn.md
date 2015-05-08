@@ -39,8 +39,8 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 安装完成后, 新建 *index.js* 文件并输入:
 
     var odata = require('node-odata');
-
-    odata.set('db', 'mongodb://localhost/my-app');
+    
+    var server = odata('mongodb://localhost/my-app');
 
     odata.resources.register({
         url: '/books',
@@ -423,13 +423,23 @@ params: 复杂对象, 具体字段如下所示:
     }
   });
 
+#### 简化的 API
+
+您也可以使用简化后的 API 达到相同效果:
+
+   odata.get(url, handle, auth);
+   odata.put(url, handle, auth);
+   odata.post(url, handle, auth);
+   odata.del(url, handle, auth);
+
+
 ## 5.3 config
 
 用于对 node-odata 进行一些基本配置.
 
 || **Allow Key**                               || **Value Type**                            || **Details** ||
-|| db      || string || mongoDB 数据库地址 ||
-|| prefix    || string || 配置 URL 前缀, 默认为 '/odata' ||
+|| db      || string || 重新配置 mongoDB 数据库地址 ||
+|| prefix    || string || 重新配置 URL 前缀, 默认为 '/odata' ||
 || maxTop  || int || 设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖 ||
 || maxSkip  || int || 设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖 ||
 
