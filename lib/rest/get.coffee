@@ -21,17 +21,17 @@ module.exports =
       errHandle = (err) ->
         return reject err
 
-      if err =require('./query-parser/$count')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
+      if err =require('../parser/countParser')(resData, mongooseModel, req.query['$count'], req.query['$filter'])
         return errHandle err
-      if err = require('./query-parser/$filter')(query, req.query['$filter'])
+      if err = require('../parser/filterParser')(query, req.query['$filter'])
         return errHandle err
-      if err = require('./query-parser/$orderby')(query, req.query['$orderby'] || options.orderby)
+      if err = require('../parser/orderbyParser')(query, req.query['$orderby'] || options.orderby)
         return errHandle err
-      if err = require('./query-parser/$skip')(query, req.query['$skip'], options.maxSkip)
+      if err = require('../parser/skipParser')(query, req.query['$skip'], options.maxSkip)
         return errHandle err
-      if err = require('./query-parser/$top')(query, req.query['$top'], options.maxTop)
+      if err = require('../parser/topParser')(query, req.query['$top'], options.maxTop)
         return errHandle err
-      if err = require('./query-parser/$select')(query, req.query['$select'])
+      if err = require('../parser/selectParser')(query, req.query['$select'])
         return errHandle err
 
       # todo

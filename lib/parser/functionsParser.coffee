@@ -1,5 +1,3 @@
-
-
 module.exports =
   # indexof(CompanyName,'X') eq 1
   indexof: (query, key, odataOperator, value) ->

@@ -6,7 +6,7 @@ module.exports = (resData, mongooseModel, $count, $filter) ->
 
   if $count == 'true'
     query = mongooseModel.find()
-    require('./$filter')(query, $filter)
+    require('./filterParser')(query, $filter)
     query.count (err, count) ->
       resData['@odata.count'] = count
   else if $count == 'false'
