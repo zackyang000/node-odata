@@ -13,6 +13,8 @@ module.exports =
     _options[key]
 
   set: (key, value) ->
+    if !value
+      return
     if key == 'db'
       return  if _options[key] == value
       throw new Error("db already set before, you can't set it twice.")  if _options[key]
