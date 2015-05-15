@@ -5,19 +5,19 @@ markdown2extras: wiki-tables
 
 # 关于 node-odata
 
-node-odata 可以让你轻松创建 REST API, 并能使用 [OData](http://www.odata.org/) 协议的格式进行数据的查询. 它让你可以更方便的创建 API 服务, 使你更专注于业务逻辑的处理.
+node-odata 可以让你轻松创建 REST API, 并能使用 [OData](http://www.odata.org/) 协议对资源进行的查询. 它能让你以极简的方式来创建 API 服务, 使你更专注于业务逻辑的处理.
 
 ## 什么是 OData 协议?
 
-OData 全称开放数据协议(Open Data Protocol), 是一个用于 web 的数据访问协议. OData 提供了一个统一的 CRUD (create, read, update, and delete) 操作来查询和维护数据集.
+OData 全名"开放数据协议(Open Data Protocol)", 是一个用于 web 的数据访问协议. OData 提供了一个统一的 CRUD (create, read, update, and delete) 操作来查询和维护数据集.
 
 ## 为什么使用 node-odata?
 
-node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 高并发能力的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API.
+node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 支持高并发的优势, 使开发者能快速的创建一个高性能并支持各种复杂查询的 REST API.
 
-在常规的 REST 框架中, 仅仅提供了 REST 风格的 CRUD 操作. 开发者不的不对每一个资源都手动添加一些公共功能, 如排序/分页等, 甚至在复杂的业务场景中, 开发者不的不一次次根据业务需求制定一些特定的复杂查询, 这都极大的浪费了人力资源. OData数据访问协议很好的解决了这一问题. 它定义了$filter, $orderby, $select等一系列关键字来进行统一的筛选, 排序, 分页等操作. 极大的减轻了开发者的负担, 提高了生产力.
+在常规的 REST 框架中, 其只提供了 REST 风格的 CRUD 操作. 开发者不得不对每一个资源都手动添加一些公共功能, 如排序/分页等. 甚至在多数复杂的业务场景中, 开发者需要一次次根据业务需求定制出特定的复杂查询 API, 这都极大的浪费了人力资源. OData数据访问协议很好的解决了这一问题. 它定义了$filter, $orderby, $select等一系列关键字来进行统一的筛选, 排序, 分页等操作. 极大的减轻了开发者的负担, 提高了生产力.
 
-反观 OData 社区, 目前 node-odata 是唯一一款基于 NodeJS 的 OData 实现. 与其它编译型语言的 OData 实现相比, 它运行更加高效, 部署更加方便, 编写更加简单 (最短只需3行代码即可初始化一个 OData 服务).
+反观 OData 社区, 目前 node-odata 是唯一一款基于 NodeJS 的服务端 OData 框架. 与其它编译型语言的 OData 实现相比, 它运行更加高效, 部署更加方便, 编写更加简单 (4行代码即可初始化一个 OData 服务).
 
 ## 当前状态
 
@@ -36,7 +36,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 2.1 创建服务
 
-安装完成后, 新建 *index.js* 文件并输入:
+`node-odata` 安装完成后, 新建 *index.js* 文件并输入以下脚本:
 
     var odata = require('node-odata');
 
@@ -267,7 +267,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 本节讲介绍 node-odata 提供的 API.
 
-## 5.1 resources.register
+## 5.1 odata.resources.register
 
 在 OData 服务中注册一个 Resource, 使其可以使用基于 OData 的 REST API 进行增删查改.
 
@@ -392,7 +392,7 @@ params: 复杂对象, 具体字段如下所示:
   });
 
 
-## 5.2 functions.register
+## 5.2 odata.functions.register
 
 在 OData 中注册一个 WEB API, 用于处理自定义的逻辑.
 
@@ -433,7 +433,7 @@ params: 复杂对象, 具体字段如下所示:
    odata.del(url, handle, auth);
 
 
-## 5.3 config
+## 5.3 odata.config.set / odata.config.get
 
 用于对 node-odata 进行一些基本配置.
 
@@ -446,7 +446,7 @@ params: 复杂对象, 具体字段如下所示:
 
 # 6) 进阶指南
 
-## 6.1 中间件支持
+## 6.1 Express 中间件支持
 
 使用 `odata.use` 添加中间件.
 
