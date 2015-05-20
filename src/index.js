@@ -3,12 +3,12 @@
 /**
  * Module dependencies.
  */
-import  'express';
-import  'mongoose';
-import  './config';
-import  './resources';
-import  './functions';
-import  './metadata';
+import express from 'express';
+import mongoose from 'mongoose';
+import config from './config';
+import resources from './resources';
+import functions from './functions';
+import metadata from './metadata';
 
 var createService = (db, prefix) => {
   var app = express();
