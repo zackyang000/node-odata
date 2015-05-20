@@ -1,31 +1,33 @@
 import config from './../config';
 import parser from './parser';
 
-entities = {}
+var entities = {}
 
-register = (params) =>
-  name = params.url;
-  model = params.model;
+var register = (params) => {
+  var name = params.url;
+  var model = params.model;
   entities[name] = model;
+}
 
-build = (entity) =>
-  app = config.get('app');
-  prefix = config.get('prefix');
+var build = (entity) => {
+  var app = config.get('app');
+  var prefix = config.get('prefix');
 
   app.get(prefix || '/', (req, res, next) => {
-    resources = {};
-    Object.keys(entities).map (name) => {
+    var resources = {};
+    Object.keys(entities).map((name) => {
       resources[name] = `http://${req.headers.host}${prefix}/__metadata/${name}`;
-    }
+    });
     res.json({resources: resources});
   });
 
-  ebject.keys(entities).map((name) => {
+  Object.keys(entities).map((name) => {
     app.get("#{prefix}/__metadata/#{name}", (req, res, next) => {
-      metadata = parser.toMetadata(entities[name]);
+      var metadata = parser.toMetadata(entities[name]);
       res.json({[name]: metadata});
     });
   });
+}
 
 module.exports = {
   register: register,

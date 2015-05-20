@@ -33,7 +33,7 @@ import metadata from './metadata'
 // #     maxSkip:
 // #     maxTop:
 module.exports = {
-  register: (params) =>
+  register: (params) => {
     if(params.url.indexOf('/') === 0)
       params.url = params.url.substr(1);
 
@@ -43,4 +43,5 @@ module.exports = {
     model.register(params.url, params.model);
     rest.register(params);
     metadata.register(params);
+  }
 }

@@ -37,11 +37,11 @@ var initExpress = (app) => {
 var initServer = (app, server) => {
   server.listen = () => {
     metadata.build();
-    app.listen.apply(app, arguments);
+    app.listen.apply(app, ...arguments);
   }
 
   server.use = () => {
-    app.use.apply(app, arguments);
+    app.use.apply(app, ...arguments);
   }
 
   server.config = {

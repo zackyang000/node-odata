@@ -1,11 +1,12 @@
-REPORTER = dot #spec
+REPORTER = dot
 
-check: test
+run: compile mocha
+.PHONY: run
 
 compile: 
 	babel -d lib/ src/
 
-test:
+mocha:
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha --harmony\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
@@ -19,4 +20,3 @@ test-cov:
 		--require coffee-script/register \
 		test/*.coffee \
 
-.PHONY: compile test

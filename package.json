@@ -13,8 +13,7 @@
     "url": "https://github.com/TossShinHwa/node-odata.git"
   },
   "engines": {
-    "node": "0.12.x",
-    "npm": "2.5.x"
+    "node": "0.10.x || 0.12.x"
   },
   "scripts": {
     "compile": "babel -d lib/ src/",
