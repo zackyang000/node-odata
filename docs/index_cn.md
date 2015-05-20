@@ -273,7 +273,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ### 参数
 
-params: 复杂对象, 具体字段如下所示:
+params: 复杂对象, 具体字段如下所示
 
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || Resource 的 URL 地址 ||
@@ -284,7 +284,7 @@ params: 复杂对象, 具体字段如下所示:
 
 ### example
 
-*注意: 除了 url 和 model 以外, 其它都是可选参数
+*注: 除了 url 和 model 以外, 其它都是可选参数
 
   odata.resources.register({
     // Resource URL注册为 /book
@@ -423,9 +423,9 @@ params: 复杂对象, 具体字段如下所示:
     }
   });
 
-#### 简化的 API
+#### 简化 API
 
-您也可以使用简化后的 API 达到相同效果:
+您也可以使用以下 API 达到相同效果
 
    odata.get(url, handle, auth);
    odata.put(url, handle, auth);
@@ -443,24 +443,11 @@ params: 复杂对象, 具体字段如下所示:
 || maxTop  || int || 设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖 ||
 || maxSkip  || int || 设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖 ||
 
+## 5.4 odata.use
 
-# 6) 进阶指南
+使用 `odata.use` 可添加 `Express` 中间件.
 
-## 6.1 Express 中间件支持
+## 5.5 odata.listen
 
-使用 `odata.use` 添加中间件.
-
-## 6.2 构建复杂的 Resource
-
-## 6.3 隐藏指定字段
-
-## 6.4 权限验证
-
-## 6.5 错误处理
-
-## 6.6 日志记录
-
-## 6.7 高级查询
-
-# 7) 尚未支持的 OData 特性列表
+在给定的主机和端口上监听请求.
 
