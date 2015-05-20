@@ -6,7 +6,7 @@ var isField = (obj) => {
   if(typeof(obj) === 'object'){
     if(obj.type && typeof(obj.type) === 'function'){
       // 检测该 obj 下字段, 如果有除了 type 以外是 function 类型的字段, 表明该 obj 不是基本类型
-      for(name of obj){
+      for(name in obj){
         if(name !== 'type' && typeof(obj[name]) === 'function')
           return false;
       }
