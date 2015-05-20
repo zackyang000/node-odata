@@ -3,13 +3,12 @@
 /**
  * Module dependencies.
  */
-var express = require('express');
-var mongoose = require('mongoose');
-var config = require('./config');
-var resources = require('./resources');
-var functions = require('./functions');
-var metadata = require('./metadata');
-
+import  'express';
+import  'mongoose';
+import  './config';
+import  './resources';
+import  './functions';
+import  './metadata';
 
 var createService = (db, prefix) => {
   var app = express();

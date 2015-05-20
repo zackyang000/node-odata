@@ -2,6 +2,9 @@ REPORTER = dot #spec
 
 check: test
 
+compile: 
+	babel -d lib/ src/
+
 test:
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha --harmony\
 		--reporter $(REPORTER) \
@@ -11,9 +14,9 @@ test:
 
 test-cov:
 	@NODE_ENV=test node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
-	./node_modules/mocha/bin/_mocha test/*.coffee -- \
-	--reporter $(REPORTER) \
-	--require coffee-script/register \
-	test/*.coffee \
+		./node_modules/mocha/bin/_mocha test/*.coffee -- \
+		--reporter $(REPORTER) \
+		--require coffee-script/register \
+		test/*.coffee \
 
-.PHONY: test
+.PHONY: compile test

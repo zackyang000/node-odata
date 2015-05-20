@@ -13,11 +13,11 @@
     "url": "https://github.com/TossShinHwa/node-odata.git"
   },
   "engines": {
-    "node": "0.10.x",
-    "npm": "1.4.x"
+    "node": "0.12.x",
+    "npm": "2.5.x"
   },
   "scripts": {
-    "run": "grunt"
+    "compile": "babel -d lib/ src/"
   },
   "keywords": [
     "OData",
@@ -26,19 +26,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "coffee-script": "1.9.1",
+    "es6-shim": "0.31.2",
+    "express": "3.2.0",
     "lodash": "3.6.0",
     "mongoose": "4.0.1",
-    "express": "3.2.0",
     "node-uuid": "1.4.3"
   },
   "devDependencies": {
+    "coffee-coverage": "0.4.5",
+    "istanbul": "0.3.13",
     "mocha": "2.2.1",
     "should": "5.2.0",
-    "supertest": "0.15.0",
-    "istanbul": "0.3.13",
-    "coffee-coverage": "0.4.5",
     "sinon": "1.14.1",
+    "supertest": "0.15.0",
     "pow-mongoose-fixtures": "0.3.0"
   }
 }
