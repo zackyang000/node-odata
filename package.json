@@ -17,7 +17,8 @@
     "npm": "2.5.x"
   },
   "scripts": {
-    "compile": "babel -d lib/ src/"
+    "compile": "babel -d lib/ src/",
+    "prepublish": "npm run compile"
   },
   "keywords": [
     "OData",

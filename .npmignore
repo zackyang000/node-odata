@@ -1,0 +1,6 @@
+src/
+node_modules/
+coverage/
+npm-debug.log
+nohup.out
+
