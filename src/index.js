@@ -35,13 +35,13 @@ var initExpress = (app) => {
 }
 
 var initServer = (app, server) => {
-  server.listen = () => {
+  server.listen = (...args) => {
     metadata.build();
-    app.listen.apply(app, ...arguments);
+    app.listen.apply(app, args);
   }
 
-  server.use = () => {
-    app.use.apply(app, ...arguments);
+  server.use = (...args) => {
+    app.use.apply(app, args);
   }
 
   server.config = {
