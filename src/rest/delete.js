@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(req, mongooseModel) {
   return new Promise(function(resolve, reject) {
     mongooseModel.remove({_id: req.params.id}, function(err, result) {

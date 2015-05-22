@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
   // indexof(CompanyName,'X') eq 1
   indexof: function(query, key, odataOperator, value) {

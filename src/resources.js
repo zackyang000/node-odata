@@ -1,3 +1,5 @@
+"use strict";
+
 import model from './model'
 import rest from './rest'
 import metadata from './metadata'

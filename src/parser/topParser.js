@@ -1,3 +1,5 @@
+"use strict";
+
 import _ from 'lodash'
 import config from '../config'
 const SYSTEM_MAX_TOP = 1000000

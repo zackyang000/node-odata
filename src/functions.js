@@ -1,3 +1,5 @@
+"use strict";
+
 import config from './config'
 
 module.exports = {

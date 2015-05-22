@@ -1,3 +1,5 @@
+"use strict";
+
 import _ from 'lodash'
 
 module.exports = function(req, mongooseModel) {

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(req, mongooseModel) {
   return new Promise(function(resolve, reject) {
     if(Object.keys(req.body).length === 0)

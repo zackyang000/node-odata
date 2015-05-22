@@ -1,3 +1,5 @@
+"use strict";
+
 // ###
 // Operator  Description             Example
 // Comparison Operators

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
   get : function(req, mongooseModel) {
     return new Promise(function(resolve, reject) {

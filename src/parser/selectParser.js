@@ -1,3 +1,5 @@
+"use strict";
+
 // # ?$select=Rating,ReleaseDate
 // # ->
 // # query.select(Rating ReleaseDate)

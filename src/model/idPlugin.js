@@ -1,3 +1,5 @@
+"use strict";
+
 import uuid from 'node-uuid';
 
 module.exports = exports = function(schema, options) {
