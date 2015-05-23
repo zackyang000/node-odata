@@ -4,5 +4,6 @@
 
  before_script:
   - npm install --quiet
+  - npm install babel -g
 
  script:
