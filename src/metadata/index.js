@@ -5,10 +5,8 @@ import parser from './parser';
 
 var entities = {}
 
-var register = (params) => {
-  var name = params.url;
-  var model = params.model;
-  entities[name] = model;
+var register = ({url, model}) => {
+  entities[url] = model;
 }
 
 var build = (entity) => {
@@ -24,7 +22,7 @@ var build = (entity) => {
   });
 
   Object.keys(entities).map((name) => {
-    app.get("#{prefix}/__metadata/#{name}", (req, res, next) => {
+    app.get(`${prefix}/__metadata/${name}`, (req, res, next) => {
       var metadata = parser.toMetadata(entities[name]);
       res.json({[name]: metadata});
     });

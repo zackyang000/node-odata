@@ -32,8 +32,8 @@ var isObject = (obj) => {
 
 module.exports = {
   toMetadata: (obj) => {
-    convert = (obj, name, root) => {
-      LEN = 'function '.length;
+    var convert = (obj, name, root) => {
+      var LEN = 'function '.length;
       if(isField(obj[name])){
         if(typeof(obj[name]) === 'function'){
           obj[name] = obj[name].toString();
@@ -54,7 +54,8 @@ module.exports = {
         obj[name][0] = obj[name][0].substr(LEN, obj[name][0].indexOf('(') - LEN);
       }
       else if(isObject(obj[name])){
-        for(childName of obj[name]){
+        console.log(obj[name]);
+        for(var childName in Object.keys(obj[name])){
           convert(obj[name], childName);
         }
       }
