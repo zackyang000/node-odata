@@ -2,7 +2,7 @@
 
 import uuid from 'node-uuid';
 
-module.exports = exports = function(schema, options) {
+module.exports = exports = (schema, options) => {
   // add _id to schema.
   if(!schema.paths._id){
     schema.add({
