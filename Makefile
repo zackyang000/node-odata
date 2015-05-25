@@ -7,7 +7,7 @@ compile:
 	babel -d lib/ src/
 
 mocha:
-	@NODE_ENV=test ./node_modules/mocha/bin/mocha --harmony\
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		--compilers coffee:coffee-script/register \

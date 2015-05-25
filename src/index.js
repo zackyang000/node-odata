@@ -10,10 +10,11 @@ import resources from './resources';
 import functions from './functions';
 import metadata from './metadata';
 
-var createService = (db, prefix) => {
-  var app = express();
+let createService = (db, prefix) => {
+  let app = express();
   initExpress(app);
-  var server = {};
+
+  let server = {};
   initServer(app, server);
 
   config.set('app', app);
@@ -28,6 +29,7 @@ var initExpress = (app) => {
   app.use(express.query());
   app.use(express.methodOverride());
 
+  // remove express info.
   app.use((req, res, next) => {
     res.removeHeader("X-Powered-By");
     next();
@@ -35,24 +37,10 @@ var initExpress = (app) => {
 }
 
 var initServer = (app, server) => {
-  server.listen = (...args) => {
-    metadata.build();
-    app.listen.apply(app, args);
-  }
-
-  server.use = (...args) => {
-    app.use.apply(app, args);
-  }
-
-  server.config = {
-    get : config.get,
-    set : config.set,
-  };
-
-  // resources
+  // expose resources
   server.resources = resources;
 
-  // functions
+  // expose functions
   server.functions = functions;
   ['get', 'put', 'del', 'post'].map((method) => {
     server[method] = (url, handle, auth) => {
@@ -65,8 +53,25 @@ var initServer = (app, server) => {
     }
   });
 
+  // expose listen.
+  server.listen = (...args) => {
+    app.listen.apply(app, args);
+  }
+
+  //expose use
+  server.use = (...args) => {
+    app.use.apply(app, args);
+  }
+
+  // expose config
+  server.config = {
+    get : config.get,
+    set : config.set,
+  };
+
+  // expose privite object for special situation.
   server._app = app;
-  server.mongoose = mongoose;
+  server._mongoose = mongoose;
 }
 
 /**

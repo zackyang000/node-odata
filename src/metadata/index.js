@@ -3,33 +3,23 @@
 import config from './../config';
 import parser from './parser';
 
-var entities = {}
+const entities = new Map();
 
-var register = ({url, model}) => {
-  entities[url] = model;
-}
-
-var build = (entity) => {
-  var app = config.get('app');
-  var prefix = config.get('prefix');
-
-  app.get(prefix || '/', (req, res, next) => {
-    var resources = {};
-    Object.keys(entities).map((name) => {
-      resources[name] = `http://${req.headers.host}${prefix}/__metadata/${name}`;
-    });
-    res.json({resources: resources});
-  });
-
-  Object.keys(entities).map((name) => {
-    app.get(`${prefix}/__metadata/${name}`, (req, res, next) => {
-      var metadata = parser.toMetadata(entities[name]);
-      res.json({[name]: metadata});
-    });
-  });
-}
+let isBootstrap = false;
 
 module.exports = {
-  register: register,
-  build: build,
+  register: ({url, model}) => {
+    entities.set(url, parser.toMetadata(model));
+
+    if (!isBootstrap) {
+      isBootstrap = true;
+
+      let app = config.get('app');
+      let prefix = config.get('prefix');
+
+      app.get(prefix || '/', (req, res, next) => {
+        res.json({resources: [...entities.entries()]});
+      });
+    }
+  }
 }

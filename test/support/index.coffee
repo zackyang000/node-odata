@@ -6,7 +6,7 @@ done = undefined
 
 server = odata('mongodb://localhost/odata-test')
 
-mongoose = server.mongoose
+mongoose = server._mongoose
 
 bookInfo = {
   author: String,
