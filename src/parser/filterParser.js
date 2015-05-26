@@ -1,6 +1,5 @@
 "use strict";
 
-// ###
 // Operator  Description             Example
 // Comparison Operators
 // eq        Equal                   Address/City eq 'Redmond'
@@ -18,40 +17,39 @@
 // eg.
 //   http://host/service/Products?$filter=Price lt 10.00
 //   http://host/service/Categories?$filter=Products/$count lt 10
-// ###
 
-import _ from 'lodash';
 import functions from './functionsParser';
 
-module.exports = function(query, $filter) {
-  if(!$filter) {
+module.exports = (query, $filter) => {
+  if (!$filter) {
     return;
   }
 
   const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
   const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
 
-  if(stringHelper.has($filter, 'and')) {
-    var condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
+  let condition;
+  if (stringHelper.has($filter, 'and')) {
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
   }
   else {
-    var condition = [ $filter.trim() ];
+    condition = [ $filter.trim() ];
   }
 
   for (let i = 0; i < condition.length; i++) {
-    var item = condition[i];
-    var conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
-    if(conditionArr.length !== 3) {
+    let item = condition[i];
+    let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
+    if (conditionArr.length !== 3) {
       return new Error("Syntax error at '#{item}'.");
     }
-    var [key, odataOperator, value] = conditionArr;
-    var value = validator.formatValue(value);
+    let [key, odataOperator, value] = conditionArr;
+    value = validator.formatValue(value);
 
     // handle query-functions
-    var queryFunctions = ['indexof', 'year'];
+    let queryFunctions = ['indexof', 'year'];
     for (let i = 0; i < queryFunctions.length; i++) {
       let queryFunction = queryFunctions[i];
-      if(key.indexOf(`${queryFunction}(`) === 0) {
+      if (key.indexOf(`${queryFunction}(`) === 0) {
         functions[queryFunction](query, key, odataOperator, value);
         return;
       }
@@ -83,37 +81,41 @@ module.exports = function(query, $filter) {
 }
 
 
-var stringHelper = {
-  has : function(str, key) {
+const stringHelper = {
+  has : (str, key) => {
     return str.indexOf(key) >= 0;
   },
 
-  isBeginWith : function(str, key) {
+  isBeginWith : (str, key) => {
     return str.indexOf(key) === 0;
   },
 
-  isEndWith : function(str, key) {
+  isEndWith : (str, key) => {
     return str.lastIndexOf(key) === (str.length - key.length)
   },
 
-  removeEndOf : function(str, key) {
-    if(stringHelper.isEndWith(str, key)) {
+  removeEndOf : (str, key) => {
+    if (stringHelper.isEndWith(str, key)) {
       return str.substr(0, str.length - key.length);
     }
     return str;
   },
 }
 
-var validator = {
-  formatValue : function(value) {
-    if(value === 'true')
+const validator = {
+  formatValue : (value) => {
+    if (value === 'true') {
       return true;
-    if(value === 'false')
+    }
+    if (value === 'false') {
       return false;
-    if(+value === +value)
+    }
+    if (+value === +value) {
       return +value;
-    if(stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'"))
+    }
+    if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
       return value.slice(1, -1);
+    }
     return new Error(`Syntax error at '${value}'.`);
   }
 }

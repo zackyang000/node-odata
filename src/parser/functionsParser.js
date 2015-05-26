@@ -2,20 +2,20 @@
 
 module.exports = {
   // indexof(CompanyName,'X') eq 1
-  indexof: function(query, key, odataOperator, value) {
-    var [key, target] = key.substring(key.indexOf('(') + 1, key.indexOf(')')).split(',');
+  indexof: (query, key, odataOperator, value) => {
+    let target;
+    [key, target] = key.substring(key.indexOf('(') + 1, key.indexOf(')')).split(',');
     [key, target] = [key.trim(), target.trim()];
-
-    var operator = convertToOperator(odataOperator)
+    let operator = convertToOperator(odataOperator)
     query.$where(`this.${key}.indexOf(${target}) ${operator} ${value}`);
   },
 
    // year(publish_date) eq 2000
-  year: function(query, key, odataOperator, value) {
-    var key = key.substring(key.indexOf('(')+1, key.indexOf(')'));
+  year: (query, key, odataOperator, value) => {
+    key = key.substring(key.indexOf('(')+1, key.indexOf(')'));
 
-    var start = new Date(+value, 0, 1);
-    var end = new Date(+value + 1, 0, 1);
+    let start = new Date(+value, 0, 1);
+    let end = new Date(+value + 1, 0, 1);
 
     switch(odataOperator) {
       case 'eq':
@@ -44,8 +44,8 @@ module.exports = {
 }
 
 
-var convertToOperator = function(odataOperator) {
-  var operator = undefined;
+const convertToOperator = (odataOperator) => {
+  let operator;
   switch(odataOperator) {
     case 'eq':
       operator = '==';
@@ -66,5 +66,5 @@ var convertToOperator = function(odataOperator) {
       operator = '<=';
       break;
   }
-  return operator
+  return operator;
 }

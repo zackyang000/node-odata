@@ -5,16 +5,16 @@ import config from './../config';
 import model from './../model';
 
 module.exports = {
-    register: function(params) {
-      var app = config.get('app')
-      var prefix = config.get('prefix')
+    register: (params) => {
+      const app = config.get('app')
+      const prefix = config.get('prefix')
 
-      var options = params.options || {}
-      var rest = params.rest || {}
-      var actions = params.actions || []
+      let options = params.options || {}
+      let rest = params.rest || {}
+      let actions = params.actions || []
 
-      var resourceURL = `${prefix}/${params.url}`
-      var routes = [
+      let resourceURL = `${prefix}/${params.url}`
+      let routes = [
         {
           method: 'post',
           url: `${resourceURL}`,
@@ -47,26 +47,31 @@ module.exports = {
         },
       ];
 
-      var mongooseModel = model.get(params.url);
+      let mongooseModel = model.get(params.url);
 
-      routes.map(function(route) {
-        app[route.method](route.url, function(req, res, next) {
-          if(checkAuth(route.config.auth, req)) {
-            route.controller(req, mongooseModel, options).then(function(result = {}) {
+      routes.map((route) => {
+        app[route.method](route.url, (req, res, next) => {
+          if (checkAuth(route.config.auth, req)) {
+            route.controller(req, mongooseModel, options).then((result = {}) => {
               res.status(result.status || 200);
-              if(result.text)
+              if (result.text) {
                 res.send(result.text);
-              else if(result.entity)
+              }
+              else if (result.entity) {
                 res.jsonp(result.entity);
-              else
+              }
+              else {
                 res.end();
+              }
               route.config.after(result.entity, result.originEntity);
             }
-            , function(err) {
-              if(err.status)
+            , (err) => {
+              if (err.status) {
                 res.status(err.status).send(err.text || '');
-              else
+              }
+              else {
                 next(err);
+              }
             });
           }
           else {
@@ -75,20 +80,22 @@ module.exports = {
         });
       });
 
-      for(var url in actions) {
-        var action = actions[url];
-        (function(url, action) {
-          app.post(`${resourceURL}/:id${url}`, function(req, res, next) {
-            if(checkAuth(action.auth))
+      for(let url in actions) {
+        let action = actions[url];
+        ((url, action) => {
+          app.post(`${resourceURL}/:id${url}`, (req, res, next) => {
+            if(checkAuth(action.auth)) {
               action(req, res, next);
+            }
           });
         })(url, action);
       }
     }
 }
 
-var checkAuth = function(auth, req) {
-  if(!auth)
+const checkAuth = (auth, req) => {
+  if (!auth) {
     return true;
+  }
   return auth(req);
 };

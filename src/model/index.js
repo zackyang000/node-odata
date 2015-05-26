@@ -3,18 +3,18 @@
 import mongoose from 'mongoose';
 import id from './idPlugin';
 
-var register = function(name, model) {
-  var conf = {
+const register = (name, model) => {
+  const conf = {
     _id: false,
     versionKey: false,
     collection: name,
   };
-  var schema = new mongoose.Schema(model, conf);
+  const schema = new mongoose.Schema(model, conf);
   schema.plugin(id);
   mongoose.model(name, schema);
 };
 
-var get = function(name) {
+const get = (name) => {
   return mongoose.model(name);
 };
 

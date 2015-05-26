@@ -1,20 +1,21 @@
 "use strict";
 
-// # ?$skip=10
-// # ->
-// # query.skip(10)
-module.exports = function(resData, mongooseModel, $count, $filter) {
-  if(!$count)
+// ?$skip=10
+// ->
+// query.skip(10)
+module.exports = (resData, mongooseModel, $count, $filter) => {
+  if (!$count) {
     return;
+  }
 
-  if($count === 'true') {
-    var query = mongooseModel.find();
+  if ($count === 'true') {
+    const query = mongooseModel.find();
     require('./filterParser')(query, $filter);
-    query.count(function(err, count) {
+    query.count((err, count) => {
       resData['@odata.count'] = count;
     });
   }
-  else if($count == 'false') {
+  else if ($count == 'false') {
     return;
   }
   else {

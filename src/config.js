@@ -22,12 +22,12 @@ module.exports = {
       return undefined;
     }
 
-    if(key == 'db') {
+    if (key == 'db') {
       if (options[key] == value) {
         return undefined;
       }
       if (options[key]) {
-        throw new Error("db already set before, you can't set it twice.");
+        throw new Error('db already set before, you can\'t set it twice.');
       }
       mongoose.connect(value);
     }

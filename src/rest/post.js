@@ -1,14 +1,16 @@
 "use strict";
 
-module.exports = function(req, mongooseModel) {
-  return new Promise(function(resolve, reject) {
-    if(Object.keys(req.body).length === 0)
+module.exports = (req, mongooseModel) => {
+  return new Promise((resolve, reject) => {
+    if (!Object.keys(req.body).length) {
       return reject({status: 422});
+    }
 
-    var entity = new mongooseModel(req.body);
-    entity.save(function(err) {
-      if(err)
+    let entity = new mongooseModel(req.body);
+    entity.save((err) => {
+      if (err) {
         return reject(err);
+      }
       return resolve({status: 201, entity: entity});
     });
   });

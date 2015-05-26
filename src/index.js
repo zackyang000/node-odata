@@ -9,12 +9,13 @@ import config from './config';
 import resources from './resources';
 import functions from './functions';
 import metadata from './metadata';
+import { get as getRepository } from './model';
 
-let createService = (db, prefix) => {
-  let app = express();
+const createService = (db, prefix) => {
+  const app = express();
   initExpress(app);
 
-  let server = {};
+  const server = {};
   initServer(app, server);
 
   config.set('app', app);
@@ -24,7 +25,7 @@ let createService = (db, prefix) => {
   return server;
 }
 
-var initExpress = (app) => {
+const initExpress = (app) => {
   app.use(express.bodyParser());
   app.use(express.query());
   app.use(express.methodOverride());
@@ -36,7 +37,7 @@ var initExpress = (app) => {
   });
 }
 
-var initServer = (app, server) => {
+const initServer = (app, server) => {
   // expose resources
   server.resources = resources;
 
@@ -52,6 +53,9 @@ var initServer = (app, server) => {
       });
     }
   });
+
+  // expose repository
+  server.repository = getRepository;
 
   // expose listen.
   server.listen = (...args) => {

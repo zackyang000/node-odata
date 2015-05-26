@@ -43,7 +43,7 @@ module.exports = {
 
     // not allow contain '/' in url.
     if (params.url.indexOf('/') >= 0) {
-      throw new Error("Resource of url can't contain '/', it can only be allowed to exist in the beginning.");
+      throw new Error('Resource of url can\'t contain "/", it can only be allowed to exist in the beginning.');
     }
 
     model.register(params.url, params.model);

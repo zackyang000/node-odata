@@ -1,23 +1,26 @@
 "use strict";
 
-import _ from 'lodash'
+import { extend } from 'lodash'
 
-module.exports = function(req, mongooseModel) {
-  return new Promise(function(resolve, reject) {
-    mongooseModel.findOne({_id: req.params.id}, function(err, entity) {
-      if(err)
+module.exports = (req, mongooseModel) => {
+  return new Promise((resolve, reject) => {
+    mongooseModel.findOne({_id: req.params.id}, (err, entity) => {
+      if (err) {
         return reject(err);
+      }
 
-      if(!entity)
+      if (!entity) {
         return reject({status: 404}, {text: 'Not Found'});
+      }
 
-      var originEntity = JSON.parse(JSON.stringify(entity));
-      var entity = _.extend(entity, req.body);
-      entity.save(function(err) {
-        if(err)
+      let originEntity = JSON.parse(JSON.stringify(entity));
+      entity = extend(entity, req.body);
+      entity.save((err) => {
+        if (err) {
           return reject(err);
+        }
 
-        return resolve({entity: entity}, {originEntity: originEntity});
+        return resolve({entity, originEntity});
       });
     });
   });

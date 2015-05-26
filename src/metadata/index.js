@@ -14,8 +14,8 @@ module.exports = {
     if (!isBootstrap) {
       isBootstrap = true;
 
-      let app = config.get('app');
-      let prefix = config.get('prefix');
+      const app = config.get('app');
+      const prefix = config.get('prefix');
 
       app.get(prefix || '/', (req, res, next) => {
         res.json({resources: [...entities.entries()]});
