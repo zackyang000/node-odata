@@ -1,19 +1,19 @@
- language: node_js
+language: node_js
 
- node_js:
-   - "0.12"
+node_js:
+  - "0.12"
 
 services:
   - mongodb
 
- before_install:
+before_install:
   - sudo apt-get install build-essential
 
- install:
+install:
   - npm install babel -g
 
- before_script:
+before_script:
   - npm install --quiet
 
- script:
+script:
   - make
