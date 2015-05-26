@@ -33,6 +33,7 @@
     "node-uuid": "1.4.3"
   },
   "devDependencies": {
+    "coffee-script": "1.9.0",
     "coffee-coverage": "0.4.5",
     "istanbul": "0.3.13",
     "mocha": "2.2.1",
