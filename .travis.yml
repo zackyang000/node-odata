@@ -14,3 +14,6 @@ before_script:
 
 script:
   - make
+
+after_script:
+  - npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls
