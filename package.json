@@ -16,8 +16,8 @@
     "node": "0.10.x || 0.12.x"
   },
   "scripts": {
-    "compile": "babel -d lib/ src/",
-    "prepublish": "npm run compile"
+    "prepublish": "make compile",
+    "test": "make"
   },
   "keywords": [
     "OData",
