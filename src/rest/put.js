@@ -20,7 +20,7 @@ module.exports = (req, mongooseModel) => {
           return reject(err);
         }
 
-        return resolve({entity, originEntity});
+        return resolve({ entity, originEntity });
       });
     });
   });
