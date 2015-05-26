@@ -10,7 +10,6 @@ mocha:
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
-		--compilers coffee:coffee-script/register \
 		test/*.coffee
 
 test-cov:
@@ -19,4 +18,5 @@ test-cov:
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		test/*.coffee \
+		&& cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
 
