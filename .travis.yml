@@ -6,6 +6,9 @@
 services:
   - mongodb
 
+ before_install:
+  - sudo apt-get install build-essential
+
  install:
   - npm install babel -g
 
