@@ -4,7 +4,7 @@ request = require("supertest")
 server = require("../examples/hidden-field")
 app = server._app
 
-describe "hidden-field", ->
+describe "Hidden-field", ->
   before (done) ->
     done()
 

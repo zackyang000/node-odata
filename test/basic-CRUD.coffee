@@ -5,7 +5,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "basic CRUD", ->
+describe "Basic CRUD", ->
   before (done) ->
     support.ready ->
       app = support.app

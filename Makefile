@@ -1,12 +1,12 @@
 REPORTER = dot
 
-run: compile mocha
+run: compile tests
 .PHONY: run
 
 compile: 
 	babel -d lib/ src/
 
-mocha:
+tests:
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \

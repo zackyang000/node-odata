@@ -5,7 +5,7 @@ support = require('./support')
 app = undefined
 books = undefined
 
-describe "odata function", ->
+describe "OData action", ->
   before (done) ->
     support.ready ->
       app = support.app
@@ -14,10 +14,10 @@ describe "odata function", ->
 
   it "should work", (done) ->
     request(app)
-      .get("/odata/license")
+      .post("/odata/books/#{books[10].id}/50off")
       .expect(200)
       .expect('Content-Type', /json/)
       .end (err, res) ->
         return done(err)  if(err)
-        res.body.license.should.be.equal('MIT')
+        res.body.price.should.be.equal(+((books[10].price/2).toFixed(2)))
         done()
