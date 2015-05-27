@@ -2,7 +2,6 @@ should = require("should")
 request = require("supertest")
 app = undefined
 
-### TODO: CI 上测试会出现没有数据导致失败的情况.
 describe "Resource special conditions", ->
   describe "use function keyword", ->
     before (done) ->
@@ -47,4 +46,3 @@ describe "Resource special conditions", ->
               return done(err)  if(err)
               res.body.value[0].id.should.be.equal(100)
               done()
-###
