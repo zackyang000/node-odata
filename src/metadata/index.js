@@ -17,7 +17,11 @@ const register = ({url, model}) => {
     const prefix = config.get('prefix');
 
     app.get(prefix || '/', (req, res, next) => {
-      res.json({resources: [...entities.entries()]});
+      const resources = {};
+      for (let [key, value] of entities) {
+        resources[key] = value;
+      }
+      res.json({ resources });
     });
   }
 }
