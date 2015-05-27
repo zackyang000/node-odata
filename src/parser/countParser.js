@@ -1,5 +1,7 @@
 "use strict";
 
+import filterParser from './filterParser';
+
 // ?$skip=10
 // ->
 // query.skip(10)
@@ -10,7 +12,7 @@ export default (resData, mongooseModel, $count, $filter) => {
 
   if ($count === 'true') {
     const query = mongooseModel.find();
-    require('./filterParser')(query, $filter);
+    filterParser(query, $filter);
     query.count((err, count) => {
       resData['@odata.count'] = count;
     });

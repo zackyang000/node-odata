@@ -3,6 +3,10 @@
 import _ from 'lodash';
 import config from './../config';
 import model from './../model';
+import post from './post';
+import put from './put';
+import del from './delete';
+import { get, getAll } from './get';
 
 const register = (params) => {
   const app = config.get('app')
@@ -17,31 +21,31 @@ const register = (params) => {
     {
       method: 'post',
       url: `${resourceURL}`,
-      controller: require('./post'),
+      controller: post,
       config: rest.post || rest.create || {},
     },
     {
       method: 'put',
       url: `${resourceURL}/:id`,
-      controller: require('./put'),
+      controller: put,
       config: rest.put || rest.update || {},
     },
     {
       method: 'del',
       url: `${resourceURL}/:id`,
-      controller: require('./delete'),
+      controller: del,
       config: rest.delete || rest.del || {},
     },
     {
       method: 'get',
       url: `${resourceURL}/:id`,
-      controller: require('./get').get,
+      controller: get,
       config: rest.get || rest.read || {},
     },
     {
       method: 'get',
       url: `${resourceURL}`,
-      controller: require('./get').getAll,
+      controller: getAll,
       config: rest.getAll || rest.readAll || {},
     },
   ];
