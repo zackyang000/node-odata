@@ -13,19 +13,7 @@ describe "Resource special conditions", ->
         .post('/odata/resource-use-function-keyword')
         .send
           year: 2015
-        .expect(201)
-        .end (err, res) ->
-          return done(err)  if(err)
-          setTimeout ->
-            request(app)
-              .get('/odata/resource-use-function-keyword?$filter=year eq 2015')
-              .expect(200)
-              .expect('Content-Type', /json/)
-              .end (err, res) ->
-                return done(err)  if(err)
-                res.body.value.length.should.be.above(0)
-                done()
-          , 500
+        .expect(201, done)
 
   describe "use custom id", ->
     before (done) ->
@@ -37,14 +25,4 @@ describe "Resource special conditions", ->
         .post('/odata/resource-use-custom-id')
         .send
           id: 100
-        .expect(201)
-        .end (err, res) ->
-          return done(err)  if(err)
-          request(app)
-            .get('/odata/resource-use-custom-id')
-            .expect(200)
-            .expect('Content-Type', /json/)
-            .end (err, res) ->
-              return done(err)  if(err)
-              res.body.value[0].id.should.be.equal(100)
-              done()
+        .expect(201, done)
