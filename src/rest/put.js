@@ -2,7 +2,7 @@
 
 import { extend } from 'lodash'
 
-module.exports = (req, mongooseModel) => {
+export default (req, mongooseModel) => {
   return new Promise((resolve, reject) => {
     mongooseModel.findOne({_id: req.params.id}, (err, entity) => {
       if (err) {

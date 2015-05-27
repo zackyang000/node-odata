@@ -2,12 +2,12 @@
 
 import config from './config'
 
-module.exports = {
-  register: ({ url, method, handle }) => {
-    method = method.toLowerCase();
-    const app = config.get('app');
-    const prefix = config.get('prefix');
+const register = ({ url, method, handle }) => {
+  method = method.toLowerCase();
+  const app = config.get('app');
+  const prefix = config.get('prefix');
 
-    app[method](`${prefix}${url}`, handle);
-  }
+  app[method](`${prefix}${url}`, handle);
 }
+
+export default { register };

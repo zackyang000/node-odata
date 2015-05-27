@@ -3,7 +3,7 @@
 // ?$skip=10
 // ->
 // query.skip(10)
-module.exports = (query, $orderby) => {
+export default (query, $orderby) => {
   if (!$orderby) {
     return;
   }

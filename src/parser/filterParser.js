@@ -20,7 +20,7 @@
 
 import functions from './functionsParser';
 
-module.exports = (query, $filter) => {
+export default (query, $filter) => {
   if (!$filter) {
     return;
   }

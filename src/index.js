@@ -81,10 +81,4 @@ const initServer = (app, server) => {
 /**
  * Expose `createService()`.
  */
-module.exports = createService;
-
-/**
- * Expose `express` and `mongoose` for special situation.
- */
-module.exports.express = express;
-module.exports.mongoose = mongoose;
+export default createService;

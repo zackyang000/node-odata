@@ -18,7 +18,4 @@ const get = (name) => {
   return mongoose.model(name);
 };
 
-module.exports = {
-  register: register,
-  get: get,
-};
+export default { register, get };

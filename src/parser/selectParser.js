@@ -1,9 +1,9 @@
 "use strict";
 
-// # ?$select=Rating,ReleaseDate
-// # ->
-// # query.select(Rating ReleaseDate)
-module.exports = (query, $select) => {
+// ?$select=Rating,ReleaseDate
+// ->
+// query.select(Rating ReleaseDate)
+export default (query, $select) => {
   if(!$select)
     return;
 
@@ -12,7 +12,7 @@ module.exports = (query, $select) => {
     list[i] = list[i].trim();
   }
 
-  // todo: 下面这种处理方式讲导致隐藏的字段被显示出来
+  // FIXME: 下面这种处理方式讲导致隐藏的字段被显示出来
   let selectFields = { _id: 0 };
   Object.keys(query.model.schema.tree).map((item) => {
     if (list.indexOf(item) >= 0) {

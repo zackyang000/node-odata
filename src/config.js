@@ -12,26 +12,26 @@ const options = {
   },
 }
 
-module.exports = {
-  get: (key) => {
-    return options[key];
-  },
+const get = (key) => {
+  return options[key];
+}
 
-  set: (key, value) => {
-    if (!value) {
+const set = (key, value) => {
+  if (!value) {
+    return undefined;
+  }
+
+  if (key == 'db') {
+    if (options[key] == value) {
       return undefined;
     }
-
-    if (key == 'db') {
-      if (options[key] == value) {
-        return undefined;
-      }
-      if (options[key]) {
-        throw new Error('db already set before, you can\'t set it twice.');
-      }
-      mongoose.connect(value);
+    if (options[key]) {
+      throw new Error('db already set before, you can\'t set it twice.');
     }
-
-    options[key] = value;
+    mongoose.connect(value);
   }
+
+  options[key] = value;
 }
+
+export default { get, set };

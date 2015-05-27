@@ -2,7 +2,8 @@
 
 import uuid from 'node-uuid';
 
-module.exports = (schema, options) => {
+
+export default (schema, options) => {
 
   // add _id to schema.
   if (!schema.paths._id) {

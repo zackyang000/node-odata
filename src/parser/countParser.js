@@ -3,7 +3,7 @@
 // ?$skip=10
 // ->
 // query.skip(10)
-module.exports = (resData, mongooseModel, $count, $filter) => {
+export default (resData, mongooseModel, $count, $filter) => {
   if (!$count) {
     return;
   }

@@ -7,19 +7,19 @@ const entities = new Map();
 
 let isBootstrap = false;
 
-module.exports = {
-  register: ({url, model}) => {
-    entities.set(url, parser.toMetadata(model));
+const register = ({url, model}) => {
+  entities.set(url, parser.toMetadata(model));
 
-    if (!isBootstrap) {
-      isBootstrap = true;
+  if (!isBootstrap) {
+    isBootstrap = true;
 
-      const app = config.get('app');
-      const prefix = config.get('prefix');
+    const app = config.get('app');
+    const prefix = config.get('prefix');
 
-      app.get(prefix || '/', (req, res, next) => {
-        res.json({resources: [...entities.entries()]});
-      });
-    }
+    app.get(prefix || '/', (req, res, next) => {
+      res.json({resources: [...entities.entries()]});
+    });
   }
 }
+
+export default { register };

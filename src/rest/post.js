@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = (req, mongooseModel) => {
+export default (req, mongooseModel) => {
   return new Promise((resolve, reject) => {
     if (!Object.keys(req.body).length) {
       return reject({status: 422});

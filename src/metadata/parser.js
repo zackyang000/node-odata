@@ -32,36 +32,36 @@ const isObject = (obj) => {
   return obj && typeof(obj) === 'object' && !isArray(obj) && !isField(obj);
 }
 
-module.exports = {
-  toMetadata: (obj) => {
-    const convert = (obj, name, root) => {
-      const LEN = 'function '.length;
-      if (isField(obj[name])) {
-        if (typeof(obj[name]) === 'function') {
-          obj[name] = obj[name].toString();
-          obj[name] = obj[name].substr(LEN, obj[name].indexOf('(') - LEN);
-        }
-        else if (typeof(obj[name]) === 'object') {
-          obj[name].type = obj[name].type.toString();
-          obj[name].type = obj[name].type.substr(LEN, obj[name].type.indexOf('(') - LEN);
-        }
+const toMetadata = (obj) => {
+  const convert = (obj, name, root) => {
+    const LEN = 'function '.length;
+    if (isField(obj[name])) {
+      if (typeof(obj[name]) === 'function') {
+        obj[name] = obj[name].toString();
+        obj[name] = obj[name].substr(LEN, obj[name].indexOf('(') - LEN);
       }
-      else if (isComplexArray(obj[name])) {
-        for(let childName of obj[name][0]){
-          convert(obj[name][0], childName);
-        }
-      }
-      else if (isArray(obj[name])) {
-        obj[name][0] = obj[name][0].toString();
-        obj[name][0] = obj[name][0].substr(LEN, obj[name][0].indexOf('(') - LEN);
-      }
-      else if (isObject(obj[name])) {
-        Object.keys(obj[name]).map((childName) => {
-          convert(obj[name], childName);
-        });
+      else if (typeof(obj[name]) === 'object') {
+        obj[name].type = obj[name].type.toString();
+        obj[name].type = obj[name].type.substr(LEN, obj[name].type.indexOf('(') - LEN);
       }
     }
-    convert({obj: obj}, 'obj', true);
-    return obj;
+    else if (isComplexArray(obj[name])) {
+      for(let childName of obj[name][0]){
+        convert(obj[name][0], childName);
+      }
+    }
+    else if (isArray(obj[name])) {
+      obj[name][0] = obj[name][0].toString();
+      obj[name][0] = obj[name][0].substr(LEN, obj[name][0].indexOf('(') - LEN);
+    }
+    else if (isObject(obj[name])) {
+      Object.keys(obj[name]).map((childName) => {
+        convert(obj[name], childName);
+      });
+    }
   }
+  convert({obj: obj}, 'obj', true);
+  return obj;
 }
+
+export default { toMetadata };

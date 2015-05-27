@@ -4,93 +4,91 @@ import _ from 'lodash';
 import config from './../config';
 import model from './../model';
 
-module.exports = {
-    register: (params) => {
-      const app = config.get('app')
-      const prefix = config.get('prefix')
+const register = (params) => {
+  const app = config.get('app')
+  const prefix = config.get('prefix')
 
-      let options = params.options || {}
-      let rest = params.rest || {}
-      let actions = params.actions || []
+  let options = params.options || {}
+  let rest = params.rest || {}
+  let actions = params.actions || []
 
-      let resourceURL = `${prefix}/${params.url}`
-      let routes = [
-        {
-          method: 'post',
-          url: `${resourceURL}`,
-          controller: require('./post'),
-          config: rest.post || rest.create || {},
-        },
-        {
-          method: 'put',
-          url: `${resourceURL}/:id`,
-          controller: require('./put'),
-          config: rest.put || rest.update || {},
-        },
-        {
-          method: 'del',
-          url: `${resourceURL}/:id`,
-          controller: require('./delete'),
-          config: rest.delete || rest.del || {},
-        },
-        {
-          method: 'get',
-          url: `${resourceURL}/:id`,
-          controller: require('./get').get,
-          config: rest.get || rest.read || {},
-        },
-        {
-          method: 'get',
-          url: `${resourceURL}`,
-          controller: require('./get').getAll,
-          config: rest.getAll || rest.readAll || {},
-        },
-      ];
+  let resourceURL = `${prefix}/${params.url}`
+  let routes = [
+    {
+      method: 'post',
+      url: `${resourceURL}`,
+      controller: require('./post'),
+      config: rest.post || rest.create || {},
+    },
+    {
+      method: 'put',
+      url: `${resourceURL}/:id`,
+      controller: require('./put'),
+      config: rest.put || rest.update || {},
+    },
+    {
+      method: 'del',
+      url: `${resourceURL}/:id`,
+      controller: require('./delete'),
+      config: rest.delete || rest.del || {},
+    },
+    {
+      method: 'get',
+      url: `${resourceURL}/:id`,
+      controller: require('./get').get,
+      config: rest.get || rest.read || {},
+    },
+    {
+      method: 'get',
+      url: `${resourceURL}`,
+      controller: require('./get').getAll,
+      config: rest.getAll || rest.readAll || {},
+    },
+  ];
 
-      let mongooseModel = model.get(params.url);
+  let mongooseModel = model.get(params.url);
 
-      routes.map((route) => {
-        app[route.method](route.url, (req, res, next) => {
-          if (checkAuth(route.config.auth, req)) {
-            route.controller(req, mongooseModel, options).then((result = {}) => {
-              res.status(result.status || 200);
-              if (result.text) {
-                res.send(result.text);
-              }
-              else if (result.entity) {
-                res.jsonp(result.entity);
-              }
-              else {
-                res.end();
-              }
-              route.config.after(result.entity, result.originEntity);
-            }
-            , (err) => {
-              if (err.status) {
-                res.status(err.status).send(err.text || '');
-              }
-              else {
-                next(err);
-              }
-            });
+  routes.map((route) => {
+    app[route.method](route.url, (req, res, next) => {
+      if (checkAuth(route.config.auth, req)) {
+        route.controller(req, mongooseModel, options).then((result = {}) => {
+          res.status(result.status || 200);
+          if (result.text) {
+            res.send(result.text);
+          }
+          else if (result.entity) {
+            res.jsonp(result.entity);
           }
           else {
-            res.status(401).end();
+            res.end();
+          }
+          route.config.after(result.entity, result.originEntity);
+        }
+        , (err) => {
+          if (err.status) {
+            res.status(err.status).send(err.text || '');
+          }
+          else {
+            next(err);
           }
         });
-      });
-
-      for(let url in actions) {
-        let action = actions[url];
-        ((url, action) => {
-          app.post(`${resourceURL}/:id${url}`, (req, res, next) => {
-            if(checkAuth(action.auth)) {
-              action(req, res, next);
-            }
-          });
-        })(url, action);
       }
-    }
+      else {
+        res.status(401).end();
+      }
+    });
+  });
+
+  for(let url in actions) {
+    let action = actions[url];
+    ((url, action) => {
+      app.post(`${resourceURL}/:id${url}`, (req, res, next) => {
+        if(checkAuth(action.auth)) {
+          action(req, res, next);
+        }
+      });
+    })(url, action);
+  }
 }
 
 const checkAuth = (auth, req) => {
@@ -99,3 +97,5 @@ const checkAuth = (auth, req) => {
   }
   return auth(req);
 };
+
+export default { register };
