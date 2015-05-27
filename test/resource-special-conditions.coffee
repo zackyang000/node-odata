@@ -16,14 +16,16 @@ describe "Resource special conditions", ->
         .expect(201)
         .end (err, res) ->
           return done(err)  if(err)
-          request(app)
-            .get('/odata/resource-use-function-keyword?$filter=year eq 2015')
-            .expect(200)
-            .expect('Content-Type', /json/)
-            .end (err, res) ->
-              return done(err)  if(err)
-              res.body.value.length.should.be.above(0)
-              done()
+          setTimeout ->
+            request(app)
+              .get('/odata/resource-use-function-keyword?$filter=year eq 2015')
+              .expect(200)
+              .expect('Content-Type', /json/)
+              .end (err, res) ->
+                return done(err)  if(err)
+                res.body.value.length.should.be.above(0)
+                done()
+          , 500
 
   describe "use custom id", ->
     before (done) ->
