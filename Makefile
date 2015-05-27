@@ -18,5 +18,3 @@ test-cov:
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		test/*.coffee \
-		&& cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-		&& npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls
