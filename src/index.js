@@ -5,6 +5,7 @@
  */
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import config from './config';
 import resources from './resources';
 import functions from './functions';
@@ -29,6 +30,7 @@ const initExpress = (app) => {
   app.use(express.bodyParser());
   app.use(express.query());
   app.use(express.methodOverride());
+  app.use(cors());
 
   // remove express info.
   app.use((req, res, next) => {
