@@ -71,11 +71,6 @@ describe "Basic CRUD", ->
           res.body.should.be.have.property('title')
           res.body.title.should.be.equal(books[2].title)
           done()
-    it "should not modify resource if it not exist", (done) ->
-      request(app)
-        .put("/odata/books/000000000000000000000000")
-        .send(books[3])
-        .expect(404, done)
     it "should not modify resource if not use id", (done) ->
       request(app)
         .put("/odata/books")
@@ -85,7 +80,7 @@ describe "Basic CRUD", ->
       request(app)
         .put("/odata/books/put-wrong-id")
         .send(books[5])
-        .expect(404, done)
+        .expect(400, done)
 
   describe "DELETE:", ->
     it "should delete resource if it exist", (done) ->
