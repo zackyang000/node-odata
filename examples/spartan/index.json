@@ -1,0 +1,11 @@
+{
+  "endpoints": [
+    "How is ldapjs any different?",
+    "Install",
+    "Bind",
+    "Search",
+    "Add",
+    "Modify",
+    "Delete"
+  ]
+}

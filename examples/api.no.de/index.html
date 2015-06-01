@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Joyent API</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="media/css/restdown.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+</head>
+<body>
+<div id="header">
+    <h1>Joyent API Documentation</h1>
+</div>
+
+    <div id="sidebar">
+<ul>
+  <li><div><a href="#account">Account</a></div>
+  <ul>
+    <li><div><a href="#GET-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/account</span></span></a></div></li>
+    <li><div><a href="#PUT-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/account</span></span></a></div></li>
+    <li><div><a href="#POST-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/account</span></span></a></div></li>
+  </ul></li>
+  <li><div><a href="#ssh-keys">SSH Keys</a></div>
+  <ul>
+    <li><div><a href="#GET-/sshkeys"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/sshkeys</span></span></a></div></li>
+    <li><div><a href="#POST-/sshkeys"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/sshkeys</span></span></a></div></li>
+    <li><div><a href="#GET-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/sshkeys/:id</span></span></a></div></li>
+    <li><div><a href="#PUT-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/sshkeys/:id</span></span></a></div></li>
+    <li><div><a href="#DELETE-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">DELETE</span> <span class="path">/sshkeys/:id</span></span></a></div></li>
+  </ul></li>
+  <li><div><a href="#node-service">Node Service</a></div>
+  <ul>
+    <li><div><a href="#GET-/smartmachines/node"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/smartmachines/node</span></span></a></div></li>
+    <li><div><a href="#POST-/smartmachines/node"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/smartmachines/node</span></span></a></div></li>
+  </ul></li>
+</ul>
+
+    </div>
+    <div id="content">
+
+<h1>Joyent API</h1>
+<div class="intro">
+
+
+<h3>All API calls start with</h3>
+
+<pre class="base">
+https://api.no.de
+</pre>
+
+<h3>Path</h3>
+
+<p>For this documentation, we will assume every request begins with the above path.</p>
+
+<h3>Format</h3>
+
+<p>All calls are returned in <strong>JSON</strong>.</p>
+
+<h3>Status Codes</h3>
+
+<ul>
+<li><strong>200</strong> Successful GET and PUT.</li>
+<li><strong>201</strong> Successful POST.</li>
+<li><strong>202</strong> Successful Provision queued.</li>
+<li><strong>204</strong> Successful DELETE</li>
+<li><strong>401</strong> Unauthenticated.</li>
+<li><strong>409</strong> Unsuccessful POST, PUT, or DELETE (Will return an errors object)</li>
+</ul>
+
+
+</div>
+<h1 id="account">Account</h1>
+
+<h2 id="GET-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/account</span></span></h2>
+
+<p>Expects basic auth to get an existing customer. API will return <strong>200</strong>.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -k -u jill:secret https://api.no.de/account
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "username": "jill",
+  "first_name": "Jill",
+  "last_name": "Doe",
+  "company": "Joyent",
+  "email": "jill@joyent.com"
+}
+</code></pre>
+
+<h2 id="PUT-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/account</span></span></h2>
+
+<p>Update your account. Pass in any number of values. Possible responses include
+<code>200</code>, or <code>409</code>.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/account -X PUT \
+  -F 'phone=6041234567'
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "username": "jill",
+  "first_name": "Jill",
+  "last_name": "Doe",
+  "company": "Joyent",
+  "email": "jill@joyent.com",
+  "phone": "6041234567"
+}
+</code></pre>
+
+<h2 id="POST-/account"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/account</span></span></h2>
+
+<p>Creates new account. Required fields are username, email password, and password_confirmation. Possible responses include 201 or 409</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl https://api.no.de/account \
+  -F "email=jill@joyent.com" \
+  -F "username=jill" \
+  -F "password=secret" \
+  -F "password_confirmation=secret"
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "username": "jill",
+  "first_name": "Jill",
+  "last_name": "Doe",
+  "company": "Joyent",
+  "email": "jill@joyent.com",
+  "phone": null,
+}
+</code></pre>
+
+<h1 id="ssh-keys">SSH Keys</h1>
+
+<h2 id="GET-/sshkeys"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/sshkeys</span></span></h2>
+
+<p>Returns collection of public keys. Response will be 200</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>[
+  {
+    "uri": "/sshkeys/37",
+    "name": "laptop",
+    "key": "ssh-rsa AAAAB3NzaC1..."
+  },
+  {
+    "uri": "/sshkeys/42",
+    "name": "home machine",
+    "key": "ssh-rsa AAAdFzzx927..."
+  },
+  ...
+]
+</code></pre>
+
+<h2 id="POST-/sshkeys"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/sshkeys</span></span></h2>
+
+<p>Adds a new private key to your account. "key" is a required field and "name" is optional. "key" may be an a string or a file upload. Possible responses include 201 or 409.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys \
+  -F "name=laptop" -F "key=&lt;/Users/jill/.ssh/id_rsa.pub"
+</code></pre>
+
+<p>OR (file upload)</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys \
+  -F "name=laptop" -F "key=@/Users/jill/.ssh/id_rsa.pub"
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "uri": "/sshkeys/42",
+  "name": "laptop",
+  "key": "ssh-rsa AAAAB3NzaC1..."
+}
+</code></pre>
+
+<h2 id="GET-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/sshkeys/:id</span></span></h2>
+
+<p>Returns single resource with a public key. Possible responses 200, or 404</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys/42
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "uri": "/sshkeys/42",
+  "name": "laptop",
+  "key": "ssh-rsa AAAdFzzx927..."
+}
+</code></pre>
+
+<h2 id="PUT-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/sshkeys/:id</span></span></h2>
+
+<p>Updates public key record. Possible responses include 200, or 409</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys/42 -X PUT \
+  -F "name=a better description"
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "uri": "/sshkeys/42",
+  "name": "a better description",
+  "key": "ssh-rsa AAAdFzzx927..."
+}
+</code></pre>
+
+<h2 id="DELETE-/sshkeys/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">DELETE</span> <span class="path">/sshkeys/:id</span></span></h2>
+
+<p>Deletes public keys. Api will respond with status 204</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/sshkeys/42 -X DELETE
+</code></pre>
+
+<h1 id="node-service">Node Service</h1>
+
+<h2 id="GET-/smartmachines/node"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/smartmachines/node</span></span></h2>
+
+<p>Gets all Node SmartMachines. Api will respond with status 200</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/smartmachines/node
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>[
+  {
+    "uri": "/smartmachines/node/9",
+    "ip": "8.19.35.172",
+    "hostname": "wicked.no.de",
+    "repo": "ssh://node@wicked.no.de/home/node/repo"
+  },
+  {
+    "uri": "/smartmachines/node/42",
+    "ip": "8.19.35.173",
+    "hostname": "jillblog.no.de",
+    "repo": "ssh://node@jillblog.no.de/home/node/repo"
+  },
+  ...
+]
+</code></pre>
+
+<h2 id="POST-/smartmachines/node"><span class="method justendpoint"><span class="endpoint"><span class="verb">POST</span> <span class="path">/smartmachines/node</span></span></h2>
+
+<p>Creates Node SmartMachine. Api will respond with status 202, or 409</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl -u jill:secret https://api.no.de/smartmachines/node \
+  -F "coupon=123456789abcdefghijk" \
+  -F "subdomain="wicked"
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "uri": "/smartmachines/node/9",
+  "transition_uri": "/smartmachines/node/9/progress"
+}
+</code></pre>
+
+    </div>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+    var headerHeight = $("#header").height();
+    var offsets = [];
+    var current = -1;
+
+    function endpoint(scrollDistance) {
+        if (scrollDistance < offsets[0]) {
+            return -1;
+        } else {
+            for (var id = offsets.length; id > 0; id--) {
+                if (scrollDistance > offsets[id - 1]) {
+                    return id - 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    $("h2").each(function(i) {
+        offsets.push($(this).offset().top - headerHeight)
+    });
+
+    $("#content").append('<h2 class="fixed" style="display: none"><span>&nbsp;</span></h2>');
+    var fixed_h2 = $("h2.fixed");
+    var fixed_span = $("h2.fixed span");
+
+    $("#content").scroll(function() {
+        var scrollDistance = $("#content").attr('scrollTop');
+        var now = endpoint(scrollDistance);
+
+        if (now !== current) {
+            $("#sidebar li").removeClass("current");
+            current = now;
+            if (current < 0) {
+                fixed_h2.hide();
+            } else if (current >= 0) {
+                var heading = $($("h2 span")[current]).text();
+                $("#sidebar a[href|=#" + heading.replace(' ', '-') + "]").parent().addClass("current");
+                fixed_span.text(heading);
+                fixed_h2.show();
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
