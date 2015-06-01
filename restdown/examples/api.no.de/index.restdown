@@ -1,0 +1,241 @@
+---
+title: Joyent API
+brand: api.no.de
+version: 0.1.0
+---
+
+# Joyent API
+
+### All API calls start with
+
+<pre class="base">
+https://api.no.de
+</pre>
+
+### Path
+
+For this documentation, we will assume every request begins with the above path.
+
+### Format
+
+All calls are returned in **JSON**.
+
+### Status Codes
+
+- **200** Successful GET and PUT.
+- **201** Successful POST.
+- **202** Successful Provision queued.
+- **204** Successful DELETE
+- **401** Unauthenticated.
+- **409** Unsuccessful POST, PUT, or DELETE (Will return an errors object)
+
+
+
+# Account
+
+## GET /account
+
+Expects basic auth to get an existing customer. API will return **200**.
+
+#### example request
+
+    $ curl -k -u jill:secret https://api.no.de/account
+
+#### response
+
+    {
+      "username": "jill",
+      "first_name": "Jill",
+      "last_name": "Doe",
+      "company": "Joyent",
+      "email": "jill@joyent.com"
+    }
+
+
+## PUT /account
+
+Update your account. Pass in any number of values. Possible responses include
+`200`, or `409`.
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/account -X PUT \
+      -F 'phone=6041234567'
+
+#### response
+
+    {
+      "username": "jill",
+      "first_name": "Jill",
+      "last_name": "Doe",
+      "company": "Joyent",
+      "email": "jill@joyent.com",
+      "phone": "6041234567"
+    }
+
+## POST /account
+
+Creates new account. Required fields are username, email password, and password_confirmation. Possible responses include 201 or 409
+
+#### example request
+
+    $ curl https://api.no.de/account \
+      -F "email=jill@joyent.com" \
+      -F "username=jill" \
+      -F "password=secret" \
+      -F "password_confirmation=secret"
+
+#### response
+
+    {
+      "username": "jill",
+      "first_name": "Jill",
+      "last_name": "Doe",
+      "company": "Joyent",
+      "email": "jill@joyent.com",
+      "phone": null,
+    }
+
+
+# SSH Keys
+
+## GET /sshkeys
+
+Returns collection of public keys. Response will be 200
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys
+
+#### response
+
+    [
+      {
+        "uri": "/sshkeys/37",
+        "name": "laptop",
+        "key": "ssh-rsa AAAAB3NzaC1..."
+      },
+      {
+        "uri": "/sshkeys/42",
+        "name": "home machine",
+        "key": "ssh-rsa AAAdFzzx927..."
+      },
+      ...
+    ]
+
+
+## POST /sshkeys
+
+Adds a new private key to your account. "key" is a required field and "name" is optional. "key" may be an a string or a file upload. Possible responses include 201 or 409.
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys \
+      -F "name=laptop" -F "key=</Users/jill/.ssh/id_rsa.pub"
+
+OR (file upload)
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys \
+      -F "name=laptop" -F "key=@/Users/jill/.ssh/id_rsa.pub"
+
+#### response
+
+    {
+      "uri": "/sshkeys/42",
+      "name": "laptop",
+      "key": "ssh-rsa AAAAB3NzaC1..."
+    }
+
+
+## GET /sshkeys/:id
+
+Returns single resource with a public key. Possible responses 200, or 404
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys/42
+
+#### response
+
+    {
+      "uri": "/sshkeys/42",
+      "name": "laptop",
+      "key": "ssh-rsa AAAdFzzx927..."
+    }
+
+
+## PUT /sshkeys/:id
+
+Updates public key record. Possible responses include 200, or 409
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys/42 -X PUT \
+      -F "name=a better description"
+
+#### response
+
+    {
+      "uri": "/sshkeys/42",
+      "name": "a better description",
+      "key": "ssh-rsa AAAdFzzx927..."
+    }
+
+
+## DELETE /sshkeys/:id
+
+Deletes public keys. Api will respond with status 204
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/sshkeys/42 -X DELETE
+
+
+
+# Node Service
+
+## GET /smartmachines/node
+
+Gets all Node SmartMachines. Api will respond with status 200
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/smartmachines/node
+
+#### response
+
+    [
+      {
+        "uri": "/smartmachines/node/9",
+        "ip": "8.19.35.172",
+        "hostname": "wicked.no.de",
+        "repo": "ssh://node@wicked.no.de/home/node/repo"
+      },
+      {
+        "uri": "/smartmachines/node/42",
+        "ip": "8.19.35.173",
+        "hostname": "jillblog.no.de",
+        "repo": "ssh://node@jillblog.no.de/home/node/repo"
+      },
+      ...
+    ]
+
+
+## POST /smartmachines/node
+
+Creates Node SmartMachine. Api will respond with status 202, or 409
+
+#### example request
+
+    $ curl -u jill:secret https://api.no.de/smartmachines/node \
+      -F "coupon=123456789abcdefghijk" \
+      -F "subdomain="wicked"
+
+#### response
+
+    {
+      "uri": "/smartmachines/node/9",
+      "transition_uri": "/smartmachines/node/9/progress"
+    }

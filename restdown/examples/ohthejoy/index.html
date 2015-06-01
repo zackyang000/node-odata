@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dataset API (DSAPI)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="media/css/restdown.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+</head>
+<body>
+<div id="header">
+    <h1>Dataset API (DSAPI) Documentation</h1>
+</div>
+
+    <div id="sidebar">
+<ul>
+  <li><div><a href="#datasets">Datasets</a></div>
+  <ul>
+    <li><div><a href="#GET-/datasets"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets</span></span></a></div></li>
+    <li><div><a href="#GET-/datasets/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets/:id</span></span></a></div></li>
+    <li><div><a href="#GET-/datasets/:id/:path"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets/:id/:path</span></span></a></div></li>
+    <li><div><a href="#GET-/assets/:path"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/assets/:path</span></span></a></div></li>
+    <li><div><a href="#PUT-/datasets/:uuid"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/datasets/:uuid</span></span></a></div></li>
+    <li><div><a href="#DELETE-/datasets/:uuid"><span class="method justendpoint"><span class="endpoint"><span class="verb">DELETE</span> <span class="path">/datasets/:uuid</span></span></a></div></li>
+  </ul></li>
+  <li><div><a href="#general">General</a></div>
+  <ul>
+    <li><div><a href="#GET-/"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/</span></span></a></div></li>
+    <li><div><a href="#GET-/ping"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/ping</span></span></a></div></li>
+  </ul></li>
+  <li><div><a href="#manifest-specification">Manifest Specification</a></div></li>
+  <li><div><a href="#dataset-urns">Dataset URNs</a></div></li>
+</ul>
+
+    </div>
+    <div id="content">
+
+<h1>Dataset API</h1>
+<div class="intro">
+
+
+<p>The Dataset API is a repository for dataset metadata and files for
+SmartDataCenter. Datasets are the files and information used to create
+machines (VMs and SmartMachines) in SmartDataCenter.
+This is running DSAPI version {{version}}.</p>
+
+<h3>All API calls start with</h3>
+
+<pre class="base">
+{{url_base}}
+</pre>
+
+<h3>Format</h3>
+
+<p>All responses are <strong>JSON</strong> (that is, except for the current HTML docs that
+you are reading).</p>
+
+
+</div>
+<h1 id="datasets">Datasets</h1>
+
+<h2 id="GET-/datasets"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets</span></span></h2>
+
+<p>Get the list of all dataset manifests. This list is limited to those the
+authenticated user has access to (see the <code>restricted_to_uuid</code> field
+below.) If no HTTP Basic auth credentials are provided, then the set is
+limited to public datasets.</p>
+
+<p>The list can be filtered on some of the manifest fields. Currently:
+<strong>name</strong>, <strong>version</strong>, <strong>type</strong>, <strong>os</strong>, <strong>restricted_to_uuid</strong> and <strong>creator_uuid</strong>.
+For example: <code>/datasets?name=nodejs</code>.</p>
+
+<p>Results are ordered by creation timestamp (<code>published_at</code> field), most recent
+first.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/datasets
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>[
+  {
+    "uuid": "7a2a7841-a8c8-42c8-89e0-8043c7721327"
+    "name": "nodejs",
+    "version": "1.0.0"
+    ...
+    "published_at": "2011-03-17T23:56:37Z",
+  },
+  {
+    "uuid": "22639f9e-2bad-4cf0-b6bf-43380e318cc2"
+    "name": "smartos",
+    "version": "1.3.8",
+    ...
+    "published_at": "2011-03-15T13:33Z",
+  },
+  ...
+]
+</code></pre>
+
+<h2 id="GET-/datasets/:id"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets/:id</span></span></h2>
+
+<p>Get a specific dataset manifest by UUID or by URN. HTTP Basic auth
+credentials must be passed to access non-public datasets. </p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/datasets/cc707720-359e-4d84-89a7-e50959ecba43
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "cloud_name": "sdc",
+  "name": "nodejs",
+  "version": "1.0.0",
+  "type": "zone-dataset",
+  "description": "node.js git-deploy PaaS template",
+  "published_at": "2011-03-17T23:56:37Z",
+  "os": "smartos",
+  "files": [
+    {
+      "path": "nodejs-1.0.0.zfs.bz2",
+      "sha1": "9a9dc5f7841a5620094de622878601f65e9c3483",
+      "size": 262749905
+    }
+  ],
+  "requirements": {
+    "networks": [{"name": "net0", "description": "public"}]
+  },
+  "uuid": "cc707720-359e-4d84-89a7-e50959ecba43",
+  "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
+  "creator_name": "sdc",
+  "urn": "sdc:sdc:nodejs:1.0.0"
+}
+</code></pre>
+
+<p>Responds with <strong>403 Forbidden</strong> if access to the dataset is restricted
+(see <code>restricted_to_uuid</code> discussion below).</p>
+
+<h4>example 403 response</h4>
+
+<pre><code>{
+  "error": {
+    "message": "Dataset '462e47e8-26fd-de45-b820-12e12c142d99' is restricted.",
+    "code": 403
+  }
+}
+</code></pre>
+
+<h2 id="GET-/datasets/:id/:path"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/datasets/:id/:path</span></span></h2>
+
+<p>Download a dataset file. <code>:id</code> is a Dataset UUID or URN. Provide HTTP Basic
+auth credentials to access restricted dataset files (see <code>restricted_to_uuid</code>
+below).</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/datasets/22639f9e-2bad-4cf0-b6bf-43380e318cc2/nodejs-1.0.0.zfs.bz2 \
+    -o nodejs-1.0.0.zfs.bz2
+</code></pre>
+
+<p>Responds with <strong>403 Forbidden</strong> if access to the dataset is restricted.
+Responds with <strong>404 Not Found</strong> if the dataset doesn't have the named file.</p>
+
+<h4>example 403 response</h4>
+
+<pre><code>{
+  "error": {
+    "message": "Dataset '462e47e8-26fd-de45-b820-12e12c142d99' is restricted.",
+    "code": 403
+  }
+}
+</code></pre>
+
+<h4>example 404 response</h4>
+
+<pre><code>{
+  "error": {
+    "message": "Dataset '1dd09279-3edb-944d-bdd4-31a06111004e' does not have a 'bogus-1.0.0.zfs.bz2' file.",
+    "code": 404
+  }
+}
+</code></pre>
+
+<h2 id="GET-/assets/:path"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/assets/:path</span></span></h2>
+
+<p><strong>DEPRECATED</strong> Download a dataset file. This is deprecated (only remains
+for backward compatibility). Will be removed in 2011Q3.</p>
+
+<p>Use <a href="#GET-/datasets/:id/:path">GET /dataset/:id/:path</a> instead.</p>
+
+<table>
+<tbody>
+<tr><td><strong>Response Code</strong></td><td><strong>Description</strong></td></tr>
+<tr><td><strong>403_Forbidden</strong></td><td>if access to the dataset is restricted.</td></tr>
+<tr><td><strong>404<em>Not</em>Found</strong></td><td>if the path isn't a part of any datasets.</td></tr>
+<tr><td><strong>400<em>Bad</em>Request</strong></td><td>if the path is ambiguous (two datasets with the same path). Let's add some really long text here because want to see alignment in table for a cell that spans two lines.</td></tr>
+</tbody>
+</table>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/assets/nodejs-1.0.0.zfs.bz2 -o nodejs-1.0.0.zfs.bz2
+</code></pre>
+
+<h2 id="PUT-/datasets/:uuid"><span class="method justendpoint"><span class="endpoint"><span class="verb">PUT</span> <span class="path">/datasets/:uuid</span></span></h2>
+
+<p>Add (or replace) a new dataset to the repository.  This must be a
+'multipart/form-data' encoded request with one or more files: The first
+file must be called "manifest" and is the Dataset manifest. Then additional
+file(s) sections for each of the paths in the manifest "files" section.</p>
+
+<p>Only users with the "add-datasets" permission and administrators may add
+datasets.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/datasets/cc707720-359e-4d84-89a7-e50959ecba43 \
+    -X PUT \
+    -u joe:password \
+    -F manifest=@nodejs-1.0.0.dsmanifest \
+    -F nodejs-1.0.0.zfs.bz2=@nodejs-1.0.0.zfs.bz2
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "type": "zone-dataset",
+  "description": "node.js git-deploy PaaS template",
+  "published_at": "2011-03-17T23:56:37.600Z",
+  "os": "smartos",
+  "files": [
+    {
+      "path": "nodejs-1.0.0.zfs.bz2",
+      "sha1": "9a9dc5f7841a5620094de622878601f65e9c3483",
+      "size": 262749905,
+      "url": "/datasets/cc707720-359e-4d84-89a7-e50959ecba43/nodejs-1.0.0.zfs.bz2"
+    }
+  ],
+  "requirements": {
+    "networks": [{"name": "net0", "description": "public"}]
+  },
+  "uuid": "cc707720-359e-4d84-89a7-e50959ecba43",
+  "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52"
+}
+</code></pre>
+
+<p>On error it can respond with any of <strong>409 Conflict</strong> (if UUID is taken),
+<strong>403 Forbidden</strong> (if not authorized to add datasets) or
+<strong>400 Bad Request</strong> (validation errors).</p>
+
+<h4>example error response</h4>
+
+<pre><code>{
+  "error": {
+    "message": "UUID param, '73ce06d8-7ae7-11e0-b0df-1fcf8f45c5d5', does not match the UUID in the uploaded manifest, '63ce06d8-7ae7-11e0-b0df-1fcf8f45c5d5'.",
+    "code": 400
+  }
+}
+</code></pre>
+
+<h2 id="DELETE-/datasets/:uuid"><span class="method justendpoint"><span class="endpoint"><span class="verb">DELETE</span> <span class="path">/datasets/:uuid</span></span></h2>
+
+<p>Delete the identified dataset. You must be the creator of the dataset
+(<code>creator_uuid</code> field) or an administrator.</p>
+
+<h4>example request</h4>
+
+<pre class="shell"><code>curl {{url_base}}/datasets/cc707720-359e-4d84-89a7-e50959ecba43 \
+    -X DELETE -u joe:password -i
+</code></pre>
+
+<h4>response</h4>
+
+<pre><code>HTTP/1.1 204 No Content
+Content-Length: 0
+Connection: keep-alive
+</code></pre>
+
+<h4>example error response</h4>
+
+<pre><code>{
+  "error": {
+    "message": "Cannot delete dataset '9a2a7841-a8c8-42c8-89e0-8043c7721327': must be the dataset creator.",
+    "code": 403
+  }
+}
+</code></pre>
+
+<h1 id="general">General</h1>
+
+<h2 id="GET-/"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/</span></span></h2>
+
+<p>Return this HTML documentation or a JSON representation of the API, depending
+on the request "Accept" header.</p>
+
+<h4>example JSON response</h4>
+
+<pre><code>{
+  "endpoints": [
+    "GET    /datasets", 
+    "GET    /datasets/:id", 
+    "GET    /datasets/:id/:path", 
+    "GET    /assets/:path", 
+    "PUT    /datasets/:uuid", 
+    "DELETE /datasets/:uuid", 
+    "GET    /", 
+    "GET    /ping"
+  ],
+  "version": "2.2.0",
+  "cloud_name": "sdc"
+}
+</code></pre>
+
+<h2 id="GET-/ping"><span class="method justendpoint"><span class="endpoint"><span class="verb">GET</span> <span class="path">/ping</span></span></h2>
+
+<p>General health check: "Is the server up?"
+If basic auth credentials are provided, then authorization will be attempted
+and, on success, some authorized user data shown in the response.</p>
+
+<h4>example JSON response</h4>
+
+<pre><code>{
+    "ping": "pong",
+    "auth": {
+        "login": "joe",
+        "uuid": "4d9deb82-c574-fe43-9b69-3de0ee8ac87a"
+    }
+}
+</code></pre>
+
+<h1 id="manifest-specification">Manifest Specification</h1>
+
+<p>A dataset manifest is a set of static metadata for the dataset. It is
+typically in the form of a JSON ".dsmanifest" file (as produced by the Joyent
+<code>tpl</code> tool for building datasets) or a JSON response from this Dataset API.</p>
+
+<p>Example manifest (Backward compatible fields have been excluded. Not all
+possible fields are shown in this example. See discussion below):</p>
+
+<pre><code>{
+  "uuid": "63ce06d8-7ae7-11e0-b0df-1fcf8f45c5d5",
+  "cloud_name": "sdc",
+  "creator_uuid": "930896af-bf8c-48d4-885c-6573a94b1853",
+  "creator_name": "sdc",
+  "name": "smartos",
+  "version": "1.3.13",
+  "urn": "sdc:sdc:smartos:1.3.13",
+  "type": "zone-dataset",
+  "description": "Base template to build other templates on",
+  "published_at": "2011-05-10T09:25Z",
+  "os": "smartos",
+  "files": [
+    {
+      "path": "smartos-1.3.13.zfs.bz2",
+      "sha1": "a287dc535e2fb9a5a8e26b211156016b4e6cf267",
+      "size": 41982720
+    }
+  ],
+  "requirements": {
+    "networks": [
+      {
+        "name": "net0",
+        "description": "public"
+      }
+    ]
+  }
+}
+</code></pre>
+
+<p>Each of these manifest fields, plus some optional fields that are not
+used in the above example, are specified here. Fields marked "<em>required</em>"
+are required when <a href="#PUT-/datasets/:uuid">adding a dataset</a>. Fields marked
+"<em>optional</em>" are just that -- often only relevant for certain dataset types.
+Fields marked "<em>server</em>" are added by the Dataset API server, i.e. need
+not be specified when adding a dataset but will always be present when
+retrieving the manifest from the Dataset API.</p>
+
+<p><strong><code>uuid</code></strong> (<em>required</em>) is the unique identifier for this dataset.</p>
+
+<p><strong><code>cloud_name</code></strong> (<em>server</em>) identifies from which dataset repository (a.k.a.
+which Dataset API instance) this dataset originated. "sdc" is the cloud_name
+for <a href="https://datasets.joyent.com">https://datasets.joyent.com</a> -- the special-case global Dataset API that
+isn't directly associated with a cloud provider. A cloud provider may also
+have a Dataset API local to that cloud's suite of data centers. The cloud
+name for a Dataset API is available at the <a href="#GET-/">root endpoint</a>.</p>
+
+<p>Note: When doing local development of a dataset (e.g. with the <code>tpl</code> and
+<code>sdc-dsimport</code> tools), a dataset is imported into the Master API (MAPI)
+without going through a Dataset API. Lacking a DSAPI cloud_name, the
+special case "local" cloud_name is attached.</p>
+
+<p><strong><code>creator_uuid</code></strong> (<em>server</em>) identifies the creator of the dataset. It is
+the UUID of the authenticated user that added the dataset. It is the UUID for
+a customer in the local cloud's Customers API (CAPI). For backward
+compatibility, the <code>vendor_uuid</code> id field is a supported alias for this
+field (will be removed in 2011Q3).</p>
+
+<p><strong><code>creator_name</code></strong> (<em>server</em>) is the "login" name for the creator_uuid.</p>
+
+<p><strong><code>name</code></strong> (<em>required</em>) is a short name for the dataset. It may only contain
+ascii letters, numbers, hypens ('-'), periods ('.') and underscores ('_')
+and it must start with a letter. While capital letters are allowed, they are
+discouraged. The name is case-sensitive and is limited to 32 characters.</p>
+
+<p><strong><code>version</code></strong> (<em>required</em>) is a short version string for the dataset. It may
+only contain ascii letters, numbers, hypens ('-'), periods ('.') and
+underscores ('_'). While not enforced, it is strongly encouraged that
+dataset authors use the "X.Y.Z" semantic versioning scheme described at
+<a href="http://semver.org/">http://semver.org/</a>. The version is limited to 32 characters.</p>
+
+<p><strong><code>urn</code></strong> (<em>server</em>) is a nicer (that the uuid) string that uniquely
+identifies a dataset. It is constructed from the cloud_name, creator_name,
+name and version fields. See below for more "URN" discussion.</p>
+
+<p><strong><code>description</code></strong> (<em>required</em>) is a short prose description of the dataset.
+It is limited to 255 characters.</p>
+
+<p><strong><code>published_at</code></strong> (<em>server</em>) is a date and time (in ISO format) at which the
+dataset was published to the DSAPI. Note: For backward compatibility the
+<code>created_at</code> and <code>updated_at</code> fields (now deprecated) are aliases for this
+field. These aliases will be removed sometime in 2011Q4.</p>
+
+<p><strong><code>type</code></strong> (<em>required</em>) is the dataset type. Valid types are:
+"<strong>zone-dataset</strong>" for a ZFS dataset used to create a new SmartOS zone, or
+"<strong>vmimage</strong>" for a virtual machine image.</p>
+
+<p><strong><code>os</code></strong> (<em>required</em>) is the operating system of the dataset file. Valid
+values include: "<strong>smartos</strong>", "<strong>windows</strong>", and "<strong>linux</strong>". These
+spellings are not currently enforced but may be in future versions of the
+DSAPI. It is expected that more OS values will be added.</p>
+
+<p><strong><code>files</code></strong> (<em>required</em>) is an array of data files that make up the dataset.
+Often there is just one, but more are allowed. Each file is an object with
+three fields: <strong><code>path</code></strong> (the filename of this file), <strong><code>sha1</code></strong> the SHA-1
+checksum of the file, <strong><code>size</code></strong> the size in bytes of the file. The path
+field must be a relative path. While it does allow hierarchy (i.e.
+'/'-separate components) that is typically unnecessary and is discouraged.
+For backward compatibility the DSAPI server adds a download <strong><code>url</code></strong> field
+to be used for downloading the file content (will be removed in 2011Q3). New
+users should just use the
+<a href="#GET-/datasets/:uuid/:path">GET /datasets/:uuid/:path</a> endpoint for
+downloading dataset files.</p>
+
+<p><strong><code>restricted_to_uuid</code></strong> (<em>optional</em>) is a UUID (entry in the cloud Customer
+API) to which to restrict access to this dataset. I.e. A package author
+may set this to the same as creator_uuid to make this dataset private to
+them. A dataset without restricted_to_uuid set is public. The
+"read-all-datasets" permission can be given to a user to enable read-only
+access to restricted datasets. Note: For backward compatibility, the
+<code>owner_uuid</code> field is a supported alias for this field (will be removed in
+2011Q3).</p>
+
+<p><strong><code>requirements</code></strong> is a grouping of various requirements
+for provisioning a machine with this dataset. Currently specified
+requirements fields are:</p>
+
+<ul>
+<li><p><strong><code>networks</code></strong> (<em>optional</em>) is array describing the minimum number of network
+interfaces. This example shows a dataset that requires one VNIC:
+<code>"networks": [{"name": "net0", "description": "public"}]</code>.</p></li>
+<li><p><strong><code>password</code></strong> (<em>optional</em>) is a boolean indicating that provisioning with this dataset
+requires that a password be provided. For example, provisioning a Windows
+VM requires an initial password for the Administrator account. If not
+defined, it is presumed to be <em>false</em>.</p></li>
+<li><p><strong><code>ssh_key</code></strong> (<em>optional</em>) is a boolean indicating that provisioning with this dataset
+requires that an SSH public key be provided. For example, provisioning a
+Linux VM requires an SSH key for initial SSH access. If not
+defined, it is presumed to be <em>false</em>.</p></li>
+</ul>
+
+<p><strong><code>users</code></strong> (<em>optional</em>) is a list of users for which passwords should be
+generated for provisioning. This may only make sense for some datasets.
+Example: <code>"users": [{"name": "root"}, {"name": "admin"}]</code></p>
+
+<p><strong><code>generate_passwords</code></strong> (<em>optional</em>) is a boolean indicating whether to
+generate passwords for the users in the "users" field. If not present, the
+default value is <em>true</em>.</p>
+
+<p><strong><code>inherited_directories</code></strong> (<em>optional</em>) is a list of inherited directories
+(other than the defaults for the brand). This can be left out or the empty
+list if the dataset need not inherit directories. This field only makes sense
+for datasets of type "zone-dataset".
+Example: <code>"inherited_directories": ["/opt/support"]</code>.</p>
+
+<p><strong><code>platform_type</code></strong> (<em>optional</em>) identifies the host platform type on which
+this dataset can run. Valid values are "smartos" and "hvm". This will default
+to "hvm" for "type==vmimage" and to "smartos" otherwise.</p>
+
+<p><strong><code>nic_driver</code></strong> (<em>required if type==vmimage</em>) The NIC driver used by this
+VM image. Examples are 'virtio', 'ne2k_pci', 'rtl8139', 'e1000', 'pcnet'.</p>
+
+<p><strong><code>disk_driver</code></strong> (<em>required if type==vmimage</em>) The disk driver used by this
+VM image. Examples are 'virtio', 'ide', 'scsi'.</p>
+
+<p><strong><code>cpu_type</code></strong> (<em>optional</em>, defaults to "qemu64" for datasets of type
+"vmimage") The QEMU CPU model to use for this VM. Examples are: "qemu64",
+"host".</p>
+
+<p><strong><code>image_size</code></strong> (<em>required if type==vmimage</em>) is the size (in MiB) of
+the VM's disk, and hence the required size of allocated disk for
+provisioning.</p>
+
+<h1 id="dataset-urns">Dataset URNs</h1>
+
+<p>Every dataset has a UUID, but using UUIDs for provisioning and identifying
+and communicating can be painful, so the following URN scheme can also be
+used to uniquely identify datasets. Note that technically speaking,
+the "urn" string used in the Dataset API is really the Namespace Specific
+String (NSS) part of a proper URN (as per
+<a href="http://en.wikipedia.org/wiki/Uniform_Resource_Name">http://en.wikipedia.org/wiki/Uniform_Resource_Name</a>). A full URN is achieved
+by prefixing "urn:sdcdataset:".</p>
+
+<p>A full dataset URN is (using the manifest field names described above):</p>
+
+<pre><code>cloud_name:creator_name:name:version
+</code></pre>
+
+<p>Examples Dataset URNs ("Acme" and "JPC" examples are hypothetical):</p>
+
+<pre><code>sdc:sdc:smartos:1.3.13
+sdc:sdc:nodejs:1.1.4
+sdc:basho:riak:1.3.1        # Basho-built dataset in datasets.joyent.com
+
+acme:acme:mysql:1.0.0       # Acme-built custom MySQL dataset in the Acme cloud
+
+acme:joe:webhead:1.0.0      # Acme customer "joe"'s webhead dataset
+acme:joe:database:1.0.0
+acme:sally:webhead:1.0.0
+acme:sally:mysql:1.0.0
+
+# Joyent Public Cloud (jpc) customer "sally"'s webhead and mysql datasets
+# in the JPC cloud. The point here is that this "sally" is unrelated to
+# the "sally" in the Acme cloud.
+jpc:sally:webhead:1.0.0
+jpc:sally:mysql:1.0.0
+</code></pre>
+
+<p>A few <em>shortcuts</em> are supported for URNs. Mostly these are relevant for
+usage with the SDC Cloud API for provisioning machines.</p>
+
+<p>The "cloud_name:creator_name" can be elided, meaning "sdc:sdc":</p>
+
+<pre><code>smartos:1.3.13      # shortcut for "sdc:sdc:smartos:1.3.13"
+nodejs:1.1.4        # shortcut for "sdc:sdc:nodejs:1.1.4"
+</code></pre>
+
+<p>The "version" field can be elided meaning the "latest released" dataset in
+that group. The latest dataset within a group is the most recent sorted by
+the "created_at" manifest field. (The "version" field is NOT currently
+used for sorting. Doing so would require tight specification of version
+strings.) The Master API might have a flag indicating whether a recent
+dataset is yet "released". For example it might still be in testing.</p>
+
+<pre><code>smartos             # latest released sdc:sdc:smartos:*
+sdc:basho:riak      # latest released sdc:basho:riak:*
+acme:sally:webhead
+</code></pre>
+
+    </div>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+    var headerHeight = $("#header").height();
+
+    var sections = $("#content h1[id], #content h2[id]");
+    var sectionOffsets = [];
+    var slack = 100;  // Give the section scroll some slack (in pixels).
+    sections.each(function(elem) {
+        sectionOffsets.push($(this).offset().top - headerHeight - slack);
+    });
+
+    var currSectionIdx = -1;
+    function getSectionIdx(scrollDistance) {
+        if (scrollDistance < sectionOffsets[0]) {
+            return -1;
+        } else {
+            for (var id = sectionOffsets.length; id > 0; id--) {
+                if (scrollDistance > sectionOffsets[id - 1]) {
+                    return id - 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    /** {{{ http://code.activestate.com/recipes/577787/ (r2) */
+    _slugify_strip_re = /[^\w\s-]/g;
+    _slugify_hyphenate_re = /[-\s]+/g;
+    function slugify(s) {
+      s = s.replace(_slugify_strip_re, '').trim().toLowerCase();
+      s = s.replace(_slugify_hyphenate_re, '-');
+      return s;
+    }
+    /** end of http://code.activestate.com/recipes/577787/ }}} */
+
+
+    $("#content").scroll(function() {
+        var scrollDistance = $("#content").attr('scrollTop');
+        var sectionIdx = getSectionIdx(scrollDistance);
+    
+        if (sectionIdx !== currSectionIdx) {
+            $("#sidebar li>div").removeClass("current");
+            currSectionIdx = sectionIdx;
+            if (currSectionIdx >= 0) {
+                var heading = $(sections[currSectionIdx]).text();
+                var possibleAnchors = [
+                    slugify(heading), // h1 or non-method h2
+                    heading.replace(/ /g, '-'), // h2 method, just name or just endpoint
+                    heading.slice(0, heading.lastIndexOf(' (')).trimRight().replace(/ /g, '-'), // h2 method, name and endpoint
+                ]
+                for (var i=0; i < possibleAnchors.length; i++) {
+                    $("#sidebar a[href|=#" + possibleAnchors[i] + "]").parent().addClass("current");
+                }
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>

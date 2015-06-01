@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>%(title)s</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="%(mediaroot)s/css/style.css">
+  %(doc_style)s
+  <script type="text/javascript" src="%(mediaroot)s/js/jquery-1.4.2.min.js"></script>
+
+</head>
+<body>
+<div id="wrapper">
+<div id="main">
+
+<header id="header">
+  <span id="logo">%(title)s</span>
+  <span id="tocbox">
+    <span id="tocbutton" class="navbutton">Table of Contents</span>
+    <div id="toc" style="display: none">
+      %(toc_html)s
+    </div>
+  </span>
+</header>

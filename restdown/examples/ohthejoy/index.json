@@ -1,0 +1,12 @@
+{
+  "endpoints": [
+    "GET    /datasets",
+    "GET    /datasets/:id",
+    "GET    /datasets/:id/:path",
+    "GET    /assets/:path",
+    "PUT    /datasets/:uuid",
+    "DELETE /datasets/:uuid",
+    "GET    /",
+    "GET    /ping"
+  ]
+}

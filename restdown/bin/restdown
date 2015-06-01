@@ -1,0 +1,768 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""restdown -- Pretty REST API docs authored in Markdown
+
+Usage:
+    restdown foo.restdown
+
+Write a Markdown file that describes your REST API -- with some light
+convention structure to your doc file. Run it through `restdown` and out
+pops some nice HTML for your API. Choose one of the included brands and
+sex it up a bit.
+
+See <https://github.com/trentm/restdown> for more info.
+"""
+
+__version_info__ = (1, 3, 7)
+__version__ = '.'.join(map(str, __version_info__))
+
+import re
+import time
+import sys
+import os
+import codecs
+import shutil
+from os.path import expanduser, basename, splitext, dirname, join, abspath, isdir, exists, realpath
+from glob import glob
+from pprint import pprint
+import logging
+import json
+import copy
+import optparse
+from StringIO import StringIO
+import csv
+from urllib import quote_plus as urlquote
+
+_saved_path = sys.path[:]
+sys.path.insert(0, join(dirname(dirname(abspath(realpath(__file__)))), "externals", "lib")) # dev layout
+sys.path.insert(0, join(dirname(realpath(__file__)))) # allow markdown2.py in same dir
+# Little bit of a hack for the internal import.
+from markdown2 import Markdown, UnicodeWithAttrs, _regex_from_encoded_pattern
+sys.path = _saved_path
+del _saved_path
+
+
+
+#---- globals
+
+log = logging.getLogger("restdown")
+
+DEFAULT_BRAND = "ohthejoy"
+
+markdown_opts = {
+    "extras": {
+        "toc": True,
+        "markdown-in-html": True,
+    }
+}
+
+
+class RestdownError(StandardError):
+    pass
+
+
+
+#---- restdown processor
+
+class Restdowner(Markdown):
+    """Markdown subclass that tweaks API TOC entries for some REST API
+    TOC love.
+
+    @param api_sections {list} A list of h1 section names that are API
+        sections, as opposed to prose introductory or explanatory sections.
+        If not given, or None, then all sections except the first (presumed
+        to be a preface section) are assumed to be API sections.
+    """
+    def __init__(self, api_sections=None, **kwargs):
+        self.api_sections = api_sections
+        Markdown.__init__(self, **kwargs)
+
+    def reset(self):
+        super(Restdowner, self).reset()
+        self.methods = OrderedDict()
+
+    # Use this Markdown hook to:
+    # - exclude first h1 section from the TOC
+    # - do custom translation of h2 text to id (h2's are the API endpoints)
+    # - exclude other header levels from the TOC.
+    _h1_stack = []
+    def header_id_from_text(self, text, prefix, n):
+        if n == 1:
+            self._h1_stack.append(text)
+        if self.api_sections is None:
+            if len(self._h1_stack) == 1:
+                pass
+            elif n == 1:
+                return super(Restdowner, self).header_id_from_text(text, prefix, n)
+            elif n == 2:
+                # API endpoint.
+                for regex, sub in self._method_subs:
+                    m = regex.match(text)
+                    if m:
+                        gd = m.groupdict()
+                        # Render-away escaped chars: 'foo\\_bar' -> 'foo_bar'.
+                        rtext = self._unescape_special_chars(self._escape_special_chars(text))
+                        self.methods[rtext] = (gd.get("name"), gd.get("verb"), gd.get("path"))
+                        # The `.split()[0]` is for e.g.:
+                        #   PutDirectory [mkdir] (PUT /:account/:dir)
+                        # I.e. to exclude the extra "[mkdir]" stuff from the
+                        # anchor. The idea is that the first no-space token
+                        # is the API endpoint name.
+                        return ("name" in gd and m.group("name").split()[0]
+                                or m.group(0)).replace(' ', '-')
+                else:
+                    return super(Restdowner, self).header_id_from_text(text, prefix, n)
+            else:
+                return super(Restdowner, self).header_id_from_text(text, prefix, n)
+        else:
+            if len(self._h1_stack) == 1 and self._h1_stack[-1] not in self.api_sections:
+                # Still presume the first section to be a preface section
+                # and exclude from TOC, unless explicitly in `api_sections`.
+                pass
+            elif n == 2 and self._h1_stack[-1] in self.api_sections:
+                # API endpoint.
+                for regex, sub in self._method_subs:
+                    m = regex.match(text)
+                    if m:
+                        gd = m.groupdict()
+                        # Render-away escaped chars: 'foo\\_bar' -> 'foo_bar'.
+                        rtext = self._unescape_special_chars(self._escape_special_chars(text))
+                        self.methods[rtext] = (gd.get("name"), gd.get("verb"), gd.get("path"))
+                        return ("name" in gd and m.group("name").split()[0]
+                                or m.group(0)).replace(' ', '-')
+                else:
+                    return super(Restdowner, self).header_id_from_text(text, prefix, n)
+            #elif n in (1,2):
+            #    return super(Restdowner, self).header_id_from_text(text, prefix, n)
+            else:
+                return super(Restdowner, self).header_id_from_text(text, prefix, n)
+
+    # Add some markup to endpoint entries in the TOC html for styling.
+    _method_subs = [
+        # E.g. "ListMachines ... (GET /machines)"
+        (re.compile(r'^(?P<name>.*?) +\((?P<verb>GET|PUT|POST|DELETE|HEAD|OPTIONS|TRACE|PATCH|LINK|UNLINK) +(?P<path>.*?)\)$'),
+         r'<span class="method both"><span class="name">\1</span> <span class="endpoint">(<span class="verb">\2</span> <span class="path">\3</span>)</span></span>'),
+        # E.g. "GET /machines"
+        (re.compile(r'^(?P<verb>GET|PUT|POST|DELETE|HEAD|OPTIONS|TRACE|PATCH|LINK|UNLINK) +(?P<path>.+?)$'),
+         r'<span class="method justendpoint"><span class="endpoint"><span class="verb">\1</span> <span class="path">\2</span></span></span>'),
+    ]
+    def _toc_add_entry(self, n, id, name):
+        rname = self._unescape_special_chars(name)
+        if n == 2 and rname in self.methods:
+            for regex, sub in self._method_subs:
+                m = regex.match(name)
+                if m:
+                    name = m.expand(sub)
+                    break
+        if n <= 2:
+            super(Restdowner, self)._toc_add_entry(n, id, name)
+
+
+    _method_header_re = re.compile(
+        r'''^(<h2.*?>)(.*?)(</h2>)$''', re.M)
+    def _method_header_sub(self, match):
+        inside = self._unescape_special_chars(match.group(2))
+        if inside in self.methods:
+            for regex, sub in self._method_subs:
+                m = regex.match(inside)
+                if m:
+                    return match.group(1) + m.expand(sub) + match.group(3)
+        return match.group(0)
+
+    _pre_command_block_re = re.compile(r'<pre><code>\$ (.*?)</code></pre>', re.S)
+    _first_h1_and_block_re = re.compile(r'(<h1.*?</h1>)(.*?)(?=<h1)', re.S)
+    def postpostprocess(self, text):
+        """This method (*post*postprocess) isn't a real markdown2.py thing.
+        We are hacking this in because we need to work on the converted
+        text *after* unescaping of special chars.
+        """
+        # Markup method h2's for styling.
+        text = self._method_header_re.sub(self._method_header_sub, text)
+
+        # Identify shell pre-blocks for styling.
+        text = self._pre_command_block_re.sub(
+            r'<pre class="shell"><code>\1</code></pre>', text)
+
+        # First h1 body is wrapped in `<div class="intro">`.
+        text = self._first_h1_and_block_re.sub(
+            r'\n\1\n<div class="intro">\n\2\n</div>\n', text, 1)
+
+        self._h1_stack = [] # reset
+        return text
+
+    def convert(self, text):
+        mtext = Markdown.convert(self, text)
+        text = self.postpostprocess(mtext)
+
+        # This is a total gross hack: reproduce the UnicodeWithAttrs wrapping
+        # that markdown2.py is doing.
+        rv = UnicodeWithAttrs(text)
+        if hasattr(mtext, "_toc"):
+            rv._toc = mtext._toc
+        if hasattr(mtext, "metadata"):
+            rv.metadata = mtext.metadata
+        return rv
+
+def restdown_path(path, brand_dir=None, copy_brand_media_to=None, defines=None):
+    markdown = codecs.open(path, 'r', 'utf-8').read()
+    metadata = {}
+    if markdown.startswith("---"):
+        _, metastr, markdown = re.compile(r"^---[ \t]*$", re.M).split(
+            markdown, 2)
+        for line in metastr.strip().splitlines(False):
+            line = line.strip()
+            if not line:
+                continue
+            k, v = line.split(':', 1)
+            metadata[k.strip()] = v.strip()
+    if "title" not in metadata:
+        title = ' '.join(s.capitalize()
+            for s in splitext(basename(path))[0].split('-'))
+        metadata["title"] = title
+    if "mediaroot" not in metadata:
+        metadata["mediaroot"] = "media"
+    for key in ["apisections", "markdown2extras", "markdown2linkpatternsfile"]:
+        # Expand "list"-type config vars. They are csv.
+        if key in metadata:
+            f = StringIO(metadata[key])
+            reader = csv.reader(f)
+            try:
+                row = [cell.strip() for cell in reader.next()]
+            except StopIteration:
+                row = []
+            metadata[key] = row
+    if defines:
+        metadata.update(defines)
+    doc_dir = dirname(path)
+    html, data = restdown(metadata, markdown, brand_dir, doc_dir)
+
+    base, ext = splitext(basename(path))
+    html_path = join(dirname(path), base + ".html")
+    codecs.open(html_path, "w", "utf-8").write(html)
+    log.info("wrote %s", html_path)
+    json_path = join(dirname(path), base + ".json")
+    json_str = json.dumps(data, sort_keys=True, indent=2) + '\n'
+    json_str = re.compile(r' +$', re.M).sub('', json_str)  # trailing whitespace sucks
+    codecs.open(json_path, "w", "utf-8").write(json_str)
+    log.info("wrote %s", json_path)
+
+    if copy_brand_media_to is not None:
+        if not isdir(copy_brand_media_to):
+            raise RestdownError("'%s' does not exist or is not a dir" % copy_brand_media_to)
+        src = join(brand_dir or _get_brand_dir(metadata.get("brand")), "media")
+        dst = join(copy_brand_media_to, "media")
+        _copy_dir(src, dst)
+
+def restdown(metadata, markdown, brand_dir=None, doc_dir=None):
+    """Convert the given metadata and markdown content to restdown HTML.
+
+    @param metadata {dict} Relevant metadata keys are:
+        "title"    the HTML document title
+        "brand"    the brand to use for styling/images etc.
+        "version"  version string for the API
+    @param markdown {str} The markdown content to convert
+    @param brand_dir {str} Brand directory (including a 'header.html.in' et al)
+        to use. If not given it uses the default brand in the restdown
+        installation.
+    @param doc_dir {str} The directory of the restdown file being processed.
+    @returns {str, dict} The HTML document (full page) and a dict giving
+        data about the API: version, endpoints.
+    """
+    doc_markdown_opts = copy.deepcopy(markdown_opts)
+    for extra in metadata.get("markdown2extras", []):
+        doc_markdown_opts["extras"][extra] = None
+    if metadata.get("markdown2linkpatternsfile"):
+        path = join(doc_dir, metadata["markdown2linkpatternsfile"][0])
+        link_patterns = []
+        for line in open(path):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            pat, link = line.split(None, 1)
+            regex = _regex_from_encoded_pattern(pat)
+            link_patterns.append((regex, link))
+        doc_markdown_opts["link_patterns"] = link_patterns
+    restdowner = Restdowner(api_sections=metadata.get("apisections"),
+        **doc_markdown_opts)
+    html = restdowner.convert(markdown)
+
+    # Add a wrapper <div> around the links in TOC elements. This allows
+    # full width styling of 'li' lines, even if they contain children.
+    if html.toc_html:
+        metadata["toc_html"] = re.sub(r'(<a href=".*?">.*?</a>)',
+            r'<div>\1</div>', html.toc_html)
+    else:
+        metadata["toc_html"] = ""
+
+    # Custom css for the document based on metadata.
+    doc_css = ""
+    if "logo-color" in metadata:
+        doc_css += """
+#logo {
+  color: %s;
+}
+""" % metadata["logo-color"]
+    google_fonts = []
+    if "logo-font-family" in metadata:
+        # Comma-separate list.
+        names = re.split(r'\s*,\s*', metadata["logo-font-family"].strip())
+        for i, name in enumerate(names):
+            if name.startswith("google:"):
+                names[i] = name = name[7:]
+                google_fonts.append(name)
+        doc_css += """
+#logo {
+  font-family: %s;
+}
+""" % ', '.join(names)
+    if "header-font-family" in metadata:
+        # Comma-separate list.
+        names = re.split(r'\s*,\s*', metadata["header-font-family"].strip())
+        for i, name in enumerate(names):
+            if name.startswith("google:"):
+                names[i] = name = name[7:]
+                google_fonts.append(name)
+        doc_css += """
+h1,h2,h3,h4,h5,h6 {
+  font-family: %s;
+}
+""" % ', '.join(names)
+    doc_style = ""
+    if doc_css:
+        for name in google_fonts:
+            doc_style += '<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=%s">\n' % urlquote(name)
+        doc_style += "<style>\n%s\n</style>\n" % doc_css
+    metadata["doc_style"] = doc_style
+
+    if brand_dir is None:
+        brand_dir = _get_brand_dir(metadata.get("brand"))
+    header_in = codecs.open(join(brand_dir, "header.html.in"), 'r', 'utf-8').read()
+    header = header_in % metadata
+    footer_in = codecs.open(join(brand_dir, "footer.html.in"), 'r', 'utf-8').read()
+    footer = footer_in % metadata
+
+    bits = [header]
+    toc_html_marker = "%(toc_html)s"
+    if toc_html_marker not in header_in and toc_html_marker not in footer_in:
+        bits.append
+        bits.append(u"""
+    <div id="sidebar">
+%(toc_html)s
+    </div>
+""" % metadata)
+    bits.append('    <div id="content">\n')
+    bits.append(html)
+    bits.append(u"\n    </div> <!-- #content -->\n")
+    bits.append(footer)
+
+    endpoints = []
+    for text, (name, verb, path) in restdowner.methods.items():
+        if verb and path:
+            endpoints.append("%-6s %s" % (verb, path))
+        else:
+            endpoints.append(name)
+    data = {
+        "endpoints": endpoints
+    }
+
+    if "version" in metadata:
+        data["version"] = metadata["version"]
+    return u''.join(bits), data
+
+
+
+#---- internal support stuff
+
+def _copy_dir(src, dst):
+    """Copy `src` dir to `dst` dir, updating already existing files.
+
+    Note: This does NOT delete files in dst that don't exist in src.
+    """
+    for dirpath, dirnames, filenames in os.walk(src):
+        for f in filenames:
+            srcpath = join(dirpath, f)
+            if dirpath == src:
+                dstpath = join(dst, f)
+            else:
+                dstpath = join(dst, dirpath[len(src)+1:], f)
+            if not exists(dirname(dstpath)):
+                os.makedirs(dirname(dstpath))
+            dstpath_exists = exists(dstpath)
+            if dstpath_exists and _md5path(dstpath) == _md5path(srcpath):
+                pass
+            else:
+                if dstpath_exists:
+                    log.info("update %s", dstpath)
+                else:
+                    log.info("cp %s", dstpath)
+                shutil.copy(srcpath, dstpath)
+
+def _md5path(path):
+    try:
+        from hashlib import md5
+    except ImportError:
+        from md5 import md5
+    f = open(path, 'rb')
+    try:
+        return md5(f.read()).hexdigest()
+    finally:
+        f.close()
+
+def _get_brand_dir(brand=None):
+    if brand is None:
+        brand = DEFAULT_BRAND
+    return join(dirname(dirname(abspath(realpath(__file__)))), "brand", brand)
+
+class _LowerLevelNameFormatter(logging.Formatter):
+    def format(self, record):
+        record.lowerlevelname = record.levelname.lower()
+        return logging.Formatter.format(self, record)
+
+def _setup_logging():
+    hdlr = logging.StreamHandler(sys.stdout)
+    fmt = "%(name)s: %(lowerlevelname)s: %(message)s"
+    fmtr = _LowerLevelNameFormatter(fmt=fmt)
+    hdlr.setFormatter(fmtr)
+    logging.root.addHandler(hdlr)
+
+class _NoReflowFormatter(optparse.IndentedHelpFormatter):
+    """An optparse formatter that does NOT reflow the description."""
+    def format_description(self, description):
+        return description or ""
+
+
+#---- OrderedDict
+# This is in Python >2.7 and >3.1, but we support Python earlier than that.
+
+## {{{ http://code.activestate.com/recipes/576693/ (r9)
+# Backport of OrderedDict() class that runs on Python 2.4, 2.5, 2.6, 2.7 and pypy.
+# Passes Python2.7's test suite and incorporates all the latest updates.
+
+try:
+    from thread import get_ident as _get_ident
+except ImportError:
+    from dummy_thread import get_ident as _get_ident
+
+try:
+    from _abcoll import KeysView, ValuesView, ItemsView
+except ImportError:
+    pass
+
+
+class OrderedDict(dict):
+    'Dictionary that remembers insertion order'
+    # An inherited dict maps keys to values.
+    # The inherited dict provides __getitem__, __len__, __contains__, and get.
+    # The remaining methods are order-aware.
+    # Big-O running times for all methods are the same as for regular dictionaries.
+
+    # The internal self.__map dictionary maps keys to links in a doubly linked list.
+    # The circular doubly linked list starts and ends with a sentinel element.
+    # The sentinel element never gets deleted (this simplifies the algorithm).
+    # Each link is stored as a list of length three:  [PREV, NEXT, KEY].
+
+    def __init__(self, *args, **kwds):
+        '''Initialize an ordered dictionary.  Signature is the same as for
+        regular dictionaries, but keyword arguments are not recommended
+        because their insertion order is arbitrary.
+
+        '''
+        if len(args) > 1:
+            raise TypeError('expected at most 1 arguments, got %d' % len(args))
+        try:
+            self.__root
+        except AttributeError:
+            self.__root = root = []                     # sentinel node
+            root[:] = [root, root, None]
+            self.__map = {}
+        self.__update(*args, **kwds)
+
+    def __setitem__(self, key, value, dict_setitem=dict.__setitem__):
+        'od.__setitem__(i, y) <==> od[i]=y'
+        # Setting a new item creates a new link which goes at the end of the linked
+        # list, and the inherited dictionary is updated with the new key/value pair.
+        if key not in self:
+            root = self.__root
+            last = root[0]
+            last[1] = root[0] = self.__map[key] = [last, root, key]
+        dict_setitem(self, key, value)
+
+    def __delitem__(self, key, dict_delitem=dict.__delitem__):
+        'od.__delitem__(y) <==> del od[y]'
+        # Deleting an existing item uses self.__map to find the link which is
+        # then removed by updating the links in the predecessor and successor nodes.
+        dict_delitem(self, key)
+        link_prev, link_next, key = self.__map.pop(key)
+        link_prev[1] = link_next
+        link_next[0] = link_prev
+
+    def __iter__(self):
+        'od.__iter__() <==> iter(od)'
+        root = self.__root
+        curr = root[1]
+        while curr is not root:
+            yield curr[2]
+            curr = curr[1]
+
+    def __reversed__(self):
+        'od.__reversed__() <==> reversed(od)'
+        root = self.__root
+        curr = root[0]
+        while curr is not root:
+            yield curr[2]
+            curr = curr[0]
+
+    def clear(self):
+        'od.clear() -> None.  Remove all items from od.'
+        try:
+            for node in self.__map.itervalues():
+                del node[:]
+            root = self.__root
+            root[:] = [root, root, None]
+            self.__map.clear()
+        except AttributeError:
+            pass
+        dict.clear(self)
+
+    def popitem(self, last=True):
+        '''od.popitem() -> (k, v), return and remove a (key, value) pair.
+        Pairs are returned in LIFO order if last is true or FIFO order if false.
+
+        '''
+        if not self:
+            raise KeyError('dictionary is empty')
+        root = self.__root
+        if last:
+            link = root[0]
+            link_prev = link[0]
+            link_prev[1] = root
+            root[0] = link_prev
+        else:
+            link = root[1]
+            link_next = link[1]
+            root[1] = link_next
+            link_next[0] = root
+        key = link[2]
+        del self.__map[key]
+        value = dict.pop(self, key)
+        return key, value
+
+    # -- the following methods do not depend on the internal structure --
+
+    def keys(self):
+        'od.keys() -> list of keys in od'
+        return list(self)
+
+    def values(self):
+        'od.values() -> list of values in od'
+        return [self[key] for key in self]
+
+    def items(self):
+        'od.items() -> list of (key, value) pairs in od'
+        return [(key, self[key]) for key in self]
+
+    def iterkeys(self):
+        'od.iterkeys() -> an iterator over the keys in od'
+        return iter(self)
+
+    def itervalues(self):
+        'od.itervalues -> an iterator over the values in od'
+        for k in self:
+            yield self[k]
+
+    def iteritems(self):
+        'od.iteritems -> an iterator over the (key, value) items in od'
+        for k in self:
+            yield (k, self[k])
+
+    def update(*args, **kwds):
+        '''od.update(E, **F) -> None.  Update od from dict/iterable E and F.
+
+        If E is a dict instance, does:           for k in E: od[k] = E[k]
+        If E has a .keys() method, does:         for k in E.keys(): od[k] = E[k]
+        Or if E is an iterable of items, does:   for k, v in E: od[k] = v
+        In either case, this is followed by:     for k, v in F.items(): od[k] = v
+
+        '''
+        if len(args) > 2:
+            raise TypeError('update() takes at most 2 positional '
+                            'arguments (%d given)' % (len(args),))
+        elif not args:
+            raise TypeError('update() takes at least 1 argument (0 given)')
+        self = args[0]
+        # Make progressively weaker assumptions about "other"
+        other = ()
+        if len(args) == 2:
+            other = args[1]
+        if isinstance(other, dict):
+            for key in other:
+                self[key] = other[key]
+        elif hasattr(other, 'keys'):
+            for key in other.keys():
+                self[key] = other[key]
+        else:
+            for key, value in other:
+                self[key] = value
+        for key, value in kwds.items():
+            self[key] = value
+
+    __update = update  # let subclasses override update without breaking __init__
+
+    __marker = object()
+
+    def pop(self, key, default=__marker):
+        '''od.pop(k[,d]) -> v, remove specified key and return the corresponding value.
+        If key is not found, d is returned if given, otherwise KeyError is raised.
+
+        '''
+        if key in self:
+            result = self[key]
+            del self[key]
+            return result
+        if default is self.__marker:
+            raise KeyError(key)
+        return default
+
+    def setdefault(self, key, default=None):
+        'od.setdefault(k[,d]) -> od.get(k,d), also set od[k]=d if k not in od'
+        if key in self:
+            return self[key]
+        self[key] = default
+        return default
+
+    def __repr__(self, _repr_running={}):
+        'od.__repr__() <==> repr(od)'
+        call_key = id(self), _get_ident()
+        if call_key in _repr_running:
+            return '...'
+        _repr_running[call_key] = 1
+        try:
+            if not self:
+                return '%s()' % (self.__class__.__name__,)
+            return '%s(%r)' % (self.__class__.__name__, self.items())
+        finally:
+            del _repr_running[call_key]
+
+    def __reduce__(self):
+        'Return state information for pickling'
+        items = [[k, self[k]] for k in self]
+        inst_dict = vars(self).copy()
+        for k in vars(OrderedDict()):
+            inst_dict.pop(k, None)
+        if inst_dict:
+            return (self.__class__, (items,), inst_dict)
+        return self.__class__, (items,)
+
+    def copy(self):
+        'od.copy() -> a shallow copy of od'
+        return self.__class__(self)
+
+    @classmethod
+    def fromkeys(cls, iterable, value=None):
+        '''OD.fromkeys(S[, v]) -> New ordered dictionary with keys from S
+        and values equal to v (which defaults to None).
+
+        '''
+        d = cls()
+        for key in iterable:
+            d[key] = value
+        return d
+
+    def __eq__(self, other):
+        '''od.__eq__(y) <==> od==y.  Comparison to another OD is order-sensitive
+        while comparison to a regular mapping is order-insensitive.
+
+        '''
+        if isinstance(other, OrderedDict):
+            return len(self)==len(other) and self.items() == other.items()
+        return dict.__eq__(self, other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    # -- the following methods are only used in Python 2.7 --
+
+    def viewkeys(self):
+        "od.viewkeys() -> a set-like object providing a view on od's keys"
+        return KeysView(self)
+
+    def viewvalues(self):
+        "od.viewvalues() -> an object providing a view on od's values"
+        return ValuesView(self)
+
+    def viewitems(self):
+        "od.viewitems() -> a set-like object providing a view on od's items"
+        return ItemsView(self)
+## end of http://code.activestate.com/recipes/576693/ }}}
+
+
+
+#---- mainline
+
+def main(argv=sys.argv):
+    _setup_logging()
+    log.setLevel(logging.INFO)
+
+    # Parse options.
+    parser = optparse.OptionParser(prog="restdown", usage='',
+        version="%prog " + __version__, description=__doc__,
+        formatter=_NoReflowFormatter())
+    parser.add_option("-v", "--verbose", dest="log_level",
+        action="store_const", const=logging.DEBUG,
+        help="more verbose output")
+    parser.add_option("-q", "--quiet", dest="log_level",
+        action="store_const", const=logging.WARNING,
+        help="quieter output (just warnings and errors)")
+    parser.add_option("-m", "--copy-brand-media-to", metavar="DIR",
+        help="also copy brand 'media/' dir to the given output dir")
+    parser.add_option("-b", "--brand-dir", metavar="DIR",
+        help="brand dir to use for constructing HTML. Defaults to "
+             "'brand/%s' in the restdown install." % DEFAULT_BRAND)
+    parser.add_option("-D", "--define", metavar="NAME=VALUE",
+        action="append", dest="defines",
+        help="define a metadatum to be used for processing")
+    parser.set_defaults(log_level=logging.INFO, copy_brand_media_to=None,
+        brand_dir=None, defines=[])
+    opts, paths = parser.parse_args()
+    log.setLevel(opts.log_level)
+
+    defines = dict(d.split('=', 1) for d in opts.defines)
+    for path in paths:
+        restdown_path(path, brand_dir=opts.brand_dir,
+            copy_brand_media_to=opts.copy_brand_media_to,
+            defines=defines)
+
+## {{{ http://code.activestate.com/recipes/577258/ (r4)
+if __name__ == "__main__":
+    try:
+        retval = main(sys.argv)
+    except KeyboardInterrupt:
+        sys.exit(1)
+    except SystemExit:
+        raise
+    except:
+        import traceback, logging
+        if not log.handlers and not logging.root.handlers:
+            logging.basicConfig()
+        skip_it = False
+        exc_info = sys.exc_info()
+        if hasattr(exc_info[0], "__name__"):
+            exc_class, exc, tb = exc_info
+            if isinstance(exc, IOError) and exc.args[0] == 32:
+                # Skip 'IOError: [Errno 32] Broken pipe': often a cancelling of `less`.
+                skip_it = True
+            if not skip_it:
+                tb_path, tb_lineno, tb_func = traceback.extract_tb(tb)[-1][:3]
+                log.error("%s (%s:%s in %s)", exc_info[1], tb_path,
+                    tb_lineno, tb_func)
+        else:  # string exception
+            log.error(exc_info[0])
+        if not skip_it:
+            if log.isEnabledFor(logging.DEBUG):
+                print()
+                traceback.print_exception(*exc_info)
+            sys.exit(1)
+    else:
+        sys.exit(retval)
+## end of http://code.activestate.com/recipes/577258/ }}}

@@ -1,0 +1,15 @@
+{
+  "endpoints": [
+    "GET    /account",
+    "PUT    /account",
+    "POST   /account",
+    "GET    /sshkeys",
+    "POST   /sshkeys",
+    "GET    /sshkeys/:id",
+    "PUT    /sshkeys/:id",
+    "DELETE /sshkeys/:id",
+    "GET    /smartmachines/node",
+    "POST   /smartmachines/node"
+  ],
+  "version": "0.1.0"
+}
