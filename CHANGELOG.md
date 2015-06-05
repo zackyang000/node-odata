@@ -2,6 +2,14 @@
 
 ## Features
 
+- **Convert project language from CoffeeScript to ECMAScript6.**
+- Default support cors. ([#16](https://github.com/TossShinHwa/node-odata/issues/16))
+- Allow put to create entity. ([#18](https://github.com/TossShinHwa/node-odata/issues/18))
+
+# 0.5.0 (2015-05-08)
+
+## Features
+
 - Add detail links for metadata info.
 - Change API: server.get/set -> server.config.get/set
 - Add simple API for functions. ([#7](https://github.com/TossShinHwa/node-odata/issues/7))
