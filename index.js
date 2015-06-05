@@ -1,2 +1,2 @@
-require("coffee-script").register()
-module.exports = require("./lib")
+require('es6-shim');
+module.exports = exports = require("./lib");

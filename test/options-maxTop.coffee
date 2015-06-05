@@ -6,7 +6,7 @@ app = undefined
 books = undefined
 server = undefined
 
-describe "options of maxTop", ->
+describe "Options of maxTop", ->
   before (done) ->
     support.ready ->
       app = support.app

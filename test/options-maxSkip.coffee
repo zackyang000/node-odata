@@ -6,7 +6,7 @@ app = undefined
 books = undefined
 server = undefined
 
-describe "options of maxSkip", ->
+describe "Options of maxSkip", ->
   before (done) ->
     support.ready ->
       app = support.app

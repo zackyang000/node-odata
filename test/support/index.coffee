@@ -6,7 +6,7 @@ done = undefined
 
 server = odata('mongodb://localhost/odata-test')
 
-mongoose = server.mongoose
+mongoose = server._mongoose
 
 bookInfo = {
   author: String,
@@ -22,7 +22,7 @@ server.resources.register
   model: bookInfo
   actions:
     '/50off': (req, res, next) ->
-      mongoose.model('books').findById req.params.id, (err, book) ->
+      server.repository('books').findById req.params.id, (err, book) ->
         book.price = +(book.price / 2).toFixed(2)
         book.save (err) ->
           res.jsonp(book)

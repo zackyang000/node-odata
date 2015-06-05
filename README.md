@@ -50,7 +50,7 @@ GET ...
 
 ## Current State
 
-node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by CoffeeScript then compiled to Javascript. It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
+node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by ECMAScript 6 then compiled to ECMAScript 5 by [babel](https://babeljs.io/). It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
 
 ## Install
 
@@ -70,16 +70,6 @@ npm install node-odata
 
 - ENGLISH DOCUMENTATION (coming soon...)
 - [中文文档](http://tossshinhwa.github.io/node-odata/cn/)
-
-
-## Demo
-
-[Live demo](http://books.zackyang.com/odata/books) and try it:
-
-* GET [/books?$select=title, author](http://books.zackyang.com/odata/books?$select=title, author)
-* GET [/books?$top=3&$skip=2](http://books.zackyang.com/odata/books?$top=3&$skip=2)
-* GET [/books?$orderby=price desc](http://books.zackyang.com/odata/books?$orderby=price desc)
-* GET [/books?$filter=price gt 10](http://books.zackyang.com/odata/books?$filter=price gt 10)
 
 
 ## Support Feature
