@@ -7,7 +7,7 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
-  [![Coverage Status](https://coveralls.io/repos/TossShinHwa/node-odata/badge.svg?branch=0.6)](https://coveralls.io/r/TossShinHwa/node-odata?branch=0.6)
+  [![Coverage Status](https://coveralls.io/repos/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/r/TossShinHwa/node-odata?branch=master)
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
 
 ```JavaScript
