@@ -1,15 +1,19 @@
+
+
+
 ---
 title: node-odata Documentation
 markdown2extras: wiki-tables
 ---
 
-# 关于 node-odata
+# About node-odata
 
-node-odata 可以让你轻松创建 REST API, 并能使用 [OData](http://www.odata.org/) 协议对资源进行的查询. 它能让你以极简的方式来创建 API 服务, 使你更专注于业务逻辑的处理.
 
-## 什么是 OData 协议?
+Create awesome REST APIs abide by [OData](http://www.odata.org/).  Its purpose is to easier to creating APIs, make you more focus on business logic.
 
-OData 全名"开放数据协议(Open Data Protocol)", 是一个用于 web 的数据访问协议. OData 提供了一个统一的 CRUD (create, read, update, and delete) 操作来查询和维护数据集.
+## What's the OData?
+
+The Open Data Protocol (OData) is a data access protocol for the web. OData provides a uniform way to query and manipulate data sets through CRUD operations (create, read, update, and delete).
 
 ## 为什么使用 node-odata?
 
