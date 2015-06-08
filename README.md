@@ -59,13 +59,6 @@ npm install node-odata
 ```
 
 
-## API
-
-* [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register)
-* [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register)
-* [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set)
-
-
 ## DOCUMENTATION
 
 - [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)
