@@ -66,10 +66,10 @@ npm install node-odata
 * [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set)
 
 
-## Docs
+## DOCUMENTATION
 
-- ENGLISH DOCUMENTATION (coming soon...)
-- [中文文档](http://tossshinhwa.github.io/node-odata/cn/)
+- [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)
+- [中文](http://tossshinhwa.github.io/node-odata/cn/)
 
 
 ## Support Feature
