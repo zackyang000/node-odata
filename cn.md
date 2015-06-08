@@ -21,7 +21,7 @@ node-odata 同时结合了 OData 强大的数据查询能力以及 NodeJS 支持
 
 ## 当前状态
 
-node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 CoffeeScript 编写. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.
+node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 ECMAScript6 编写, 使用 babel 便以为 ECMAScript5 后发布. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.
 
 # 1) 安装
 
@@ -32,7 +32,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 # 2) 快速开始
 
-这里我们讲创建并运行一个最简单的 OData 服务.
+这里我们将创建并运行一个最简单的 OData 服务.
 
 ## 2.1 创建服务
 
@@ -72,7 +72,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.1 新增
 
-使用 `POST /odata/resource` 插入新的数据, 他将返回 resource 的最新状态.
+使用 `POST /odata/resource` 插入新的数据, 它将返回 resource 的最新状态.
 
     $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
     HTTP/1.1 201 Created
@@ -90,7 +90,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.2 修改
 
-使用 `PUT /odata/resource/:id` 修改已有的数据, 他将返回 resource 修改后的状态.
+使用 `PUT /odata/resource/:id` 修改已有的数据, 它将返回 resource 修改后的状态.
 
     $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -108,7 +108,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.3 查询
 
-使用 `GET /odata/resource` 查询 resource 列表, 其结果将以数组的形式将返回在 value 对象中.
+使用 `GET /odata/resource` 查询 resource 列表, 其结果将以数组的形式返回在 value 中.
 
     $ curl -i -X GET http://127.0.0.1:3000/odata/books
     HTTP/1.1 200 OK
@@ -159,7 +159,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 # 4) OData 查询
 
-本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.
+本节将介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.
 
 每个关键字只能指定一次.
 
@@ -198,7 +198,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 `$orderby` 关键字可以使返回的数据依据集合中特定字段进行排序.
 
-他可以使用逗号分隔以实现多重排序.
+它可以使用逗号分隔以实现多重排序.
 
 表达式可以以 `asc` 或 `desc` 结尾用于表示升序或降序. 如果不提供, 默认则为 `asc`.
 
@@ -265,7 +265,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 # 5) API
 
-本节讲介绍 node-odata 提供的 API.
+本节将介绍 node-odata 提供的 API.
 
 ## 5.1 odata.resources.register
 
@@ -381,10 +381,10 @@ params: 复杂对象, 具体字段如下所示
     // 设置 REST API 的默认行为
     options: {
       // 默认排序字段, 默认为 undefined
-      orderby: 'date desc'
+      orderby: 'date desc',
 
       // 最大允许跳过的行数, 默认为不限制
-      maxSkip: 10000
+      maxSkip: 10000,
 
       // 最大允许一次返回的条数, 默认为不限制
       maxTop: 100
@@ -440,8 +440,8 @@ params: 复杂对象, 具体字段如下所示
 || **Allow Key**                               || **Value Type**                            || **Details** ||
 || db      || string || 重新配置 mongoDB 数据库地址 ||
 || prefix    || string || 重新配置 URL 前缀, 默认为 '/odata' ||
-|| maxTop  || int || 设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖 ||
-|| maxSkip  || int || 设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖 ||
+|| maxTop  || int || 设置全局最大允许查询的条数 ||
+|| maxSkip  || int || 设置全局最大允许跳过的条数 ||
 
 ## 5.4 odata.use
 

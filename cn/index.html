@@ -68,7 +68,7 @@
 
 <h2>当前状态</h2>
 
-<p>node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 CoffeeScript 编写. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.</p>
+<p>node-odata 当前处于测试版中, 它是稳定的但并不完整. node-odata 基于 ECMAScript6 编写, 使用 babel 便以为 ECMAScript5 后发布. 它目前需要依赖特定数据库: MongoDB. 当前的目标是完成 OData 协议中得所有特性, 然后制作链接到其它数据库的 Adapter.</p>
 
 
 </div>
@@ -81,7 +81,7 @@
 
 <h1 id="2">2) 快速开始</h1>
 
-<p>这里我们讲创建并运行一个最简单的 OData 服务.</p>
+<p>这里我们将创建并运行一个最简单的 OData 服务.</p>
 
 <h2 id="21">2.1 创建服务</h2>
 
@@ -124,7 +124,7 @@ DELETE /odata/books/:id
 
 <h2 id="31">3.1 新增</h2>
 
-<p>使用 <code>POST /odata/resource</code> 插入新的数据, 他将返回 resource 的最新状态.</p>
+<p>使用 <code>POST /odata/resource</code> 插入新的数据, 它将返回 resource 的最新状态.</p>
 
 <pre class="shell"><code>curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
 HTTP/1.1 201 Created
@@ -143,7 +143,7 @@ Connection: keep-alive
 
 <h2 id="32">3.2 修改</h2>
 
-<p>使用 <code>PUT /odata/resource/:id</code> 修改已有的数据, 他将返回 resource 修改后的状态.</p>
+<p>使用 <code>PUT /odata/resource/:id</code> 修改已有的数据, 它将返回 resource 修改后的状态.</p>
 
 <pre class="shell"><code>curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
 HTTP/1.1 200 OK
@@ -162,7 +162,7 @@ Connection: keep-alive
 
 <h2 id="33">3.3 查询</h2>
 
-<p>使用 <code>GET /odata/resource</code> 查询 resource 列表, 其结果将以数组的形式将返回在 value 对象中.</p>
+<p>使用 <code>GET /odata/resource</code> 查询 resource 列表, 其结果将以数组的形式返回在 value 中.</p>
 
 <pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/books
 HTTP/1.1 200 OK
@@ -216,7 +216,7 @@ OK
 
 <h1 id="4-odata">4) OData 查询</h1>
 
-<p>本节讲介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.</p>
+<p>本节将介绍如何使用 OData 协议进行数据集的查询. 查询是通过一个特定的 URL 来进行的, 你可以对数据集进行如 过滤, 排序, 分页等. 每个关键字都有相同的 ($) 字符作为前缀.</p>
 
 <p>每个关键字只能指定一次.</p>
 
@@ -264,7 +264,7 @@ OK
 
 <p><code>$orderby</code> 关键字可以使返回的数据依据集合中特定字段进行排序.</p>
 
-<p>他可以使用逗号分隔以实现多重排序.</p>
+<p>它可以使用逗号分隔以实现多重排序.</p>
 
 <p>表达式可以以 <code>asc</code> 或 <code>desc</code> 结尾用于表示升序或降序. 如果不提供, 默认则为 <code>asc</code>.</p>
 
@@ -341,7 +341,7 @@ Connection: keep-alive
 
 <h1 id="5-api">5) API</h1>
 
-<p>本节讲介绍 node-odata 提供的 API.</p>
+<p>本节将介绍 node-odata 提供的 API.</p>
 
 <h2 id="51-odataresourcesregister">5.1 odata.resources.register</h2>
 
@@ -461,10 +461,10 @@ actions: {
 // 设置 REST API 的默认行为
 options: {
   // 默认排序字段, 默认为 undefined
-  orderby: 'date desc'
+  orderby: 'date desc',
 
   // 最大允许跳过的行数, 默认为不限制
-  maxSkip: 10000
+  maxSkip: 10000,
 
   // 最大允许一次返回的条数, 默认为不限制
   maxTop: 100
@@ -528,8 +528,8 @@ handle: function(req, res, next) {
 <tr><td><strong>Allow Key</strong></td><td><strong>Value Type</strong></td><td><strong>Details</strong></td></tr>
 <tr><td>db</td><td>string</td><td>重新配置 mongoDB 数据库地址</td></tr>
 <tr><td>prefix</td><td>string</td><td>重新配置 URL 前缀, 默认为 '/odata'</td></tr>
-<tr><td>maxTop</td><td>int</td><td>设置全局最大允许查询的条数, 可以被 Resource 的设置覆盖</td></tr>
-<tr><td>maxSkip</td><td>int</td><td>设置全局最大允许跳过的条数, 可以被 Resource 的设置覆盖</td></tr>
+<tr><td>maxTop</td><td>int</td><td>设置全局最大允许查询的条数</td></tr>
+<tr><td>maxSkip</td><td>int</td><td>设置全局最大允许跳过的条数</td></tr>
 </tbody>
 </table>
 
