@@ -10,6 +10,7 @@ const options = {
     maxTop: undefined,
     maxSkip: undefined,
   },
+  enableOdataSyntax: undefined
 }
 
 const get = (key) => {

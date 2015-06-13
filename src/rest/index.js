@@ -9,14 +9,20 @@ import del from './delete';
 import { get, getAll } from './get';
 
 const register = (params) => {
-  const app = config.get('app')
-  const prefix = config.get('prefix')
+  const app = config.get('app');
+  const prefix = config.get('prefix');
 
-  let options = params.options || {}
-  let rest = params.rest || {}
-  let actions = params.actions || []
+  let options = params.options || {};
+  let rest = params.rest || {};
+  let actions = params.actions || [];
 
-  let resourceURL = `${prefix}/${params.url}`
+  let resourceURL = `${prefix}/${params.url}`;
+
+  let getUrl = `${resourceURL}/:id`;
+  if (config.get('enableOdataSyntax')) {
+    getUrl = `${resourceURL}(:id)`;
+  }
+
   let routes = [
     {
       method: 'post',
@@ -38,7 +44,7 @@ const register = (params) => {
     },
     {
       method: 'get',
-      url: `${resourceURL}/:id`,
+      url: getUrl,
       controller: get,
       config: rest.get || rest.read || {},
     },
