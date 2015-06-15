@@ -12,6 +12,7 @@ import functions from './functions';
 import metadata from './metadata';
 import { get as getRepository } from './model';
 
+
 const createService = (db, prefix) => {
   const app = express();
   initExpress(app);
@@ -31,12 +32,7 @@ const initExpress = (app) => {
   app.use(express.query());
   app.use(express.methodOverride());
   app.use(cors());
-
-  // remove express info.
-  app.use((req, res, next) => {
-    res.removeHeader("X-Powered-By");
-    next();
-  });
+  app.disable('x-powered-by');
 }
 
 const initServer = (app, server) => {
@@ -80,7 +76,4 @@ const initServer = (app, server) => {
   server._mongoose = mongoose;
 }
 
-/**
- * Expose `createService()`.
- */
 export default createService;
