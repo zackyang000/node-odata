@@ -17,15 +17,16 @@ server.init = function(db, prefix) {
   this._app.use(cors());
   this._app.disable('x-powered-by');
 
+  this.settings = {};
   this.defaultConfiguration(db, prefix);
 
   this._mongoose = mongoose;
 };
 
-server.defaultConfiguration = function(db, prefix) {
-  config.set('app', this._app);
-  config.set('db', db);
-  config.set('prefix', prefix);
+server.defaultConfiguration = function(db, prefix = '/oData' ) {
+  this.set('app', this._app);
+  this.set('db', db);
+  this.set('prefix', prefix);
 }
 
 server.resources = resources;
@@ -43,23 +44,28 @@ server.functions = functions;
   }
 });
 
-// expose repository
 server.repository = getRepository;
 
-// expose listen.
 server.listen = function (...args) {
   this._app.listen.apply(this._app, args);
 }
 
-//expose use
 server.use = function(...args) {
   this._app.use.apply(this._app, args);
 }
 
-// expose config
-server.config = {
-  get : config.get,
-  set : config.set,
+server.get = function(key) {
+  return this.settings[key];
+};
+
+server.set = function(key, val) {
+  this.settings[key] = val;
+  switch (key) {
+    case 'db':
+      mongoose.connect(val);
+      break;
+  }
+  return this;
 };
 
 // expose privite object for special situation.
