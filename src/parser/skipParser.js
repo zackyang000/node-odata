@@ -1,13 +1,10 @@
 "use strict";
 
-import { min } from 'lodash'
-import config from '../config'
-
 // ?$skip=10
 // ->
 // query.skip(10)
 export default (query, skip, maxSkip) => {
-  skip =  min([config.get('maxSkip'), maxSkip, skip]);
+  skip =  min([maxSkip, skip]);
   if(skip < 0) {
     return;
   }

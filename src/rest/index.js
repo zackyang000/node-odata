@@ -1,25 +1,22 @@
 "use strict";
 
 import _ from 'lodash';
-import config from './../config';
+import { Router } from 'express';
 import model from './../model';
 import post from './post';
 import put from './put';
 import del from './delete';
 import { get, getAll } from './get';
 
-const register = (params) => {
-  const app = config.get('app');
-  const prefix = config.get('prefix');
-
+const getRouter = (params, enableOdataSyntax) => {
   let options = params.options || {};
   let rest = params.rest || {};
   let actions = params.actions || [];
 
-  let resourceURL = `${prefix}/${params.url}`;
+  let resourceURL = `/${params.url}`;
 
   let getUrl = `${resourceURL}/:id`;
-  if (config.get('enableOdataSyntax')) {
+  if (enableOdataSyntax) {
     getUrl = `${resourceURL}(:id)`;
   }
 
@@ -37,7 +34,7 @@ const register = (params) => {
       config: rest.put || rest.update || {},
     },
     {
-      method: 'del',
+      method: 'delete',
       url: `${resourceURL}/:id`,
       controller: del,
       config: rest.delete || rest.del || {},
@@ -58,8 +55,9 @@ const register = (params) => {
 
   let mongooseModel = model.get(params.url);
 
+  let router = Router();
   routes.map((route) => {
-    app[route.method](route.url, (req, res, next) => {
+    router[route.method](route.url, (req, res, next) => {
       if (checkAuth(route.config.auth, req)) {
         route.controller(req, mongooseModel, options).then((result = {}) => {
           res.status(result.status || 200);
@@ -92,13 +90,15 @@ const register = (params) => {
   for(let url in actions) {
     let action = actions[url];
     ((url, action) => {
-      app.post(`${resourceURL}/:id${url}`, (req, res, next) => {
+      router.post(`${resourceURL}/:id${url}`, (req, res, next) => {
         if(checkAuth(action.auth)) {
           action(req, res, next);
         }
       });
     })(url, action);
   }
+
+  return router;
 }
 
 const checkAuth = (auth, req) => {
@@ -108,4 +108,4 @@ const checkAuth = (auth, req) => {
   return auth(req);
 };
 
-export default { register };
+export default { getRouter };
