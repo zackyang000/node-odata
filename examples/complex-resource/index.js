@@ -17,7 +17,7 @@ var order = {
   }]
 }
 
-server.resources.register({
+server.register({
   url: '/orders',
   model: orderInfo
 });

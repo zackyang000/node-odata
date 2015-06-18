@@ -8,7 +8,7 @@ import put from './put';
 import del from './delete';
 import { get, getAll } from './get';
 
-const getRouter = (params, enableOdataSyntax) => {
+const getRouter = (_conn, params, enableOdataSyntax) => {
   let options = params.options || {};
   let rest = params.rest || {};
   let actions = params.actions || [];
@@ -53,7 +53,7 @@ const getRouter = (params, enableOdataSyntax) => {
     },
   ];
 
-  let mongooseModel = model.get(params.url);
+  let mongooseModel = model.get(_conn, params.url);
 
   let router = Router();
   routes.map((route) => {

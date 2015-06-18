@@ -18,11 +18,11 @@ server.init = function(db, prefix) {
   this._app.use(express.query());
   this._app.use(cors());
   this._app.disable('x-powered-by');
+  this._mongoose = mongoose;
 
   this.settings = {};
   this.defaultConfiguration(db, prefix);
 
-  this._mongoose = mongoose;
 
   // metadata
   this._app.get(this.settings['prefix'] || '/', (req, res, next) => {
@@ -41,7 +41,7 @@ server.defaultConfiguration = function(db, prefix = '/oData' ) {
 }
 
 server.resources = [];
-server.resources.register = (params) => {
+server.register = function(params) {
   server.resources.push(params);
 
   // remove '/' if url is startwith it.
@@ -54,21 +54,19 @@ server.resources.register = (params) => {
     throw new Error('Resource of url can\'t contain "/", it can only be allowed to exist in the beginning.');
   }
 
-  model.register(params.url, params.model);
+  model.register(this._db, params.url, params.model);
 
+  params.options = params.options || {};
   params.options.maxTop = min(this.get('maxTop'), params.options.maxTop);
   params.options.maxSkip = min(this.get('maxSkip'), params.options.maxSkip);
 
-  router = rest.getRouter(params, this.get('enableOdataSyntax'));
+  let router = rest.getRouter(this._db, params, this.get('enableOdataSyntax'));
   this._app.use(this.get('prefix'), router);
 }
 
 // expose functions
 server.functions = {};
 server.functions.register = function({ method, url, handle }) {
-  method = method.toLowerCase();
-  const prefix = this.get('prefix');
-  this._app[method](`${prefix}${url}`, handle);
 }
 // ['get', 'put', 'del', 'post'].map((method) => {
 //   server[method] = (url, handle, auth) => {
@@ -98,7 +96,7 @@ server.get = function(key) {
 server.set = function(key, val) {
   switch (key) {
     case 'db':
-      mongoose.connect(val);
+      this._db = mongoose.createConnection(val);
       break;
     case 'prefix':
       if (val === '/') {

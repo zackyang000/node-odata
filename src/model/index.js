@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import id from './idPlugin';
 
-const register = (name, model) => {
+const register = (_conn, name, model) => {
   const conf = {
     _id: false,
     versionKey: false,
@@ -11,11 +11,11 @@ const register = (name, model) => {
   };
   const schema = new mongoose.Schema(model, conf);
   schema.plugin(id);
-  mongoose.model(name, schema);
+  _conn.model(name, schema);
 };
 
-const get = (name) => {
-  return mongoose.model(name);
+const get = (_conn, name) => {
+  return _conn.model(name);
 };
 
 export default { register, get };

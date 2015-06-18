@@ -1,5 +1,6 @@
 "use strict";
 
+import { min } from 'lodash'
 const SYSTEM_MAX_TOP = 1000000
 
 // ?$top=10

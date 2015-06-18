@@ -2,7 +2,7 @@ var odata = require('../../');
 
 server = odata('mongodb://localhost/odata-test');
 
-server.resources.register({
+server.register({
     url: '/books-simple',
     model: {
         title: String,

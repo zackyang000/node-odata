@@ -11,7 +11,7 @@ var bookInfo = {
   title: String
 }
 
-server.resources.register({
+server.register({
   url: '/books',
   model: bookInfo,
   actions: {

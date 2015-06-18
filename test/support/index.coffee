@@ -4,9 +4,11 @@ data = require("./data.json")
 callback = undefined
 done = undefined
 
-server = odata('mongodb://localhost/odata-test')
+conn = 'mongodb://localhost/odata-test'
+server = odata()
 
-mongoose = server._mongoose
+mongoose = server.mongoose
+db = server._db
 
 bookInfo = {
   author: String,
@@ -17,7 +19,7 @@ bookInfo = {
   title: String
 }
 
-server.resources.register
+server.register
   url: '/books'
   model: bookInfo
   actions:
@@ -32,8 +34,8 @@ server.get '/license', (req, res, next) ->
 
 #import data.
 load = (callback) ->
-  fixtures.load books: data, mongoose.connection, (err) ->
-    mongoose.model('books').find().exec (err, data) ->
+  fixtures.load books: data, db.connection, (err) ->
+    db.model('books').find().exec (err, data) ->
       module.exports.server = server
       module.exports.app = server._app
       module.exports.books = data

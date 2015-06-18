@@ -4,7 +4,7 @@ server = odata('mongodb://localhost/odata-test')
 
 server.config.set 'enableOdataSyntax', true
 
-server.resources.register
+server.register
   url: '/odataSyntax'
   model:
     title: String

@@ -2,7 +2,7 @@ odata = require '../../index'
 
 server = odata('mongodb://localhost/odata-test')
 
-server.resources.register
+server.register
   url: '/resource-use-function-keyword'
   model:
     year: Number
