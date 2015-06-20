@@ -3,12 +3,12 @@
 import uuid from 'node-uuid';
 
 
-export default (schema, options) => {
+export default function(schema, options) {
 
   // add _id to schema.
   if (!schema.paths._id) {
     schema.add({
-      _id:{
+      _id: {
         type: String,
         unique: true,
       }
@@ -31,7 +31,7 @@ export default (schema, options) => {
   if (!schema.options.toJSON) {
     schema.options.toJSON = {};
   }
-  const remove = (doc, ret, options) => {
+  const remove = function(doc, ret, options) {
     delete ret._id;
     if (!ret.id) {
       delete ret.id;

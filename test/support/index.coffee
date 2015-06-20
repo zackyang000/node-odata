@@ -5,22 +5,21 @@ callback = undefined
 done = undefined
 
 conn = 'mongodb://localhost/odata-test'
-server = odata()
+server = odata(conn)
 
-mongoose = server.mongoose
+mongoose = server._mongoose
 db = server._db
 
-bookInfo = {
-  author: String,
-  description: String,
-  genre: String,
-  price: Number,
-  publish_date: Date,
+bookInfo =
+  author: String
+  description: String
+  genre: String
+  price: Number
+  publish_date: Date
   title: String
-}
 
 server.register
-  url: '/books'
+  url: 'books'
   model: bookInfo
   actions:
     '/50off': (req, res, next) ->
@@ -34,7 +33,8 @@ server.get '/license', (req, res, next) ->
 
 #import data.
 load = (callback) ->
-  fixtures.load books: data, db.connection, (err) ->
+  # TODO: 修改为使用 mongoDB 直接存储, 因为 fixtures 不支持这个功能.
+  #fixtures.load books: data, mongoose.connection, (err) ->
     db.model('books').find().exec (err, data) ->
       module.exports.server = server
       module.exports.app = server._app

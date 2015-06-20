@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import id from './idPlugin';
 
-const register = (_conn, name, model) => {
+const register = function(_conn, name, model) {
   const conf = {
     _id: false,
     versionKey: false,
