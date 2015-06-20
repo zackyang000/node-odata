@@ -1,0 +1,98 @@
+[
+  {
+    "author": "Gambardella, Matthew",
+    "description": "An in-depth look at creating applications \n with XML.",
+    "genre": "Computer",
+    "price": 44.95,
+    "publish_date": "2000-10-01",
+    "title": "XML Developer's Guide"
+  },
+  {
+    "author": "Ralls, Kim",
+    "description": "A former architect battles corporate zombies, \n an evil sorceress, and her own childhood to become queen \n of the world.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2000-12-16",
+    "title": "Midnight Rain"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "After the collapse of a nanotechnology \n society in England, the young survivors lay the \n foundation for a new society.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2000-11-17",
+    "title": "Maeve Ascendant"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "In post-apocalypse England, the mysterious \n agent known only as Oberon helps to create a new life \n for the inhabitants of London. Sequel to Maeve \n Ascendant.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2001-03-10",
+    "title": "Oberon's Legacy"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "The two daughters of Maeve, half-sisters, \n battle one another for control of England. Sequel to \n Oberon's Legacy.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2001-09-10",
+    "title": "The Sundered Grail"
+  },
+  {
+    "author": "Randall, Cynthia",
+    "description": "When Carla meets Paul at an ornithology \n conference, tempers fly as feathers get ruffled.",
+    "genre": "Romance",
+    "price": 4.95,
+    "publish_date": "2000-09-02",
+    "title": "Lover Birds"
+  },
+  {
+    "author": "Thurman, Paula",
+    "description": "A deep sea diver finds true love twenty \n thousand leagues beneath the sea.",
+    "genre": "Romance",
+    "price": 4.95,
+    "publish_date": "2000-11-02",
+    "title": "Splish Splash"
+  },
+  {
+    "author": "Knorr, Stefan",
+    "description": "An anthology of horror stories about roaches,\n centipedes, scorpions and other insects.",
+    "genre": "Horror",
+    "price": 4.95,
+    "publish_date": "2000-12-06",
+    "title": "Creepy Crawlies"
+  },
+  {
+    "author": "Kress, Peter",
+    "description": "After an inadvertant trip through a Heisenberg\n Uncertainty Device, James Salway discovers the problems \n of being quantum.",
+    "genre": "Science Fiction",
+    "price": 6.95,
+    "publish_date": "2000-11-02",
+    "title": "Paradox Lost"
+  },
+  {
+    "author": "O'Brien, Tim",
+    "description": "Microsoft's .NET initiative is explored in \n detail in this deep programmer's reference.",
+    "genre": "Computer",
+    "price": 36.95,
+    "publish_date": "2000-12-09",
+    "title": "Microsoft .NET: The Programming Bible"
+  },
+  {
+    "author": "O'Brien, Tim",
+    "description": "The Microsoft MSXML3 parser is covered in \n detail, with attention to XML DOM interfaces, XSLT processing, \n SAX and more.",
+    "genre": "Computer",
+    "price": 36.95,
+    "publish_date": "2000-12-01",
+    "title": "MSXML3: A Comprehensive Guide"
+  },
+  {
+    "author": "Galos, Mike",
+    "description": "Microsoft Visual Studio 7 is explored in depth,\n looking at how Visual Basic, Visual C++, C#, and ASP+ are \n integrated into a comprehensive development \n environment.",
+    "genre": "Computer",
+    "price": 49.95,
+    "publish_date": "2001-04-16",
+    "title": "Visual Studio 7: A Comprehensive Guide"
+  }
+]
