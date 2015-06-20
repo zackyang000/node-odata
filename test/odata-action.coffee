@@ -13,6 +13,7 @@ describe "OData action", ->
       done()
 
   it "should work", (done) ->
+    console.log "/odata/books/#{books[10].id}/50off"
     request(app)
       .post("/odata/books/#{books[10].id}/50off")
       .expect(200)

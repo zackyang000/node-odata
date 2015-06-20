@@ -1,6 +1,6 @@
 var odata = require('../../');
 
-server = odata('mongodb://localhost/odata-test');
+var server = odata('mongodb://localhost/odata-test');
 
 var bookInfo = {
   author: String,
@@ -16,8 +16,7 @@ server.register({
   model: bookInfo,
   actions: {
     '/50off': function(req, res, next){
-      var mongoose = server.mongoose;
-      mongoose.model('books').findById(req.params.id, function(err, book){
+      server.repository('books').findById(req.params.id, function(err, book){
         book.price = +(book.price / 2).toFixed(2);
         book.save(function(err){
           res.jsonp(book);

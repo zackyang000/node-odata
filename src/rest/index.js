@@ -94,6 +94,9 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
         if(checkAuth(action.auth)) {
           action(req, res, next);
         }
+        else {
+          res.status(401).end();
+        }
       });
     })(url, action);
   }

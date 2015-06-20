@@ -79,7 +79,9 @@ server.functions.register = function({ method, url, handle }) {
 //   }
 // });
 
-server.repository = getRepository;
+server.repository = function(name) {
+  return getRepository(this._db, name);
+}
 
 server.listen = function (...args) {
   this._app.listen.apply(this._app, args);
