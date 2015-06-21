@@ -1,5 +1,5 @@
-should = require("should")
-request = require("supertest")
+should = require('should')
+request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
@@ -46,7 +46,7 @@ describe 'rest.get', ->
         res.body.title.should.be.equal(books[0].title)
         done()
 
-  it 'should be 404 if resouces not declare', (done) ->
+  it 'should be 404 if resouce name not declare', (done) ->
     request(app)
       .get("/odata/not-exist-resource")
       .expect(404, done)
