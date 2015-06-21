@@ -12,11 +12,11 @@ var bookInfo = {
 }
 
 server.register({
-  url: '/books',
+  url: '/book',
   model: bookInfo,
   actions: {
     '/50off': function(req, res, next){
-      server.repository('books').findById(req.params.id, function(err, book){
+      server.repository('book').findById(req.params.id, function(err, book){
         book.price = +(book.price / 2).toFixed(2);
         book.save(function(err){
           res.jsonp(book);
@@ -31,7 +31,7 @@ server.get('/license', function(req, res, next){
 });
 
 server.listen(3000, function(){
-  console.log('OData services has started, you can visit by http://localhost:3000/odata/books');
+  console.log('OData services has started, you can visit by http://localhost:3000/odata/book');
 });
 
 module.exports = exports = server;

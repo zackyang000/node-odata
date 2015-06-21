@@ -11,7 +11,7 @@ import { get, getAll } from './get';
 const getRouter = (_conn, params, enableOdataSyntax) => {
   let options = params.options || {};
   let rest = params.rest || {};
-  let actions = params.actions || [];
+  let actions = params.actions || {};
 
   let resourceURL = `/${params.url}`;
 

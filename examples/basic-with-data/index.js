@@ -1,6 +1,11 @@
 var server = require('../basic/');
+var data = require("../../test/support/books.json");
 
-//import data.
-var fixtures = require("pow-mongoose-fixtures");
-var data = require("../../test/support/data.json");
-fixtures.load({books: data}, server._mongoose.connection);
+model = server._db.model('book');
+
+model.remove({}, function(err, result) {
+  data.map(function(item) {
+    entity = new model(item);
+    entity.save();
+  });
+});
