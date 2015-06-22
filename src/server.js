@@ -57,8 +57,8 @@ server.register = function(params) {
   model.register(this._db, params.url, params.model);
 
   params.options = params.options || {};
-  params.options.maxTop = min(this.get('maxTop'), params.options.maxTop);
-  params.options.maxSkip = min(this.get('maxSkip'), params.options.maxSkip);
+  params.options.maxTop = min([this.get('maxTop'), params.options.maxTop]);
+  params.options.maxSkip = min([this.get('maxSkip'), params.options.maxSkip]);
 
   let router = rest.getRouter(this._db, params, this.get('enableOdataSyntax'));
   this._app.use(this.get('prefix'), router);

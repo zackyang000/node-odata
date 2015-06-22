@@ -11,6 +11,7 @@ var bookInfo = {
   title: String
 }
 
+server.set( 'enableOdataSyntax', true);
 server.register({
   url: '/book',
   model: bookInfo,

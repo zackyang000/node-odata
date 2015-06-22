@@ -17,7 +17,7 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
 
   let getUrl = `${resourceURL}/:id`;
   if (enableOdataSyntax) {
-    getUrl = `${resourceURL}(:id)`;
+    getUrl = `${resourceURL}\\(:id\\)`;
   }
 
   let routes = [
@@ -90,7 +90,11 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
   for(let url in actions) {
     let action = actions[url];
     ((url, action) => {
-      router.post(`${resourceURL}/:id${url}`, (req, res, next) => {
+      let fullUrl = `${resourceURL}/:id${url}`;
+      if (enableOdataSyntax) {
+        fullUrl = `${resourceURL}\\(:id\\)${url}`;
+      }
+      router.post(fullUrl, (req, res, next) => {
         if(checkAuth(action.auth)) {
           action(req, res, next);
         }
