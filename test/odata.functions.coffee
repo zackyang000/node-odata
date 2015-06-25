@@ -3,7 +3,7 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
-describe 'rest.functions', ->
+describe 'odata.functions', ->
   app = undefined
 
   before (done) ->

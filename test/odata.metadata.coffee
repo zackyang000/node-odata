@@ -5,7 +5,7 @@ odata = require('../.')
 bookSchema =
   title: String
 
-describe 'rest.post', ->
+describe 'odata.metadata', ->
   app = undefined
 
   before (done) ->

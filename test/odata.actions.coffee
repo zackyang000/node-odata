@@ -11,7 +11,7 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'rest.actions', ->
+describe 'odata.actions', ->
   app = undefined
   books = undefined
 
