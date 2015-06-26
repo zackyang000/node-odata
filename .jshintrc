@@ -1,0 +1,4 @@
+{
+  "node"          : true,    // Node.js
+  "esnext"        : true
+}

@@ -8,7 +8,7 @@ export default (query, $orderby) => {
     return;
   }
 
-  let order = {}
+  let order = {};
   let orderbyArr = $orderby.split(',');
 
   orderbyArr.map((item) => {
@@ -21,4 +21,4 @@ export default (query, $orderby) => {
     order[key] = value;
   });
   query.sort(order);
-}
+};

@@ -1,8 +1,8 @@
 "use strict";
 
-import model from './model'
-import rest from './rest'
-import metadata from './metadata'
+import model from './model';
+import rest from './rest';
+import metadata from './metadata';
 
 // params:
 //   url:
@@ -48,6 +48,6 @@ const register = (params) => {
   model.register(params.url, params.model);
   rest.register(params);
   metadata.register(params);
-}
+};
 
 export default { register };

@@ -1,7 +1,7 @@
 "use strict";
 
-import { min } from 'lodash'
-import config from '../config'
+import { min } from 'lodash';
+import config from '../config';
 
 // ?$skip=10
 // ->
@@ -12,4 +12,4 @@ export default (query, skip, maxSkip) => {
     return;
   }
   query.skip(skip);
-}
+};

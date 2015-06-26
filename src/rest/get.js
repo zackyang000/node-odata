@@ -21,7 +21,7 @@ const get = (req, mongooseModel) => {
       return resolve({entity: entity});
     });
   });
-}
+};
 
 const getAll = (req, mongooseModel, options) => {
   return new Promise((resolve, reject) => {
@@ -31,25 +31,36 @@ const getAll = (req, mongooseModel, options) => {
 
     let errHandle = (err) => {
       return reject(err);
-    }
-    let err = undefined;
+    };
+    let err;
 
-    if(err = countParser(resData, mongooseModel, req.query['$count'], req.query['$filter'])) {
+    /*jshint -W084 */
+    if(err = countParser(resData, mongooseModel, req.query.$count, req.query.$filter)) {
       return errHandle(err);
     }
-    if(err = filterParser(query, req.query['$filter'])) {
+
+    /*jshint -W084 */
+    if(err = filterParser(query, req.query.$filter)) {
       return errHandle(err);
     }
-    if(err = orderbyParser(query, req.query['$orderby'] || options.orderby)) {
+
+    /*jshint -W084 */
+    if(err = orderbyParser(query, req.query.$orderby || options.orderby)) {
       return errHandle(err);
     }
-    if(err = skipParser(query, req.query['$skip'], options.maxSkip)) {
+
+    /*jshint -W084 */
+    if(err = skipParser(query, req.query.$skip, options.maxSkip)) {
       return errHandle(err);
     }
-    if(err = topParser(query, req.query['$top'], options.maxTop)) {
+
+    /*jshint -W084 */
+    if(err = topParser(query, req.query.$top, options.maxTop)) {
       return errHandle(err);
     }
-    if(err = selectParser(query, req.query['$select'])) {
+
+    /*jshint -W084 */
+    if(err = selectParser(query, req.query.$select)) {
       return errHandle(err);
     }
 
@@ -62,6 +73,6 @@ const getAll = (req, mongooseModel, options) => {
       return resolve({entity: resData});
     });
   });
-}
+};
 
 export default { get, getAll };

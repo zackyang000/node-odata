@@ -23,4 +23,4 @@ export default (resData, mongooseModel, $count, $filter) => {
   else {
     return new Error('Unknown $count option, only "true" and "false" are supported.');
   }
-}
+};
