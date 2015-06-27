@@ -1,6 +1,6 @@
 REPORTER = dot
 
-run: compile tests
+run: compile tests jshint
 .PHONY: run
 
 compile: 
@@ -18,3 +18,10 @@ test-cov:
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		test/*.coffee \
+
+jshint:
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha\
+		--reporter $(REPORTER) \
+		--require coffee-script/register \
+		test/jshint/jshint.coffee
+
