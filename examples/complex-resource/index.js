@@ -19,7 +19,7 @@ var order = {
 
 server.resources.register({
   url: '/orders',
-  model: orderInfo
+  model: order
 });
 
 server.listen(3000, function(){
