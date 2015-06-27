@@ -78,7 +78,7 @@ export default (query, $filter) => {
         return new Error("Incorrect operator at '#{item}'.");
     }
   }
-}
+};
 
 
 const stringHelper = {
@@ -91,7 +91,7 @@ const stringHelper = {
   },
 
   isEndWith : (str, key) => {
-    return str.lastIndexOf(key) === (str.length - key.length)
+    return str.lastIndexOf(key) === (str.length - key.length);
   },
 
   removeEndOf : (str, key) => {
@@ -100,7 +100,7 @@ const stringHelper = {
     }
     return str;
   },
-}
+};
 
 const validator = {
   formatValue : (value) => {
@@ -118,4 +118,4 @@ const validator = {
     }
     return new Error(`Syntax error at '${value}'.`);
   }
-}
+};

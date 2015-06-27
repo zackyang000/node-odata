@@ -37,7 +37,7 @@ export default (schema, options) => {
       delete ret.id;
     }
     return ret;
-  }
+  };
   schema.options.toObject.transform = remove;
   schema.options.toJSON.transform = remove;
 
@@ -48,4 +48,4 @@ export default (schema, options) => {
     }
     return next();
   });
-}
+};

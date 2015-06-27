@@ -9,7 +9,7 @@ var bookInfo = {
   price: Number,
   publish_date: Date,
   title: String
-}
+};
 
 server.resources.register({
   url: '/books',

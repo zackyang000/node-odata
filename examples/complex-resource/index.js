@@ -15,7 +15,7 @@ var order = {
       price: Number
     }
   }]
-}
+};
 
 server.resources.register({
   url: '/orders',

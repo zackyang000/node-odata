@@ -1,6 +1,6 @@
 "use strict";
 
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const options = {
   app : undefined,  // app express instants
@@ -10,11 +10,11 @@ const options = {
     maxTop: undefined,
     maxSkip: undefined,
   },
-}
+};
 
 const get = (key) => {
   return options[key];
-}
+};
 
 const set = (key, value) => {
   if (!value) {
@@ -32,6 +32,6 @@ const set = (key, value) => {
   }
 
   options[key] = value;
-}
+};
 
 export default { get, set };

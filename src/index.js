@@ -24,7 +24,7 @@ const createService = (db, prefix) => {
   config.set('prefix', prefix);
 
   return server;
-}
+};
 
 const initExpress = (app) => {
   app.use(express.bodyParser());
@@ -37,7 +37,7 @@ const initExpress = (app) => {
     res.removeHeader("X-Powered-By");
     next();
   });
-}
+};
 
 const initServer = (app, server) => {
   // expose resources
@@ -53,7 +53,7 @@ const initServer = (app, server) => {
         handle: handle,
         auth: auth,
       });
-    }
+    };
   });
 
   // expose repository
@@ -62,12 +62,12 @@ const initServer = (app, server) => {
   // expose listen.
   server.listen = (...args) => {
     app.listen.apply(app, args);
-  }
+  };
 
   //expose use
   server.use = (...args) => {
     app.use.apply(app, args);
-  }
+  };
 
   // expose config
   server.config = {
@@ -78,7 +78,7 @@ const initServer = (app, server) => {
   // expose privite object for special situation.
   server._app = app;
   server._mongoose = mongoose;
-}
+};
 
 /**
  * Expose `createService()`.

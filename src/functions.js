@@ -1,6 +1,6 @@
 "use strict";
 
-import config from './config'
+import config from './config';
 
 const register = ({ url, method, handle }) => {
   method = method.toLowerCase();
@@ -8,6 +8,6 @@ const register = ({ url, method, handle }) => {
   const prefix = config.get('prefix');
 
   app[method](`${prefix}${url}`, handle);
-}
+};
 
 export default { register };

@@ -24,6 +24,6 @@ const register = ({url, model}) => {
       res.json({ resources });
     });
   }
-}
+};
 
 export default { register };

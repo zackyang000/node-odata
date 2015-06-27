@@ -5,9 +5,9 @@ const indexof = (query, key, odataOperator, value) => {
   let target;
   [key, target] = key.substring(key.indexOf('(') + 1, key.indexOf(')')).split(',');
   [key, target] = [key.trim(), target.trim()];
-  let operator = convertToOperator(odataOperator)
+  let operator = convertToOperator(odataOperator);
   query.$where(`this.${key}.indexOf(${target}) ${operator} ${value}`);
-}
+};
 
  // year(publish_date) eq 2000
 const year = (query, key, odataOperator, value) => {
@@ -39,7 +39,7 @@ const year = (query, key, odataOperator, value) => {
       query.where(key).lt(end);
       break;
   }
-}
+};
 
 const convertToOperator = (odataOperator) => {
   let operator;
@@ -64,6 +64,6 @@ const convertToOperator = (odataOperator) => {
       break;
   }
   return operator;
-}
+};
 
 export default { indexof, year };

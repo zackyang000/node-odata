@@ -1,6 +1,6 @@
 "use strict";
 
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const isField = (obj) => {
   if (typeof(obj) === 'function') {
@@ -18,19 +18,19 @@ const isField = (obj) => {
     }
   }
   return false;
-}
+};
 
 const isArray = (obj) => {
   return Array.isArray(obj) && obj.length >= 0;
-}
+};
 
 const isComplexArray = (obj) => {
   return isArray(obj) && isField(obj[0]);
-}
+};
 
 const isObject = (obj) => {
   return obj && typeof(obj) === 'object' && !isArray(obj) && !isField(obj);
-}
+};
 
 const toMetadata = (obj) => {
   const convert = (obj, name, root) => {
@@ -59,9 +59,9 @@ const toMetadata = (obj) => {
         convert(obj[name], childName);
       });
     }
-  }
+  };
   convert({obj: obj}, 'obj', true);
   return obj;
-}
+};
 
 export default { toMetadata };

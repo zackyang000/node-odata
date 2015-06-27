@@ -9,14 +9,14 @@ import del from './delete';
 import { get, getAll } from './get';
 
 const register = (params) => {
-  const app = config.get('app')
-  const prefix = config.get('prefix')
+  const app = config.get('app');
+  const prefix = config.get('prefix');
 
-  let options = params.options || {}
-  let rest = params.rest || {}
-  let actions = params.actions || []
+  let options = params.options || {};
+  let rest = params.rest || {};
+  let actions = params.actions || [];
 
-  let resourceURL = `${prefix}/${params.url}`
+  let resourceURL = `${prefix}/${params.url}`;
   let routes = [
     {
       method: 'post',
@@ -67,8 +67,7 @@ const register = (params) => {
             res.end();
           }
           route.config.after(result.entity, result.originEntity);
-        }
-        , (err) => {
+        }, (err) => {
           if (err.status) {
             res.status(err.status).send(err.text || '');
           }
@@ -93,7 +92,7 @@ const register = (params) => {
       });
     })(url, action);
   }
-}
+};
 
 const checkAuth = (auth, req) => {
   if (!auth) {
