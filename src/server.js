@@ -62,52 +62,72 @@ server.register = function(params) {
 
   let router = rest.getRouter(this._db, params, this.get('enableOdataSyntax'));
   this._app.use(this.get('prefix'), router);
-}
+};
 
-// expose functions
-server.functions = {};
-server.functions.register = function({ method, url, handle }) {
-}
-// ['get', 'put', 'del', 'post'].map((method) => {
-//   server[method] = (url, handle, auth) => {
-//     functions.register({
-//       url: url,
-//       method: method,
-//       handle: handle,
-//       auth: auth,
-//     });
-//   }
-// });
+// expose functions method
+['get', 'put', 'del', 'post'].map((method) => {
+  server[method] = (url, handle, auth) => {
+    const app = this.get('app');
+    const prefix = this.get('prefix');
+    app[method](`${prefix}${url}`, function(req, res, next) {
+      if (checkAuth(route.config.auth, req)) {
+        handle(req, res, next);
+      }
+      else {
+        res.status(401).end();
+      }
+    });
+
+
+  }
+});
 
 server.repository = function(name) {
   return getRepository(this._db, name);
-}
+};
 
 server.listen = function (...args) {
   this._app.listen.apply(this._app, args);
-}
+};
 
 server.use = function(...args) {
   this._app.use.apply(this._app, args);
-}
+};
 
-server.get = function(key) {
-  return this.settings[key];
+server.get = function(key, arg) {
+  this.get = this._get;
+
+  this.get = function(key) {
+    if (arg === undefined) {
+      return this.settings[key];
+    }
+    else {
+      return this._get(key, arg);
+    }
+  }
 };
 
 server.set = function(key, val) {
   switch (key) {
     case 'db':
       this._db = mongoose.createConnection(val);
-      break;
+    break;
     case 'prefix':
       if (val === '/') {
-        val = '';
-      }
-      break;
+      val = '';
+    }
+    break;
   }
   this.settings[key] = val;
   return this;
+};
+
+
+const checkAuth = (auth, req) => {
+  if (!auth) {
+    return true;
+  }
+  return auth(req);
 };
 
 // expose privite object for special situation.
