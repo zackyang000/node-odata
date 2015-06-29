@@ -77,8 +77,6 @@ server.register = function(params) {
         res.status(401).end();
       }
     });
-
-
   }
 });
 
@@ -94,18 +92,22 @@ server.use = function(...args) {
   this._app.use.apply(this._app, args);
 };
 
-server.get = function(key, arg) {
-  this.get = this._get;
-
-  this.get = function(key) {
-    if (arg === undefined) {
-      return this.settings[key];
+server.get = function(key, handle, auth) {
+  if (handle === undefined) {
+    return this.settings[key];
+  }
+  // TODO: Need to refactor, same as L70-L80
+  const app = this.get('app');
+  const prefix = this.get('prefix');
+  app.get(`${prefix}${key}`, function(req, res, next) {
+    if (checkAuth(auth, req)) {
+      handle(req, res, next);
     }
     else {
-      return this._get(key, arg);
+      res.status(401).end();
     }
-  }
-};
+  });
+}
 
 server.set = function(key, val) {
   switch (key) {

@@ -9,7 +9,7 @@ describe 'odata.functions', ->
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.get '/license', (req, res, next) ->
+    server.get '/test', (req, res, next) ->
       res.jsonp test:'ok'
     app = server._app
     done()
