@@ -1,12 +1,12 @@
 import express from 'express';
-import bodyParser from 'body-parser'
-import methodOverride from 'method-override'
+import bodyParser from 'body-parser';
+import methodOverride from 'method-override';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import { min } from 'lodash'
+import { min } from 'lodash';
 import parser from './metadata/parser';
-import model from './model'
-import rest from './rest'
+import model from './model';
+import rest from './rest';
 import { get as getRepository } from './model';
 
 var server = {};
@@ -23,9 +23,8 @@ server.init = function(db, prefix) {
   this.settings = {};
   this.defaultConfiguration(db, prefix);
 
-
   // metadata
-  this._app.get(this.settings['prefix'] || '/', (req, res, next) => {
+  this._app.get(this.settings.prefix || '/', (req, res, next) => {
     const resources = {};
     server.resources.map(function(item){
       resources[item.url] = parser.toMetadata(item.model);
@@ -38,7 +37,7 @@ server.defaultConfiguration = function(db, prefix = '/oData' ) {
   this.set('app', this._app);
   this.set('db', db);
   this.set('prefix', prefix);
-}
+};
 
 server.resources = [];
 server.register = function(params) {
@@ -77,7 +76,7 @@ server.register = function(params) {
         res.status(401).end();
       }
     });
-  }
+  };
 });
 
 server.repository = function(name) {
@@ -107,7 +106,7 @@ server.get = function(key, handle, auth) {
       res.status(401).end();
     }
   });
-}
+};
 
 server.set = function(key, val) {
   switch (key) {

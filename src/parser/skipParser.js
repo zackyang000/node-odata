@@ -1,6 +1,6 @@
 "use strict";
 
-import { min } from 'lodash'
+import { min } from 'lodash';
 
 // ?$skip=10
 // ->
@@ -11,4 +11,4 @@ export default (query, skip, maxSkip) => {
     return;
   }
   query.skip(skip);
-}
+};

@@ -55,6 +55,7 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
 
   let mongooseModel = model.get(_conn, params.url);
 
+  /*jshint -W064 */
   let router = Router();
   routes.map((route) => {
     router[route.method](route.url, (req, res, next) => {
@@ -86,8 +87,7 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
           if (route.config.after) {
             route.config.after(result.entity, result.originEntity);
           }
-        }
-        , (err) => {
+        }, (err) => {
           if (err.status) {
             res.status(err.status).send(err.text || '');
           }
@@ -121,7 +121,7 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
   }
 
   return router;
-}
+};
 
 const checkAuth = (auth, req) => {
   if (!auth) {

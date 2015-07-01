@@ -6,8 +6,8 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
-  [![Build Status](https://img.shields.io/travis/TossShinHwa/node-odata.svg?style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
-  [![Coverage Status](https://coveralls.io/repos/TossShinHwa/node-odata/badge.svg?branch=0.6)](https://coveralls.io/r/TossShinHwa/node-odata?branch=0.6)
+  [![Build Status](https://travis-ci.org/TossShinHwa/node-odata.svg?branch=master&style=flat)](https://travis-ci.org/TossShinHwa/node-odata)
+  [![Coverage Status](https://coveralls.io/repos/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/r/TossShinHwa/node-odata?branch=master)
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
 
 ```JavaScript
@@ -52,24 +52,17 @@ GET ...
 
 node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by ECMAScript 6 then compiled to ECMAScript 5 by [babel](https://babeljs.io/). It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
 
-## Install
+## Installation
 
 ```
 npm install node-odata
 ```
 
 
-## API
+## DOCUMENTATION
 
-* [resources.register(params)](https://github.com/TossShinHwa/node-odata/wiki/1.resources.register)
-* [functions.register(params)](https://github.com/TossShinHwa/node-odata/wiki/2.functions.register)
-* [set(key, value)](https://github.com/TossShinHwa/node-odata/wiki/3.set)
-
-
-## Docs
-
-- ENGLISH DOCUMENTATION (coming soon...)
-- [中文文档](http://tossshinhwa.github.io/node-odata/cn/)
+- [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)
+- [中文](http://tossshinhwa.github.io/node-odata/cn/)
 
 
 ## Support Feature

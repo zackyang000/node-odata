@@ -35,4 +35,4 @@ export default (query, $select) => {
   //   delete selectFields[item]
 
   query.select(selectFields);
-}
+};

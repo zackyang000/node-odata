@@ -15,11 +15,11 @@ var order = {
       price: Number
     }
   }]
-}
+};
 
 server.register({
   url: '/orders',
-  model: orderInfo
+  model: order
 });
 
 server.listen(3000, function(){

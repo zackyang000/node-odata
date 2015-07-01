@@ -6,6 +6,7 @@ export default (req, mongooseModel) => {
       return reject({status: 422});
     }
 
+    /* jshint -W055 */
     let entity = new mongooseModel(req.body);
     entity.save((err) => {
       if (err) {
@@ -14,4 +15,4 @@ export default (req, mongooseModel) => {
       return resolve({status: 201, entity: entity});
     });
   });
-}
+};

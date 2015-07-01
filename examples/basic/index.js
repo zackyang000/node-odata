@@ -9,7 +9,7 @@ var bookInfo = {
   price: Number,
   publish_date: Date,
   title: String
-}
+};
 
 server.set( 'enableOdataSyntax', true);
 server.register({
