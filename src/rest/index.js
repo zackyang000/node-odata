@@ -25,13 +25,13 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
       method: 'post',
       url: `${resourceURL}`,
       controller: post,
-      config: rest.post || rest.create || {},
+      config: rest.post || {},
     },
     {
       method: 'put',
       url: `${resourceURL}/:id`,
       controller: put,
-      config: rest.put || rest.update || {},
+      config: rest.put || {},
     },
     {
       method: 'delete',
@@ -43,13 +43,13 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
       method: 'get',
       url: getUrl,
       controller: get,
-      config: rest.get || rest.read || {},
+      config: rest.get || {},
     },
     {
       method: 'get',
       url: `${resourceURL}`,
       controller: getAll,
-      config: rest.getAll || rest.readAll || {},
+      config: rest.getAll || {},
     },
   ];
 
@@ -59,6 +59,19 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
   routes.map((route) => {
     router[route.method](route.url, (req, res, next) => {
       if (checkAuth(route.config.auth, req)) {
+        //TODO: should run controller func after before done. (use promise)
+        if (route.config.before) {
+          if (route.method === 'post') {
+            route.config.before(req.body);
+          } else {
+            mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
+              if (err) {
+                return;
+              }
+              route.config.before(entity);
+            });
+          }
+        }
         route.controller(req, mongooseModel, options).then((result = {}) => {
           res.status(result.status || 200);
           if (result.text) {
@@ -70,7 +83,9 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
           else {
             res.end();
           }
-          route.config.after(result.entity, result.originEntity);
+          if (route.config.after) {
+            route.config.after(result.entity, result.originEntity);
+          }
         }
         , (err) => {
           if (err.status) {
