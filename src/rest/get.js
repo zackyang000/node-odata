@@ -30,6 +30,7 @@ const getAll = (req, mongooseModel, options) => {
     let query = mongooseModel.find();
 
     let errHandle = (err) => {
+      err.status = 500;
       return reject(err);
     };
     let err;
