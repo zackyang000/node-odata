@@ -15,7 +15,7 @@ var odata = require('node-odata');
 
 var server = odata('mongodb://localhost/my-app');
 
-server.resources.register({
+server.register({
     url: '/books',
     model: {
         title: String,
