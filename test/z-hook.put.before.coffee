@@ -1,4 +1,3 @@
-### TODO: unknow error: if run this tester, rest.put before all will failed.
 should = require('should')
 request = require('supertest')
 odata = require('../.')
@@ -32,4 +31,3 @@ describe 'rest.put.before', ->
         .send
           title: 'new'
         .end()
-###

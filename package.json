@@ -38,9 +38,9 @@
   "devDependencies": {
     "coffee-script": "1.9.0",
     "istanbul": "0.3.13",
-    "mocha": "2.2.1",
+    "mocha": "2.2.5",
     "jshint": "2.7.0",
-    "should": "5.2.0",
+    "should": "7.0.1",
     "sinon": "1.14.1",
     "supertest": "0.15.0"
   }
