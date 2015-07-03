@@ -1,4 +1,4 @@
-var server = require('../basic/');
+var server = require('../simple/');
 var data = require("../../test/support/books.json");
 
 model = server._db.model('book');
