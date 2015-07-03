@@ -13,7 +13,6 @@
 # 0.5.0 (2015-05-08)
 ===================
 - Add detail links for metadata info.
-- Change API: server.get/set -> server.config.get/set
 - Add simple API for functions. ([#7](https://github.com/TossShinHwa/node-odata/issues/7))
 
 # 0.4.0 (2015-04-09)

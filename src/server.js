@@ -13,7 +13,7 @@ var server = {};
 
 server.init = function(db, prefix) {
   this._app = express();
-  this._app.use(bodyParser.urlencoded());
+  this._app.use(bodyParser.urlencoded({ extended: true }));
   this._app.use(bodyParser.json());
   this._app.use(methodOverride());
   this._app.use(express.query());
