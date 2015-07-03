@@ -1,4 +1,4 @@
-# Migrating from 0.6 to 0.7
+Migrating from 0.6 to 0.7
 ===================
 
 ## Resource register
