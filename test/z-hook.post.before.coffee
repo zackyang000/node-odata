@@ -27,7 +27,7 @@ describe 'rest.post.before', ->
     support conn, (data) ->
       books = data
       request(app)
-        .post("/odata/book")
+        .post("/book")
         .send
           title: 'new'
         .end()

@@ -28,7 +28,7 @@ describe 'odata.query.orderby', ->
 
   it 'should default let items order with asc', (done) ->
     request(app)
-      .get("/odata/book?$orderby=price")
+      .get("/book?$orderby=price")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -41,7 +41,7 @@ describe 'odata.query.orderby', ->
 
   it 'should let items order asc', (done) ->
     request(app)
-      .get("/odata/book?$orderby=price asc")
+      .get("/book?$orderby=price asc")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -54,7 +54,7 @@ describe 'odata.query.orderby', ->
 
   it 'should let items order desc', (done) ->
     request(app)
-      .get("/odata/book?$orderby=price desc")
+      .get("/book?$orderby=price desc")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -67,7 +67,7 @@ describe 'odata.query.orderby', ->
 
   it 'should let items order when use multiple fields', (done) ->
     request(app)
-      .get("/odata/book?$orderby=price,title")
+      .get("/book?$orderby=price,title")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -82,6 +82,6 @@ describe 'odata.query.orderby', ->
 
   it "should be ignore when order by not exist field", (done) ->
     request(app)
-      .get("/odata/book?$orderby=not-exist-field")
+      .get("/book?$orderby=not-exist-field")
       .expect(200, done)
 

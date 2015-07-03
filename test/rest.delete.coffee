@@ -28,22 +28,22 @@ describe 'rest.delete', ->
 
   it 'should delete resource if it exist', (done) ->
     request(app)
-      .del("/odata/book/#{books[0].id}")
+      .del("/book/#{books[0].id}")
       .expect(200, done)
 
   it 'should be 404 if resource not exist', (done) ->
     request(app)
-      .del("/odata/book/00000")
+      .del("/book/00000")
       .expect(404, done)
 
   it 'should be 404 if without id', (done) ->
     request(app)
-      .del("/odata/book")
+      .del("/book")
       .expect(404, done)
 
   it 'should 404 if try to delete a resource twice', (done) ->
     request(app)
-      .del("/odata/book/#{books[1].id}")
+      .del("/book/#{books[1].id}")
       .end (err, res) ->
         request(app)
           .del("/odata/book/#{books[1].id}")

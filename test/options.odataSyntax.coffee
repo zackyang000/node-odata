@@ -31,15 +31,15 @@ describe 'options.odataSyntax', ->
 
   it 'should be 200 if it have entity', (done) ->
     request(app)
-      .get("/odata/book(#{books[0].id})")
+      .get("/book(#{books[0].id})")
       .expect(200, done)
 
   it 'should be 404 if it have not entity', (done) ->
     request(app)
-      .get("/odata/book(1)")
+      .get("/book(1)")
       .expect(404, done)
 
   it 'should be 200 when request to action', (done) ->
     request(app)
-      .get("/odata/book(#{books[0].id})")
+      .get("/book(#{books[0].id})")
       .expect(200, done)

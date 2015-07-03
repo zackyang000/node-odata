@@ -29,7 +29,7 @@ describe 'odata.query.skip', ->
   it 'should skip items', (done) ->
     firstBook = books[0]
     request(app)
-      .get("/odata/book?$skip=1")
+      .get("/book?$skip=1")
       .expect(200)
       .end (err, res) ->
         res.body.value.length.should.be.equal(books.length - 1)
@@ -37,7 +37,7 @@ describe 'odata.query.skip', ->
 
   it 'should not items when skip over count of items', (done) ->
     request(app)
-      .get("/odata/book?$skip=1024")
+      .get("/book?$skip=1024")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -46,7 +46,7 @@ describe 'odata.query.skip', ->
 
   it 'should ignore when skip not a number', (done) ->
     request(app)
-      .get("/odata/book?$skip=not-a-number")
+      .get("/book?$skip=not-a-number")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -55,7 +55,7 @@ describe 'odata.query.skip', ->
         
   it 'should ignore when skip not a positive number', (done) ->
     request(app)
-      .get("/odata/book?$skip=-1")
+      .get("/book?$skip=-1")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)

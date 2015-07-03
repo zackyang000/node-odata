@@ -18,7 +18,7 @@ describe 'model.special.name', ->
       done()
     it 'should work', (done) ->
       request(app)
-        .post('/odata/funcion-keyword')
+        .post('/funcion-keyword')
         .send
           year: 2015
         .expect(201, done)

@@ -19,7 +19,7 @@ describe 'options.maxSkip', ->
     app = server._app
     support conn, (books) ->
       request(app)
-        .get("/odata/book?$skip=2")
+        .get("/book?$skip=2")
         .end (err, res) ->
           return done(err)  if(err)
           res.body.value.length.should.be.equal(books.length - 1)
@@ -35,7 +35,7 @@ describe 'options.maxSkip', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$skip=2")
+          .get("/book?$skip=2")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(books.length - 1)
@@ -49,7 +49,7 @@ describe 'options.maxSkip', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$skip=1")
+          .get("/book?$skip=1")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(books.length - 1)
@@ -66,7 +66,7 @@ describe 'options.maxSkip', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$skip=2")
+          .get("/book?$skip=2")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(books.length - 1)
@@ -81,7 +81,7 @@ describe 'options.maxSkip', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$skip=1")
+          .get("/book?$skip=1")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(books.length - 1)

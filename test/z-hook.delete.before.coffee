@@ -26,6 +26,6 @@ describe 'rest.delete.before', ->
     support conn, (data) ->
       books = data
       request(app)
-        .del("/odata/book/#{books[0].id}")
+        .del("/book/#{books[0].id}")
         .end()
 

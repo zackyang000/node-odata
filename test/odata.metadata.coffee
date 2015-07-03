@@ -19,7 +19,7 @@ describe 'odata.metadata', ->
 
   it "should work", (done) ->
     request(app)
-      .get("/odata")
+      .get("/")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)

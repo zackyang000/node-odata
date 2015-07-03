@@ -27,6 +27,6 @@ describe 'rest.get.after', ->
     support conn, (data) ->
       books = data
       request(app)
-        .get("/odata/book/#{books[0].id}")
+        .get("/book/#{books[0].id}")
         .end()
 

@@ -28,7 +28,7 @@ describe 'odata.query.top', ->
 
   it 'should top items', (done) ->
     request(app)
-      .get("/odata/book?$top=1")
+      .get("/book?$top=1")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -37,7 +37,7 @@ describe 'odata.query.top', ->
 
   it 'should igonore when top not a number', (done) ->
     request(app)
-      .get("/odata/book?$top=not-a-number")
+      .get("/book?$top=not-a-number")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -46,7 +46,7 @@ describe 'odata.query.top', ->
 
   it 'should ignore when top not a positive number', (done) ->
     request(app)
-      .get("/odata/book?$top=-1")
+      .get("/book?$top=-1")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)

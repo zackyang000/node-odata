@@ -28,7 +28,7 @@ describe 'odata.query.count', ->
 
   it 'should get count', (done) ->
     request(app)
-      .get("/odata/book?$count=true")
+      .get("/book?$count=true")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -39,7 +39,7 @@ describe 'odata.query.count', ->
 
   it 'should not get count', (done) ->
     request(app)
-      .get("/odata/book?$count=false")
+      .get("/book?$count=false")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -48,5 +48,5 @@ describe 'odata.query.count', ->
 
   it 'should 500 when $count isn\'t \'true\' or \'false\'', (done) ->
     request(app)
-      .get("/odata/book?$count=1")
+      .get("/book?$count=1")
       .expect(500, done)

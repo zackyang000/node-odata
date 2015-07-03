@@ -28,7 +28,7 @@ describe 'rest.get', ->
 
   it 'should return all of the resources', (done) ->
     request(app)
-      .get('/odata/book')
+      .get('/book')
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -38,7 +38,7 @@ describe 'rest.get', ->
 
   it 'should return special resource', (done) ->
     request(app)
-      .get("/odata/book/#{books[0].id}")
+      .get("/book/#{books[0].id}")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -48,10 +48,10 @@ describe 'rest.get', ->
 
   it 'should be 404 if resouce name not declare', (done) ->
     request(app)
-      .get("/odata/not-exist-resource")
+      .get("/not-exist-resource")
       .expect(404, done)
 
   it 'should be 404 if special resource not found', (done) ->
     request(app)
-      .get("/odata/book/00000")
+      .get("/book/00000")
       .expect(404, done)

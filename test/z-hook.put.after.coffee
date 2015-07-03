@@ -29,7 +29,7 @@ describe 'rest.put.after', ->
     support conn, (data) ->
       books = data
       request(app)
-        .put("/odata/book/#{books[0].id}")
+        .put("/book/#{books[0].id}")
         .send
           title: 'new'
         .end()

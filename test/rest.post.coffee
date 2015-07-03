@@ -24,7 +24,7 @@ describe 'rest.post', ->
 
   it 'should create new resource', (done) ->
     request(app)
-      .post("/odata/book")
+      .post("/book")
       .send
         title: 'Steve Jobs'
       .expect(201)
@@ -37,5 +37,5 @@ describe 'rest.post', ->
 
   it 'should be 422 if post without data', (done) ->
     request(app)
-      .post("/odata/book")
+      .post("/book")
       .expect(422, done)

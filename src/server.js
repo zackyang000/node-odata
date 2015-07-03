@@ -34,7 +34,7 @@ server.init = function(db, prefix) {
   });
 };
 
-server.defaultConfiguration = function(db, prefix = '/oData' ) {
+server.defaultConfiguration = function(db, prefix = '' ) {
   this.set('app', this._app);
   this.set('db', db);
   this.set('prefix', prefix);
@@ -113,12 +113,15 @@ server.set = function(key, val) {
   switch (key) {
     case 'db':
       this._db = mongoose.createConnection(val);
-    break;
+      break;
     case 'prefix':
       if (val === '/') {
-      val = '';
-    }
-    break;
+        val = '';
+      }
+      if ( val.length > 0 && val[0] !== '/') {
+        val = '/' + val;
+      }
+      break;
   }
   this.settings[key] = val;
   return this;

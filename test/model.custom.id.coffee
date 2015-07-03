@@ -18,7 +18,7 @@ describe 'model.custom.id', ->
 
   it 'should work', (done) ->
     request(app)
-      .post('/odata/custom-id')
+      .post('/custom-id')
       .send
         id: 100
       .expect(201, done)

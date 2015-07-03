@@ -19,7 +19,7 @@ describe 'model.hidden.field', ->
           select: false
     app = server._app
     request(app)
-      .post('/odata/hidden-field')
+      .post('/hidden-field')
       .send
         name: 'zack'
         password: '123'
@@ -29,7 +29,7 @@ describe 'model.hidden.field', ->
 
   it "should work when get entity", (done) ->
     request(app)
-      .get("/odata/hidden-field/#{entity.id}")
+      .get("/hidden-field/#{entity.id}")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -40,7 +40,7 @@ describe 'model.hidden.field', ->
 
   it 'should work when get entities list', (done) ->
     request(app)
-      .get('/odata/hidden-field')
+      .get('/hidden-field')
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -51,7 +51,7 @@ describe 'model.hidden.field', ->
 ### TODO: need to fix
   it 'should work when get entities list even if it is selected', (done) ->
     request(app)
-      .get('/odata/hidden-field?$select=name, password')
+      .get('/hidden-field?$select=name, password')
       .expect(200)
       .end (err, res) ->
         res.body.value[0].should.be.have.property('name')
@@ -60,7 +60,7 @@ describe 'model.hidden.field', ->
 
   it 'should work when get entities list even if only it is selected', (done) ->
     request(app)
-      .get('/odata/hidden-field?$select=password')
+      .get('/hidden-field?$select=password')
       .expect(200)
       .end (err, res) ->
         res.body.value[0].should.be.not.have.property('name')

@@ -29,7 +29,7 @@ describe 'odata.query.filter', ->
   describe '[Equal]', ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=title eq '#{books[1].title}'")
+        .get("/book?$filter=title eq '#{books[1].title}'")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -38,7 +38,7 @@ describe 'odata.query.filter', ->
           done()
     it 'should filter items when it has extra spaces at begin', (done) ->
       request(app)
-        .get("/odata/book?$filter=   title eq '#{books[1].title}'")
+        .get("/book?$filter=   title eq '#{books[1].title}'")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -47,7 +47,7 @@ describe 'odata.query.filter', ->
           done()
     it 'should filter items when it has extra spaces at mid', (done) ->
       request(app)
-        .get("/odata/book?$filter=title   eq   '#{books[1].title}'")
+        .get("/book?$filter=title   eq   '#{books[1].title}'")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -56,7 +56,7 @@ describe 'odata.query.filter', ->
           done()
     it 'should filter items when it has extra spaces at end', (done) ->
       request(app)
-        .get("/odata/book?$filter=title eq '#{books[1].title}'   ")
+        .get("/book?$filter=title eq '#{books[1].title}'   ")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -67,7 +67,7 @@ describe 'odata.query.filter', ->
   describe "'Not equal'", ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=title ne '#{books[1].title}'")
+        .get("/book?$filter=title ne '#{books[1].title}'")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -77,7 +77,7 @@ describe 'odata.query.filter', ->
   describe "'Greater than'", ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=price gt 36.95")
+        .get("/book?$filter=price gt 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -88,7 +88,7 @@ describe 'odata.query.filter', ->
   describe '[Greater than or equal]', ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=price ge 36.95")
+        .get("/book?$filter=price ge 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -99,7 +99,7 @@ describe 'odata.query.filter', ->
   describe '[Less than]', ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=price lt 36.95")
+        .get("/book?$filter=price lt 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -110,7 +110,7 @@ describe 'odata.query.filter', ->
   describe '[Less than or equal]', ->
     it 'should filter items', (done) ->
       request(app)
-        .get("/odata/book?$filter=price le 36.95")
+        .get("/book?$filter=price le 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -121,7 +121,7 @@ describe 'odata.query.filter', ->
   describe '[Logical and]', ->
     it "should filter items", (done) ->
       request(app)
-        .get("/odata/book?$filter=title ne '#{books[1].title}' and price ge 36.95")
+        .get("/book?$filter=title ne '#{books[1].title}' and price ge 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)
@@ -130,7 +130,7 @@ describe 'odata.query.filter', ->
           done()
     it "should filter items when it has extra spaces", (done) ->
       request(app)
-        .get("/odata/book?$filter=title ne '#{books[1].title}'   and   price ge 36.95")
+        .get("/book?$filter=title ne '#{books[1].title}'   and   price ge 36.95")
         .expect(200)
         .end (err, res) ->
           return done(err)  if(err)

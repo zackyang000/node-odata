@@ -28,7 +28,7 @@ describe 'odata.query.select', ->
 
   it 'should select anyone field', (done) ->
     request(app)
-      .get("/odata/book?$select=price")
+      .get("/book?$select=price")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -39,7 +39,7 @@ describe 'odata.query.select', ->
 
   it 'should select multiple field', (done) ->
     request(app)
-      .get("/odata/book?$select=price,title")
+      .get("/book?$select=price,title")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -50,7 +50,7 @@ describe 'odata.query.select', ->
 
   it 'should select multiple field with blank space', (done) ->
     request(app)
-      .get("/odata/book?$select=price,   title")
+      .get("/book?$select=price,   title")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -61,7 +61,7 @@ describe 'odata.query.select', ->
 
   it 'should select id field', (done) ->
     request(app)
-      .get("/odata/book?$select=price,title,id")
+      .get("/book?$select=price,title,id")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -72,5 +72,5 @@ describe 'odata.query.select', ->
 
   it 'should ignore when select not exist field', (done) ->
     request(app)
-      .get("/odata/book?$select=not-exist-field")
+      .get("/book?$select=not-exist-field")
       .expect(200, done)

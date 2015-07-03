@@ -30,7 +30,7 @@ describe 'rest.put', ->
   it 'should modify resource', (done) ->
     books[0].title = 'modify title'
     request(app)
-      .put("/odata/book/#{books[0].id}")
+      .put("/book/#{books[0].id}")
       .send(books[0])
       .expect(200)
       .end (err, res) ->
@@ -43,7 +43,7 @@ describe 'rest.put', ->
     id = uuid.v4()
     title = 'new title'
     request(app)
-      .put("/odata/book/#{id}")
+      .put("/book/#{id}")
       .send
         title: title
       .expect(201)
@@ -57,12 +57,12 @@ describe 'rest.put', ->
 
   it 'should be 404 if without id', (done) ->
     request(app)
-      .put("/odata/book")
+      .put("/book")
       .send(books[0])
       .expect(404, done)
 
   it "should 400 if with a wrong id", (done) ->
     request(app)
-      .put("/odata/book/wrong-id")
+      .put("/book/wrong-id")
       .send(books[0])
       .expect(400, done)

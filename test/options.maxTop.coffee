@@ -19,7 +19,7 @@ describe 'options.maxTop', ->
     app = server._app
     support conn, (books) ->
       request(app)
-        .get("/odata/book?$top=10")
+        .get("/book?$top=10")
         .end (err, res) ->
           return done(err)  if(err)
           res.body.value.length.should.be.equal(1)
@@ -35,7 +35,7 @@ describe 'options.maxTop', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$top=2")
+          .get("/book?$top=2")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(1)
@@ -50,7 +50,7 @@ describe 'options.maxTop', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$top=1")
+          .get("/book?$top=1")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(1)
@@ -67,7 +67,7 @@ describe 'options.maxTop', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$top=1")
+          .get("/book?$top=1")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(1)
@@ -83,7 +83,7 @@ describe 'options.maxTop', ->
       app = server._app
       support conn, (books) ->
         request(app)
-          .get("/odata/book?$top=2")
+          .get("/book?$top=2")
           .end (err, res) ->
             return done(err)  if(err)
             res.body.value.length.should.be.equal(1)
