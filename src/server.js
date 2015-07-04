@@ -7,9 +7,10 @@ import { min } from 'lodash';
 import parser from './metadata/parser';
 import model from './model';
 import rest from './rest';
+import Resource from './resource';
 import { get as getRepository } from './model';
 
-var server = {};
+const server = {};
 
 server.init = function(db, prefix) {
   this._app = express();
@@ -24,14 +25,17 @@ server.init = function(db, prefix) {
   this.settings = {};
   this.defaultConfiguration(db, prefix);
 
+  this._resources = [];
+  this.Resource = Resource;
+
   // metadata
-  this._app.get(this.settings.prefix || '/', (req, res, next) => {
-    const resources = {};
-    server.resources.map(function(item){
-      resources[item.url] = parser.toMetadata(item.model);
-    });
-    res.json({ resources });
-  });
+  // this._app.get(this.settings.prefix || '/', (req, res, next) => {
+  //   const resources = {};
+  //   server.resources.map(function(item){
+  //     resources[item.url] = parser.toMetadata(item.model);
+  //   });
+  //   res.json({ resources });
+  // });
 };
 
 server.defaultConfiguration = function(db, prefix = '' ) {
@@ -40,28 +44,17 @@ server.defaultConfiguration = function(db, prefix = '' ) {
   this.set('prefix', prefix);
 };
 
-server.resources = [];
-server.register = function(params) {
-  server.resources.push(params);
-
-  // remove '/' if url is startwith it.
-  if (params.url.indexOf('/') === 0) {
-    params.url = params.url.substr(1);
+server.resource = function(name, model) {
+  if (model === undefined) {
+    return this._resources.name;
   }
 
-  // not allow contain '/' in url.
-  if (params.url.indexOf('/') >= 0) {
-    throw new Error('Resource of url can\'t contain "/", it can only be allowed to exist in the beginning.');
-  }
-
-  model.register(this._db, params.url, params.model);
-
-  params.options = params.options || {};
-  params.options.maxTop = min([this.get('maxTop'), params.options.maxTop]);
-  params.options.maxSkip = min([this.get('maxSkip'), params.options.maxSkip]);
-
-  let router = rest.getRouter(this._db, params, this.get('enableOdataSyntax'));
-  this._app.use(this.get('prefix'), router);
+  const resource = {};
+  /*jshint -W103 */
+  resource.__proto__ = Resource;
+  resource.init(name, model);
+  this._resources.push(resource);
+  return resource;
 };
 
 // expose functions method
@@ -85,6 +78,10 @@ server.repository = function(name) {
 };
 
 server.listen = function (...args) {
+  this._resources.map((resource) => {
+    const router = resource._router(this._db);
+    this._app.use(this.get('prefix'), router);
+  });
   this._app.listen.apply(this._app, args);
 };
 

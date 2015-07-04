@@ -8,12 +8,12 @@ import put from './put';
 import del from './delete';
 import { get, getAll } from './get';
 
-const getRouter = (_conn, params, enableOdataSyntax) => {
+const getRouter = (_conn, url, params, enableOdataSyntax) => {
   let options = params.options || {};
   let rest = params.rest || {};
   let actions = params.actions || {};
 
-  let resourceURL = `/${params.url}`;
+  let resourceURL = `/${url}`;
 
   let getUrl = `${resourceURL}/:id`;
   if (enableOdataSyntax) {
@@ -53,7 +53,7 @@ const getRouter = (_conn, params, enableOdataSyntax) => {
     },
   ];
 
-  let mongooseModel = model.get(_conn, params.url);
+  let mongooseModel = model.get(_conn, url);
 
   /*jshint -W064 */
   let router = Router();
