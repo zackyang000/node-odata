@@ -11,23 +11,18 @@ var bookInfo = {
   title: String
 };
 
-server.register({
-  url: '/book',
-  model: bookInfo,
-  actions: {
-    '/50off': function(req, res, next){
-      server.repository('book').findById(req.params.id, function(err, book){
-        book.price = +(book.price / 2).toFixed(2);
-        book.save(function(err){
-          res.jsonp(book);
-        });
+server.resource('book', bookInfo)
+  .action('/50off', function(req, res, next){
+    server.repository('book').findById(req.params.id, function(err, book){
+      book.price = +(book.price / 2).toFixed(2);
+      book.save(function(err){
+        res.jsonp(book);
       });
-    }
-  }
-});
+    });
+  });
 
 server.get('/license', function(req, res, next){
-    res.jsonp({license:'MIT'});
+  res.jsonp({license:'MIT'});
 });
 
 server.listen(3000, function(){
