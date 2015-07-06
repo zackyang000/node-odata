@@ -82,7 +82,7 @@ server.listen = function (...args) {
     const router = resource._router(this._db);
     this._app.use(this.get('prefix'), router);
   });
-  this._app.listen.apply(this._app, args);
+  return this._app.listen.apply(this._app, args);
 };
 
 server.use = function(...args) {

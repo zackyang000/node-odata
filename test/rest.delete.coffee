@@ -18,9 +18,7 @@ describe 'rest.delete', ->
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
+    server.resource 'book', bookSchema
     app = server._app
     support conn, (data) ->
       books = data

@@ -102,12 +102,12 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
     });
   });
 
-  for(let url in actions) {
+  for(let actionUrl in actions) {
     let action = actions[url];
-    ((url, action) => {
-      let fullUrl = `${resourceURL}/:id${url}`;
+    ((actionUrl, action) => {
+      let fullUrl = `${resourceURL}/:id${actionUrl}`;
       if (enableOdataSyntax) {
-        fullUrl = `${resourceURL}\\(:id\\)${url}`;
+        fullUrl = `${resourceURL}\\(:id\\)${actionUrl}`;
       }
       router.post(fullUrl, (req, res, next) => {
         if(checkAuth(action.auth)) {
@@ -117,7 +117,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
           res.status(401).end();
         }
       });
-    })(url, action);
+    })(actionUrl, action);
   }
 
   return router;
