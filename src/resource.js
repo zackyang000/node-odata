@@ -8,17 +8,63 @@ resource.init = function(name, model) {
   this.name = name;
   this.url = name;
   this.model = model;
+  this._rest = {
+    get: {},
+    post: {},
+    put: {},
+    delete: {},
+  };
   this._actions = {};
-  this.options = {};
+  this._options = {};
   return this;
 };
 
-resource.action = function(url, callback) {
-  this._actions[url] = callback;
+resource.action = function(url, fn) {
+  this._actions[url] = fn;
   return this;
 };
 
-resource._router = function(db) {
+resource.maxTop = function(count) {
+  this._maxTop = count;
+  return this;
+};
+
+resource.maxSkip = function(count) {
+  this._maxSkip = count;
+  return this;
+};
+
+resource.get = function() {
+  this._currentMethod = 'get';
+  return this;
+};
+
+resource.post = function() {
+  this._currentMethod = 'post';
+  return this;
+};
+
+resource.put = function() {
+  this._currentMethod = 'put';
+  return this;
+};
+
+resource.delete = function() {
+  this._currentMethod = 'delete';
+  return this;
+};
+
+resource.before = function(fn) {
+  this._rest[this._currentMethod].before = fn;
+  return this;
+};
+
+resource.after = function(fn) {
+  this._rest[this._currentMethod].after = fn;
+  return this;
+};
+
+resource._router = function(db, setting = {}) {
   // remove '/' if url is startwith it.
   if (this.url.indexOf('/') === 0) {
     this.url = this.url.substr(1);
@@ -31,10 +77,17 @@ resource._router = function(db) {
 
   model.register(db, this.url, this.model);
 
-  // this.options.maxTop = min([this.get('maxTop'), this.options.maxTop]);
-  // this.options.maxSkip = min([this.get('maxSkip'), this.options.maxSkip]);
+  const params = {
+    options: {
+      maxTop: min([setting.maxTop || 100000, this._maxTop || 100000]),
+      maxSkip: min([setting.maxSkip || 100000, this._maxSkip || 100000]),
+      orderby: null,
+    },
+    rest: this._rest,
+    actions: this.actions,
+  };
 
-  return rest.getRouter(db, this.url, this.options);
+  return rest.getRouter(db, this.url, params);
 };
 
 export default resource;

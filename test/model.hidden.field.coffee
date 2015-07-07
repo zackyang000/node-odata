@@ -3,32 +3,31 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+entity = undefined
+
 describe 'model.hidden.field', ->
-  app = undefined
-  entity = undefined
 
   before (done) ->
-    conn = 'mongodb://localhost/odata-test'
-    server = odata(conn)
-    server.register
-      url: 'hidden-field'
-      model:
-        name: String
-        password:
-          type: String
-          select: false
-    app = server._app
-    request(app)
-      .post('/hidden-field')
-      .send
-        name: 'zack'
-        password: '123'
-      .end (err, res) ->
-        entity = res.body
-        done()
+    server = odata('mongodb://localhost/odata-test')
+    server.resource 'hidden-field',
+      name: String
+      password:
+        type: String
+        select: false
+    s = server.listen PORT, ->
+      PORT = s.address().port
+      request("http://localhost:#{PORT}")
+        .post('/hidden-field')
+        .send
+          name: 'zack'
+          password: '123'
+        .end (err, res) ->
+          entity = res.body
+          done()
 
   it "should work when get entity", (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/hidden-field/#{entity.id}")
       .expect(200)
       .end (err, res) ->
@@ -39,7 +38,7 @@ describe 'model.hidden.field', ->
         done()
 
   it 'should work when get entities list', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get('/hidden-field')
       .expect(200)
       .end (err, res) ->
@@ -50,7 +49,7 @@ describe 'model.hidden.field', ->
 
 ### TODO: need to fix
   it 'should work when get entities list even if it is selected', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get('/hidden-field?$select=name, password')
       .expect(200)
       .end (err, res) ->
@@ -59,7 +58,7 @@ describe 'model.hidden.field', ->
         done()
 
   it 'should work when get entities list even if only it is selected', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get('/hidden-field?$select=password')
       .expect(200)
       .end (err, res) ->

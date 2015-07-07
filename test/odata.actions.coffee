@@ -3,6 +3,8 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -11,29 +13,26 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'odata.actions', ->
-  app = undefined
-  books = undefined
+books = undefined
 
+describe 'odata.actions', ->
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-      actions:
-        '/50off': (req, res, next) ->
-          server.repository('book').findById req.params.id, (err, book) ->
-            book.price = +(book.price / 2).toFixed(2)
-            book.save (err) ->
-              res.jsonp(book)
-    app = server._app
+    server.resource 'book', bookSchema
+      .action '/50off', (req, res, next) ->
+        server.repository('book').findById req.params.id, (err, book) ->
+          book.price = +(book.price / 2).toFixed(2)
+          book.save (err) ->
+            res.jsonp(book)
     support conn, (data) ->
       books = data
-      done()
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        done()
 
   it 'should work', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .post("/book/#{books[0].id}/50off")
       .expect(200)
       .end (err, res) ->

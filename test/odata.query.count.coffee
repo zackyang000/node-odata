@@ -3,6 +3,8 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -11,23 +13,21 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'odata.query.count', ->
-  app = undefined
-  books = undefined
+books = undefined
 
+describe 'odata.query.count', ->
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-    app = server._app
+    server.resource 'book', bookSchema
     support conn, (data) ->
       books = data
-      done()
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        done()
 
   it 'should get count', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$count=true")
       .expect(200)
       .end (err, res) ->
@@ -38,7 +38,7 @@ describe 'odata.query.count', ->
         done()
 
   it 'should not get count', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$count=false")
       .expect(200)
       .end (err, res) ->
@@ -47,6 +47,6 @@ describe 'odata.query.count', ->
         done()
 
   it 'should 500 when $count isn\'t \'true\' or \'false\'', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$count=1")
       .expect(500, done)

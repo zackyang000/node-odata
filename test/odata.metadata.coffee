@@ -2,23 +2,22 @@ should = require('should')
 request = require('supertest')
 odata = require('../.')
 
+PORT = 0
+
 bookSchema =
   title: String
 
 describe 'odata.metadata', ->
-  app = undefined
-
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-    app = server._app
-    done()
+    server.resource 'book', bookSchema
+    s = server.listen PORT, ->
+      PORT = s.address().port
+      done()
 
   it "should work", (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/")
       .expect(200)
       .end (err, res) ->

@@ -4,6 +4,8 @@ uuid = require('node-uuid')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -12,24 +14,22 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'rest.put', ->
-  app = undefined
-  books = undefined
+books = undefined
 
+describe 'rest.put', ->
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-    app = server._app
+    server.resource 'book', bookSchema
     support conn, (data) ->
       books = data
-      done()
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        done()
 
   it 'should modify resource', (done) ->
     books[0].title = 'modify title'
-    request(app)
+    request("http://localhost:#{PORT}")
       .put("/book/#{books[0].id}")
       .send(books[0])
       .expect(200)
@@ -42,7 +42,7 @@ describe 'rest.put', ->
   it 'should create resource if with a new id', (done) ->
     id = uuid.v4()
     title = 'new title'
-    request(app)
+    request("http://localhost:#{PORT}")
       .put("/book/#{id}")
       .send
         title: title
@@ -56,13 +56,13 @@ describe 'rest.put', ->
         done()
 
   it 'should be 404 if without id', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .put("/book")
       .send(books[0])
       .expect(404, done)
 
   it "should 400 if with a wrong id", (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .put("/book/wrong-id")
       .send(books[0])
       .expect(400, done)

@@ -3,6 +3,8 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -15,17 +17,14 @@ describe 'rest.delete.before', ->
   it 'should work', (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-      rest:
-        delete:
-          before: (entity) ->
-            done()
-    app = server._app
-    support conn, (data) ->
-      books = data
-      request(app)
-        .del("/book/#{books[0].id}")
-        .end()
+    server.resource 'book', bookSchema
+      .delete()
+        .before (entity) ->
+          done()
+    support conn, (books) ->
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        request("http://localhost:#{PORT}")
+          .del("/book/#{books[0].id}")
+          .end()
 

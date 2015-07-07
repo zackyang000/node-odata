@@ -3,6 +3,8 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -11,23 +13,22 @@ bookSchema =
   publish_date: Date
   title: String
 
+books = undefined
+
 describe 'odata.query.top', ->
-  app = undefined
-  books = undefined
 
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-    app = server._app
+    server.resource 'book', bookSchema
     support conn, (data) ->
       books = data
-      done()
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        done()
 
   it 'should top items', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$top=1")
       .expect(200)
       .end (err, res) ->
@@ -36,7 +37,7 @@ describe 'odata.query.top', ->
         done()
 
   it 'should igonore when top not a number', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$top=not-a-number")
       .expect(200)
       .end (err, res) ->
@@ -45,7 +46,7 @@ describe 'odata.query.top', ->
         done()
 
   it 'should ignore when top not a positive number', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .get("/book?$top=-1")
       .expect(200)
       .end (err, res) ->

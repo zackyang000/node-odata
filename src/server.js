@@ -22,7 +22,7 @@ server.init = function(db, prefix) {
   this._app.disable('x-powered-by');
   this._mongoose = mongoose;
 
-  this.settings = {};
+  this._settings = {};
   this.defaultConfiguration(db, prefix);
 
   this._resources = [];
@@ -79,7 +79,7 @@ server.repository = function(name) {
 
 server.listen = function (...args) {
   this._resources.map((resource) => {
-    const router = resource._router(this._db);
+    const router = resource._router(this._db, this._setting);
     this._app.use(this.get('prefix'), router);
   });
   return this._app.listen.apply(this._app, args);
@@ -91,7 +91,7 @@ server.use = function(...args) {
 
 server.get = function(key, handle, auth) {
   if (handle === undefined) {
-    return this.settings[key];
+    return this._settings[key];
   }
   // TODO: Need to refactor, same as L70-L80
   const app = this.get('app');
@@ -120,7 +120,7 @@ server.set = function(key, val) {
       }
       break;
   }
-  this.settings[key] = val;
+  this._settings[key] = val;
   return this;
 };
 

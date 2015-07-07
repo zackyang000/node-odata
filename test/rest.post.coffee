@@ -2,6 +2,8 @@ should = require('should')
 request = require('supertest')
 odata = require('../.')
 
+PORT = 0
+
 bookSchema =
   author: String
   description: String
@@ -11,19 +13,16 @@ bookSchema =
   title: String
 
 describe 'rest.post', ->
-  app = undefined
-
   before (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
-    server.register
-      url: 'book'
-      model: bookSchema
-    app = server._app
-    done()
+    server.resource 'book', bookSchema
+    s = server.listen PORT, ->
+      PORT = s.address().port
+      done()
 
   it 'should create new resource', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .post("/book")
       .send
         title: 'Steve Jobs'
@@ -36,6 +35,6 @@ describe 'rest.post', ->
         done()
 
   it 'should be 422 if post without data', (done) ->
-    request(app)
+    request("http://localhost:#{PORT}")
       .post("/book")
       .expect(422, done)
