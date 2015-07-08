@@ -3,8 +3,6 @@ request = require('supertest')
 odata = require('../.')
 support = require('./support')
 
-PORT = 0
-
 bookSchema =
   title: String
 
@@ -13,6 +11,7 @@ conn = 'mongodb://localhost/odata-test'
 describe 'options.maxSkip', ->
 
   it 'should work', (done) ->
+    PORT = 0
     server = odata(conn)
     server.set 'maxSkip', 1
     server.resource 'book', bookSchema
@@ -28,6 +27,7 @@ describe 'options.maxSkip', ->
 
   describe 'global-limit and query-limit', ->
     it 'should use global-limit if it is minimum', (done) ->
+      PORT = 0
       server = odata(conn)
       server.set 'maxSkip', 1
       server.resource 'book', bookSchema
@@ -41,6 +41,7 @@ describe 'options.maxSkip', ->
               res.body.value.length.should.be.equal(books.length - 1)
               done()
     it 'should use query-limit if it is minimum', (done) ->
+      PORT = 0
       server = odata(conn)
       server.set 'maxSkip', 2
       server.resource 'book', bookSchema
@@ -56,6 +57,7 @@ describe 'options.maxSkip', ->
 
   describe 'query-limit and resource-limit', ->
     it 'should use global-limit if it is minimum', (done) ->
+      PORT = 0
       server = odata(conn)
       server.resource 'book', bookSchema
         .maxSkip 1
@@ -69,6 +71,7 @@ describe 'options.maxSkip', ->
               res.body.value.length.should.be.equal(books.length - 1)
               done()
     it 'should use query-limit if it is minimum', (done) ->
+      PORT = 0
       server = odata(conn)
       server.resource 'book', bookSchema
         .maxSkip 2

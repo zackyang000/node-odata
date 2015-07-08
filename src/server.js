@@ -79,7 +79,7 @@ server.repository = function(name) {
 
 server.listen = function (...args) {
   this._resources.map((resource) => {
-    const router = resource._router(this._db, this._setting);
+    const router = resource._router(this._db, this._settings);
     this._app.use(this.get('prefix'), router);
   });
   return this._app.listen.apply(this._app, args);

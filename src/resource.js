@@ -81,7 +81,7 @@ resource._router = function(db, setting = {}) {
     options: {
       maxTop: min([setting.maxTop || 100000, this._maxTop || 100000]),
       maxSkip: min([setting.maxSkip || 100000, this._maxSkip || 100000]),
-      orderby: null,
+      orderby: undefined,
     },
     rest: this._rest,
     actions: this.actions,

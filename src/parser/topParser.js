@@ -1,15 +1,17 @@
 "use strict";
 
-import { min } from 'lodash';
-const SYSTEM_MAX_TOP = 1000000;
+import { isNumber, min } from 'lodash';
 
 // ?$top=10
 // ->
 // query.top(10)
-export default (query, top, maxTop) => {
-  top = min([SYSTEM_MAX_TOP, maxTop, top]);
+export default (query, top = 0, maxTop = 10000) => {
+  if (!isNumber(+top)) {
+    return;
+  }
+  top = min([maxTop, top]);
   if (top < 0) {
-    top = SYSTEM_MAX_TOP;
+    return;
   }
   query.limit(top);
 };
