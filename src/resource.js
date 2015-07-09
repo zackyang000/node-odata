@@ -45,6 +45,11 @@ resource.get = function() {
   return this;
 };
 
+resource.getAll = function() {
+  this._currentMethod = 'getAll';
+  return this;
+};
+
 resource.post = function() {
   this._currentMethod = 'post';
   return this;
@@ -57,6 +62,12 @@ resource.put = function() {
 
 resource.delete = function() {
   this._currentMethod = 'delete';
+  return this;
+};
+
+resource.all = function() {
+  //TODO
+  throw new Error('Not implemented');
   return this;
 };
 
