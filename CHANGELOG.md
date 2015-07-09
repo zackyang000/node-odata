@@ -1,9 +1,10 @@
 # 0.7.0
 ===================
-- Improved regist resource's API.
-- Add `enableOdataSyntax` in setting for use `/resource(:id)/` url. ([#2](https://github.com/TossShinHwa/node-odata/issues/2))
+- Improved regist resource's API to fluent API. ([#3](https://github.com/TossShinHwa/node-odata/issues/3), [#22](https://github.com/TossShinHwa/node-odata/issues/22))
 - Fix function named `before` of resource will not be execute. ([#31](https://github.com/TossShinHwa/node-odata/issues/31))
-- change default url prefix form `/odata` to `/`.
+- Add `.url(url)` for set a url, different of resource name.([#26](https://github.com/TossShinHwa/node-odata/issues/26))
+- Change default url prefix form `/odata` to `/`.
+- Modify url of resource to standard format. from `/resource/:id` to `/resource(:id)`. ([#2](https://github.com/TossShinHwa/node-odata/issues/2))
 
 # 0.6.0 (2015-05-30)
 ===================
