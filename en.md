@@ -36,17 +36,11 @@ We will create and run a simple OData services.
 After `node-odata` installation is complete, create * index.js * file and enter the following code:
 
     var odata = require('node-odata');
-
+    
     var server = odata('mongodb://localhost/my-app');
-
-    server.resources.register({
-        url: '/books',
-        model: {
-            title: String,
-            price: Number
-        }
-    });
-
+    
+    server.resource('/books', { title: String, price: Number });
+    
     server.listen(3000);
 
 ## 2.2 Run
@@ -241,9 +235,9 @@ TODO
 
 # 5) API
 
-This section describes the node-odata APIs.
+This section describes the node-odata **fluent API**.
 
-## 5.1 odata.resources.register
+## 5.1 Resource
 
 Register a Resource in OData service so that it can be using the REST API to invoke.
 
@@ -254,127 +248,89 @@ params:
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || URL of Resource ||
 || model    || object || Data structure definitions of Resource ||
-|| rest     || object (optional) || configuration for REST API, see example ||
-|| actions  || object (optional) || configuration for OData Action ([What's the Action](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1)), see example ||
-|| options  || object (optional) || Setting default behavior of REST API, such as the maximum number of queries, default ordering, etc. see example ||
 
 ### example
 
 *Node: In addition to the url and model, other parameters are optional
 
-  odata.resources.register({
-    // Resource URL register to /book
-    url: 'book',
-
+  odata.resource('book', {
     // Resource aata structure definitions
     // Optional types: String, Number, Date, Boolean, Array
-    model: {
-      author: String,
-      description: String,
-      genre: String,
-      id: String,
-      price: Number,
-      publish_date: Date,
-      title: String
-    },
+    author: String,
+    description: String,
+    genre: String,
+    id: String,
+    price: Number,
+    publish_date: Date,
+    title: String
+  })
+  // configure GET /resource/:id
+  .get()
+    .auth(function (req) {...}) // authorization verification, if false, client will get 401
+    .before(function (entity) {...}) // before callback
+    .after(function (entity) {...}) // after callback
+  // configure GET /resource
+  .getAll()
+    .auth(function (req) {...})
+    .before(function (entities) {...})
+    .after(function (entities) {...})
+  // configure POST /resource/:id
+  .post()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (originEntity, newEntity) {...})
+  // configure PUT /resource/:id
+  .put()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // configure DELETE /resource/:id
+  .delete()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // configure all of the above request
+  .all()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // 设置 OData Action
+  // 第一个参数为 action url, 第二个参数为 callback
+  // first param is action url, second param is action's callback
+  // when POST /resource/:id/50-off
+  .action('/50off', function(req, res, next){...})
+  // default orderby
+  .orderBy('date desc') 
+  // max skip limit
+  .maxSkip(10000) 
+  // max top limit
+  .maxTop(100)   
 
-    // configuration for REST API
-    rest: {
-      // When GET /resource/:id
-      get: {
-        // Authorization verification, if false, client will get 401
-        auth: function (req) {},
-
-        // before handle
-        before: function (req, res) {},
-
-        //after handle
-        after: function (entity) {}
-      },
-
-      // When GET /resource
-      getAll: {
-        // same as get
-      },
-
-      post: {
-        // same as get
-      },
-
-      put: {
-        // same as get
-      },
-
-      del: {
-        // same as get
-      }
-    },
-
-    // configuration for OData Action
-    actions: {
-      // key is action url, value is action's handle
-      // Here registered a 50-off to deal with the price of the book was revised to half
-      // when POST /resource/:id/50-off
-      "50-off": function(req, res, next) {
-        repository = mongoose.model('books');
-        repository.findById(req.params.id, function(err, book){
-          book.price = +(book.price / 2).toFixed(2);
-          book.save(function(err){
-            res.jsonp(book);
-          });
-        });
-      }
-    }
-
-    // Setting default behavior
-    options: {
-      orderby: 'date desc',
-      maxSkip: 10000,
-      maxTop: 100
-    }
-  });
-
-
-## 5.2 odata.functions.register
+## 5.2 Function
 
 Register a WEB API in OData service, for processing custom logic.
+
+```
+   odata.get(url, callback, auth);
+   odata.put(url, callback, auth);
+   odata.post(url, callback, auth);
+   odata.del(url, callback, auth);
+```
 
 ### Params
 
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || Url of WEB API ||
-|| method    || ["POST", "PUT", "GET", "DELETE"] || Request method ||
 || handle  || function || handle ||
 || auth  || function (optional) || Authorization verification ||
 
 #### Example
 
-  odata.functions.register({
-    // Url of WEB API
-    // Here registers a URL '/ server-time' for getting server time
-    url: '/server-time',
-
-    // HTTP Method of WEB API
-    // Accepted values include: "POST", "PUT", "GET", "DELETE"
-    method: 'GET',
-
-    // Business logic
-    handle: function(req, res, next) {
-      return res.json({
+  odata.get('/server-time', function(req, res, next) {
+      res.json({
         date: new Date()
       });
-    }
   });
-
-#### Simplify API
-
-You can also use the following API to register
-
-   odata.get(url, handle, auth);
-   odata.put(url, handle, auth);
-   odata.post(url, handle, auth);
-   odata.del(url, handle, auth);
-
 
 ## 5.3 odata.config.set / odata.config.get
 

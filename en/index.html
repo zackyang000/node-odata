@@ -37,8 +37,8 @@
   </ul></li>
   <li><div><a href="#5-api">5) API</a></div>
   <ul>
-    <li><div><a href="#51-odataresourcesregister">5.1 odata.resources.register</a></div></li>
-    <li><div><a href="#52-odatafunctionsregister">5.2 odata.functions.register</a></div></li>
+    <li><div><a href="#51-resource">5.1 Resource</a></div></li>
+    <li><div><a href="#52-function">5.2 Function</a></div></li>
     <li><div><a href="#53-odataconfigset-odataconfigget">5.3 odata.config.set / odata.config.get</a></div></li>
     <li><div><a href="#54-odatause">5.4 odata.use</a></div></li>
     <li><div><a href="#55-odatalisten">5.5 odata.listen</a></div></li>
@@ -87,13 +87,7 @@
 
 var server = odata('mongodb://localhost/my-app');
 
-server.resources.register({
-    url: '/books',
-    model: {
-        title: String,
-        price: Number
-    }
-});
+server.resource('/books', { title: String, price: Number });
 
 server.listen(3000);
 </code></pre>
@@ -311,9 +305,9 @@ OK
 
 <h1 id="5-api">5) API</h1>
 
-<p>This section describes the node-odata APIs.</p>
+<p>This section describes the node-odata <strong>fluent API</strong>.</p>
 
-<h2 id="51-odataresourcesregister">5.1 odata.resources.register</h2>
+<h2 id="51-resource">5.1 Resource</h2>
 
 <p>Register a Resource in OData service so that it can be using the REST API to invoke.</p>
 
@@ -326,9 +320,6 @@ OK
 <tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Details</strong></td></tr>
 <tr><td>url</td><td>string</td><td>URL of Resource</td></tr>
 <tr><td>model</td><td>object</td><td>Data structure definitions of Resource</td></tr>
-<tr><td>rest</td><td>object (optional)</td><td>configuration for REST API, see example</td></tr>
-<tr><td>actions</td><td>object (optional)</td><td>configuration for OData Action (<a href="http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1">What's the Action</a>), see example</td></tr>
-<tr><td>options</td><td>object (optional)</td><td>Setting default behavior of REST API, such as the maximum number of queries, default ordering, etc. see example</td></tr>
 </tbody>
 </table>
 
@@ -336,83 +327,69 @@ OK
 
 <p>*Node: In addition to the url and model, other parameters are optional</p>
 
-<p>odata.resources.register({
-    // Resource URL register to /book
-    url: 'book',</p>
-
-<pre><code>// Resource aata structure definitions
-// Optional types: String, Number, Date, Boolean, Array
-model: {
-  author: String,
-  description: String,
-  genre: String,
-  id: String,
-  price: Number,
-  publish_date: Date,
-  title: String
-},
-
-// configuration for REST API
-rest: {
-  // When GET /resource/:id
-  get: {
-    // Authorization verification, if false, client will get 401
-    auth: function (req) {},
-
-    // before handle
-    before: function (req, res) {},
-
-    //after handle
-    after: function (entity) {}
-  },
-
-  // When GET /resource
-  getAll: {
-    // same as get
-  },
-
-  post: {
-    // same as get
-  },
-
-  put: {
-    // same as get
-  },
-
-  del: {
-    // same as get
-  }
-},
-
-// configuration for OData Action
-actions: {
-  // key is action url, value is action's handle
-  // Here registered a 50-off to deal with the price of the book was revised to half
+<p>odata.resource('book', {
+    // Resource aata structure definitions
+    // Optional types: String, Number, Date, Boolean, Array
+    author: String,
+    description: String,
+    genre: String,
+    id: String,
+    price: Number,
+    publish_date: Date,
+    title: String
+  })
+  // configure GET /resource/:id
+  .get()
+    .auth(function (req) {...}) // authorization verification, if false, client will get 401
+    .before(function (entity) {...}) // before callback
+    .after(function (entity) {...}) // after callback
+  // configure GET /resource
+  .getAll()
+    .auth(function (req) {...})
+    .before(function (entities) {...})
+    .after(function (entities) {...})
+  // configure POST /resource/:id
+  .post()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (originEntity, newEntity) {...})
+  // configure PUT /resource/:id
+  .put()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // configure DELETE /resource/:id
+  .delete()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // configure all of the above request
+  .all()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // 设置 OData Action
+  // 第一个参数为 action url, 第二个参数为 callback
+  // first param is action url, second param is action's callback
   // when POST /resource/:id/50-off
-  "50-off": function(req, res, next) {
-    repository = mongoose.model('books');
-    repository.findById(req.params.id, function(err, book){
-      book.price = +(book.price / 2).toFixed(2);
-      book.save(function(err){
-        res.jsonp(book);
-      });
-    });
-  }
-}
+  .action('/50off', function(req, res, next){...})
+  // default orderby
+  .orderBy('date desc') 
+  // max skip limit
+  .maxSkip(10000) 
+  // max top limit
+  .maxTop(100)   </p>
 
-// Setting default behavior
-options: {
-  orderby: 'date desc',
-  maxSkip: 10000,
-  maxTop: 100
-}
-</code></pre>
-
-<p>});</p>
-
-<h2 id="52-odatafunctionsregister">5.2 odata.functions.register</h2>
+<h2 id="52-function">5.2 Function</h2>
 
 <p>Register a WEB API in OData service, for processing custom logic.</p>
+
+<p><code>
+   odata.get(url, callback, auth);
+   odata.put(url, callback, auth);
+   odata.post(url, callback, auth);
+   odata.del(url, callback, auth);
+</code></p>
 
 <h3 id="params-2">Params</h3>
 
@@ -420,7 +397,6 @@ options: {
 <tbody>
 <tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Details</strong></td></tr>
 <tr><td>url</td><td>string</td><td>Url of WEB API</td></tr>
-<tr><td>method</td><td>["POST", "PUT", "GET", "DELETE"]</td><td>Request method</td></tr>
 <tr><td>handle</td><td>function</td><td>handle</td></tr>
 <tr><td>auth</td><td>function (optional)</td><td>Authorization verification</td></tr>
 </tbody>
@@ -428,33 +404,11 @@ options: {
 
 <h4 id="example-2">Example</h4>
 
-<p>odata.functions.register({
-    // Url of WEB API
-    // Here registers a URL '/ server-time' for getting server time
-    url: '/server-time',</p>
-
-<pre><code>// HTTP Method of WEB API
-// Accepted values include: "POST", "PUT", "GET", "DELETE"
-method: 'GET',
-
-// Business logic
-handle: function(req, res, next) {
-  return res.json({
-    date: new Date()
-  });
-}
-</code></pre>
-
-<p>});</p>
-
-<h4 id="simplify-api">Simplify API</h4>
-
-<p>You can also use the following API to register</p>
-
-<p>odata.get(url, handle, auth);
-   odata.put(url, handle, auth);
-   odata.post(url, handle, auth);
-   odata.del(url, handle, auth);</p>
+<p>odata.get('/server-time', function(req, res, next) {
+      res.json({
+        date: new Date()
+      });
+  });</p>
 
 <h2 id="53-odataconfigset-odataconfigget">5.3 odata.config.set / odata.config.get</h2>
 

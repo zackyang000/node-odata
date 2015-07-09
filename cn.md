@@ -42,13 +42,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
     var server = odata('mongodb://localhost/my-app');
 
-    server.resources.register({
-        url: '/books',
-        model: {
-            title: String,
-            price: Number
-        }
-    });
+    server.resource('/books', { title: String, price: Number });
 
     server.listen(3000);
 
@@ -265,175 +259,101 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 # 5) API
 
-本节将介绍 node-odata 提供的 API.
+本节将介绍 node-odata 提供的 **fluent API**.
 
-## 5.1 odata.resources.register
+## 5.1 Resource
 
 在 OData 服务中注册一个 Resource, 使其可以使用基于 OData 的 REST API 进行增删查改.
 
 ### 参数
 
-params: 复杂对象, 具体字段如下所示
-
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || Resource 的 URL 地址 ||
 || model    || object || Resource 的数据结构定义 ||
-|| rest     || object (optional) || 针对 REST API 的配置项, 详见 example ||
-|| actions  || object (optional) || 配置 OData Action ([什么是 Action](http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Actions_1)), 用于实现复杂请求, 详见 example ||
-|| options  || object (optional) || 设置 REST API 的默认行为, 如最大查询条数/默认排序方式等, 详见 example ||
 
 ### example
 
-*注: 除了 url 和 model 以外, 其它都是可选参数
+*注: 除了 url 和 model 以外, 其它都是可选配置
 
-  odata.resources.register({
-    // Resource URL注册为 /book
-    url: 'book',
-
+  odata.resource('book', {
     // Resource 的数据结构定义
     // 可选类型包括: String, Number, Date, Boolean, Array
-    model: {
-      author: String,
-      description: String,
-      genre: String,
-      id: String,
-      price: Number,
-      publish_date: Date,
-      title: String
-    },
+    author: String,
+    description: String,
+    genre: String,
+    id: String,
+    price: Number,
+    publish_date: Date,
+    title: String
+  })
+  // 配置 GET /resource/:id
+  .get()
+    .auth(function (req) {...}) // 授权验证, 若返回 false, 则客户端将得到 401
+    .before(function (entity) {...}) // 在请求前执行的 callback
+    .after(function (entity) {...}) //在请求完成后执行的 callback
+  // 配置 GET /resource
+  .getAll()
+    .auth(function (req) {...})
+    .before(function (entities) {...})
+    .after(function (entities) {...})
+  // 配置 POST /resource/:id
+  .post()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (originEntity, newEntity) {...})
+  // 配置 PUT /resource/:id
+  .put()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // 配置 DELETE /resource/:id
+  .delete()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // 配置上述所有请求
+  .all()
+    .auth(function (req) {...})
+    .before(function (entity) {...})
+    .after(function (entity) {...})
+  // 设置 OData Action
+  // 第一个参数为 action url, 第二个参数为 callback
+  // 请求方式为 POST /resource/:id/50-off
+  .action('/50off', function(req, res, next){...})
+  // 默认排序字段, 默认为 undefined
+  .orderBy('date desc') 
+  // 最大允许跳过的行数, 默认为不限制
+  .maxSkip(10000) 
+  // 最大允许一次返回的条数, 默认为不限制
+  .maxTop(100) 
 
-    // 针对 REST API 的配置项
-    rest: {
-      // 当进行 GET /resource/:id 获取特定资源时时:
-      get: {
-        // 授权验证, 若返回 false, 则客户端将得到 401
-        auth: function (req) {},
-
-        // 在请求之前的 handle (同步, 将阻塞请求)
-        before: function (req, res) {},
-
-        //在请求完成之后的 handle (异步, response 返回后继续执行)
-        after: function (entity) {}
-      },
-
-      // 在进行 GET /resource 获取资源列表时:
-      getAll: {
-        // 授权验证, 若返回 false, 则客户端将得到 401
-        auth: function (req) {},
-
-        // 在请求之前的 handle (同步, 将阻塞请求)
-        before: function (req, res) {},
-
-        //在请求完成之后的 handle (异步, response 返回后继续执行)
-        after: function (entities) {}
-      },
-
-      post: {
-        // 授权验证, 若返回 false, 则客户端将得到 401
-        auth: function (req) {},
-
-        // 在请求之前的 handle (同步, 将阻塞请求)
-        before: function (req, res) {},
-
-        //在请求完成之后的 handle (异步, response 返回后继续执行)
-        after: function (entity) {}
-      },
-
-      put: {
-        // 授权验证, 若返回 false, 则客户端将得到 401
-        auth: function (req) {},
-
-        // 在请求之前的 handle (同步, 将阻塞请求)
-        before: function (req, res) {},
-
-        //在请求完成之后的 handle (异步, response 返回后继续执行)
-        after: function (newEntity, oldEntity) {}
-      },
-
-      del: {
-        // 授权验证, 若返回 false, 则客户端将得到 401
-        auth: function (req) {},
-
-        // 在请求之前的 handle (同步, 将阻塞请求)
-        before: function (req, res) {},
-
-        //在请求完成之后的 handle (异步, response 返回后继续执行)
-        after: function () {}
-      }
-    },
-
-    // 配置 OData Action
-    actions: {
-      // key 为 action url, value 是该 action 的 handle
-      // 这里注册了一个 50-off 来处理将书的价格修改为半价
-      // 请求方式为 POST /resource/:id/50-off
-      "50-off": function(req, res, next) {
-        repository = mongoose.model('books');
-        repository.findById(req.params.id, function(err, book){
-          book.price = +(book.price / 2).toFixed(2);
-          book.save(function(err){
-            res.jsonp(book);
-          });
-        });
-      }
-    }
-
-    // 设置 REST API 的默认行为
-    options: {
-      // 默认排序字段, 默认为 undefined
-      orderby: 'date desc',
-
-      // 最大允许跳过的行数, 默认为不限制
-      maxSkip: 10000,
-
-      // 最大允许一次返回的条数, 默认为不限制
-      maxTop: 100
-    }
-  });
-
-
-## 5.2 odata.functions.register
+## 5.2 Function
 
 在 OData 中注册一个 WEB API, 用于处理自定义的逻辑.
+
+```
+   odata.get(url, callback, auth);
+   odata.put(url, callback, auth);
+   odata.post(url, callback, auth);
+   odata.del(url, callback, auth);
+```
 
 ### 参数
 
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || WEB API 的 URL 地址 ||
-|| method    || ["POST", "PUT", "GET", "DELETE"] || 请求方式 ||
-|| handle  || function || 具体处理逻辑 ||
+|| callback  || function || 具体处理逻辑 ||
 || auth  || function (optional) || 权限验证 ||
 
 #### Example
 
-  odata.functions.register({
-    // WEB API 的 URL
-    // 这里注册了一个 URL '/server-time' 用于获取服务器时间
-    url: '/server-time',
-
-    // WEB API 的 HTTP Method
-    // 接受的值包括: "POST", "PUT", "GET", "DELETE"
-    method: 'GET',
-
-    // 具体业务逻辑处理
-    handle: function(req, res, next) {
-      return res.json({
+  odata.get('/server-time', function(req, res, next) {
+      res.json({
         date: new Date()
       });
-    }
   });
 
-#### 简化 API
-
-您也可以使用以下 API 达到相同效果
-
-   odata.get(url, handle, auth);
-   odata.put(url, handle, auth);
-   odata.post(url, handle, auth);
-   odata.del(url, handle, auth);
-
-
-## 5.3 odata.config.set / odata.config.get
+## 5.3 odata.set / odata.get
 
 用于对 node-odata 进行一些基本配置.
 
