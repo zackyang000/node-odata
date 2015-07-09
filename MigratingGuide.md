@@ -2,7 +2,7 @@ Migrating from 0.6 to 0.7
 ===================
 
 ## Resource register
-To simplify api, adjusted for resource register.
+To simplify api, resource register change to **fluent API**. (see [detail](http://tossshinhwa.github.io/node-odata/en/#5-api))
 
 Before:
 
@@ -19,17 +19,11 @@ server.resources.register({
 After:
 
 ```
-server.register({
-    url: '/books',
-    model: {
-        title: String,
-        price: Number
-    }
-});
+server.resource('books', { title: String, price: Number });
 ```
 
 ## Fcuntion register
-To simplify api, adjusted for function register. Remove the original api `server.functions.register`, add 4 new API: `get`, `post`, `put` and `delete`.
+To simplify api, adjusted for function register: Remove the original api `server.functions.register`, add 4 new API: `get`, `post`, `put` and `delete`.
 
 Before:
 
