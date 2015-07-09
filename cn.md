@@ -36,7 +36,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 2.1 创建服务
 
-`node-odata` 安装完成后, 新建 *index.js* 文件并输入以下脚本:
+**node-odata** 安装完成后, 新建 *index.js* 文件并输入以下脚本:
 
     var odata = require('node-odata');
 
@@ -66,7 +66,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.1 新增
 
-使用 `POST /odata/resource` 插入新的数据, 它将返回 resource 的最新状态.
+使用 **POST /odata/resource** 插入新的数据, 它将返回 resource 的最新状态.
 
     $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
     HTTP/1.1 201 Created
@@ -84,7 +84,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.2 修改
 
-使用 `PUT /odata/resource/:id` 修改已有的数据, 它将返回 resource 修改后的状态.
+使用 **PUT /odata/resource/:id** 修改已有的数据, 它将返回 resource 修改后的状态.
 
     $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -102,7 +102,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.3 查询
 
-使用 `GET /odata/resource` 查询 resource 列表, 其结果将以数组的形式返回在 value 中.
+使用 **GET /odata/resource** 查询 resource 列表, 其结果将以数组的形式返回在 value 中.
 
     $ curl -i -X GET http://127.0.0.1:3000/odata/books
     HTTP/1.1 200 OK
@@ -122,7 +122,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
       ]
     }
 
-使用 `GET /odata/resource/:id` 查询特定 resource.
+使用 **GET /odata/resource/:id** 查询特定 resource.
 
     $ curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -140,7 +140,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 3.4 删除
 
-使用 `DELETE /odata/resource/:id` 删除指定 resource.
+使用 **DELETE /odata/resource/:id** 删除指定 resource.
 
     $ curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -159,7 +159,7 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
 
 ## 4.1 $filter
 
-`$filter` 关键字可以对返回的数据集进行筛选.
+**$filter** 关键字可以对返回的数据集进行筛选.
 
 如: 返回价格低于 10 元的书单列表
 
@@ -190,7 +190,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 4.2 $orderby
 
-`$orderby` 关键字可以使返回的数据依据集合中特定字段进行排序.
+**$orderby** 关键字可以使返回的数据依据集合中特定字段进行排序.
 
 它可以使用逗号分隔以实现多重排序.
 
@@ -202,7 +202,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 4.3 $top
 
-`$top` 关键字用于限制返回集合的条数.
+**$top** 关键字用于限制返回集合的条数.
 
 如: 从书单中返回前5本书
 
@@ -210,7 +210,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 4.4 $skip
 
-`$skip` 关键字用于排除结果中的前 n 条记录, 返回的数据集将从第 n+1 条的位置开始.
+**$skip** 关键字用于排除结果中的前 n 条记录, 返回的数据集将从第 n+1 条的位置开始.
 
 如: 返回书单中第6条和第6条以后的数据
 
@@ -224,9 +224,9 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 4.5 $count
 
-当指定 `$count` 关键字的值为 `true` 的时候, 它将返回当前查询数据集的总条数.
+当指定 **$count** 关键字的值为 `true` 的时候, 它将返回当前查询数据集的总条数.
 
-`$count` 关键字将忽略 `$top` 和 `skip` 的过滤条件, 它的结果只受 `$filter` 的影响.
+**$count** 关键字将忽略 **$top** 和 **skip** 的过滤条件, 它的结果只受 **$filter** 的影响.
 
 如: 返回书单列表, 并包含总条数数量
 
@@ -234,28 +234,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 4.6 metadata
 
-为了更方便的让客户端调用, node-odata 实现了一套非标准的 metadata 特性. 可以让客户端通过 URL 就能了解到 OData 服务中 Resource 的数据结构.
-
-|| **URL**                               || **描述**                            ||
-|| http://host/odata/                    || 列出当前 OData 服务所有可用的 Resource ||
-|| http://host/odata/__metadata          || 列出所有 Resource 的数据结构          ||
-|| http://host/odata/__metadata/resource || 列出指定 Resource 的数据结构          ||
-
-如:
-
-    $ curl -i -X GET http://127.0.0.1:3000/odata/__metadata/books
-    HTTP/1.1 200 OK
-    Content-Type: application/json; charset=utf-8
-    Content-Length: 65
-    Date: Sun, 11 Jan 2015 08:41:44 GMT
-    Connection: keep-alive
-
-    {
-      "books": {
-        "title": "String",
-        "price": "Number"
-      }
-    }
+TODO
 
 # 5) API
 
@@ -273,70 +252,68 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ### example
 
-*注: 除了 url 和 model 以外, 其它都是可选配置
+**注**: 除了 url 和 model 以外, 其它都是可选配置
 
-  odata.resource('book', {
-    // Resource 的数据结构定义
-    // 可选类型包括: String, Number, Date, Boolean, Array
-    author: String,
-    description: String,
-    genre: String,
-    id: String,
-    price: Number,
-    publish_date: Date,
-    title: String
-  })
-  // 配置 GET /resource/:id
-  .get()
-    .auth(function (req) {...}) // 授权验证, 若返回 false, 则客户端将得到 401
-    .before(function (entity) {...}) // 在请求前执行的 callback
-    .after(function (entity) {...}) //在请求完成后执行的 callback
-  // 配置 GET /resource
-  .getAll()
-    .auth(function (req) {...})
-    .before(function (entities) {...})
-    .after(function (entities) {...})
-  // 配置 POST /resource/:id
-  .post()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (originEntity, newEntity) {...})
-  // 配置 PUT /resource/:id
-  .put()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // 配置 DELETE /resource/:id
-  .delete()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // 配置上述所有请求
-  .all()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // 设置 OData Action
-  // 第一个参数为 action url, 第二个参数为 callback
-  // 请求方式为 POST /resource/:id/50-off
-  .action('/50off', function(req, res, next){...})
-  // 默认排序字段, 默认为 undefined
-  .orderBy('date desc') 
-  // 最大允许跳过的行数, 默认为不限制
-  .maxSkip(10000) 
-  // 最大允许一次返回的条数, 默认为不限制
-  .maxTop(100) 
+    odata.resource('book', {
+      // Resource 的数据结构定义
+      // 可选类型包括: String, Number, Date, Boolean, Array
+      author: String,
+      description: String,
+      genre: String,
+      id: String,
+      price: Number,
+      publish_date: Date,
+      title: String
+    })
+    // 配置 GET /resource/:id
+    .get()
+      .auth(function (req) {...}) // 授权验证, 若返回 false, 则客户端将得到 401
+      .before(function (entity) {...}) // 在请求前执行的 callback
+      .after(function (entity) {...}) //在请求完成后执行的 callback
+    // 配置 GET /resource
+    .getAll()
+      .auth(function (req) {...})
+      .before(function (entities) {...})
+      .after(function (entities) {...})
+    // 配置 POST /resource/:id
+    .post()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (originEntity, newEntity) {...})
+    // 配置 PUT /resource/:id
+    .put()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // 配置 DELETE /resource/:id
+    .delete()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // 配置上述所有请求
+    .all()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // 设置 OData Action
+    // 第一个参数为 action url, 第二个参数为 callback
+    // 请求方式为 POST /resource/:id/50-off
+    .action('/50off', function(req, res, next){...})
+    // 默认排序字段, 默认为 undefined
+    .orderBy('date desc') 
+    // 最大允许跳过的行数, 默认为不限制
+    .maxSkip(10000) 
+    // 最大允许一次返回的条数, 默认为不限制
+    .maxTop(100) 
 
 ## 5.2 Function
 
 在 OData 中注册一个 WEB API, 用于处理自定义的逻辑.
 
-```
    odata.get(url, callback, auth);
    odata.put(url, callback, auth);
    odata.post(url, callback, auth);
    odata.del(url, callback, auth);
-```
 
 ### 参数
 
@@ -347,11 +324,11 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 #### Example
 
-  odata.get('/server-time', function(req, res, next) {
+    odata.get('/server-time', function(req, res, next) {
       res.json({
         date: new Date()
       });
-  });
+    });
 
 ## 5.3 odata.set / odata.get
 
@@ -365,7 +342,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 ## 5.4 odata.use
 
-使用 `odata.use` 可添加 `Express` 中间件.
+使用 `odata.use` 可添加 **Express** 中间件.
 
 ## 5.5 odata.listen
 

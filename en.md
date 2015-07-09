@@ -33,7 +33,7 @@ We will create and run a simple OData services.
 
 ## 2.1 Create
 
-After `node-odata` installation is complete, create * index.js * file and enter the following code:
+After **node-odata** installation is complete, create * index.js * file and enter the following code:
 
     var odata = require('node-odata');
     
@@ -63,7 +63,7 @@ You can use the [REST](http://zh.wikipedia.org/wiki/REST) style HTTP requests fo
 
 ## 3.1 Create
 
-Use `POST /odata/resource` to insert new data, it will return to the latest state of the resource.
+Use **POST /odata/resource** to insert new data, it will return to the latest state of the resource.
 
     $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
     HTTP/1.1 201 Created
@@ -81,7 +81,7 @@ Use `POST /odata/resource` to insert new data, it will return to the latest stat
 
 ## 3.2 Modify
 
-Use `PUT /odata/resource/:id` to modify existing data, it will return to the latest state of the resource.
+Use **PUT /odata/resource/:id** to modify existing data, it will return to the latest state of the resource.
 
     $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -99,7 +99,7 @@ Use `PUT /odata/resource/:id` to modify existing data, it will return to the lat
 
 ## 3.3 Query
 
-Use `GET /odata/resource` to query resources list, result will be returned in the value.
+Use **GET /odata/resource** to query resources list, result will be returned in the value.
 
     $ curl -i -X GET http://127.0.0.1:3000/odata/books
     HTTP/1.1 200 OK
@@ -119,7 +119,7 @@ Use `GET /odata/resource` to query resources list, result will be returned in th
       ]
     }
 
-Use `GET /odata/resource/:id` to querey specific resource.
+Use **GET /odata/resource/:id** to querey specific resource.
 
     $ curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -137,7 +137,7 @@ Use `GET /odata/resource/:id` to querey specific resource.
 
 ## 3.4 Remove
 
-Use `DELETE /odata/resource/:id` to remove specific resource.
+Use **DELETE /odata/resource/:id** to remove specific resource.
 
     $ curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
     HTTP/1.1 200 OK
@@ -156,7 +156,7 @@ Each keyword can be specified only once.
 
 ## 4.1 $filter
 
-`$filter` for filter the data set.
+**$filter** for filter the data set.
 
 Example: Returns a price below $ 10 books list
 
@@ -187,7 +187,7 @@ node-odata also built a series of functions to support complex queries:
 
 ## 4.2 $orderby
 
-`$orderby` for sort by fields.
+**$orderby** for sort by fields.
 
 It can use a comma-separated to multiple sorting.
 
@@ -199,7 +199,7 @@ Example: return all Books ordered by publish date in ascending order, then by pr
 
 ## 4.3 $top
 
-`$top` for limits the number of items returned from a collection.
+**$top** for limits the number of items returned from a collection.
 
 Example: return only the first five books of the Books entity set.
 
@@ -207,7 +207,7 @@ Example: return only the first five books of the Books entity set.
 
 ## 4.4 $skip
 
-`$skip` for excludes the first n items of the queried collection from the result.
+**$skip** for excludes the first n items of the queried collection from the result.
 
 Example: return books starting with the 6th book of the Books entity set
 
@@ -221,9 +221,9 @@ Example: return the third through seventh books of the Books entity set
 
 ## 4.5 $count
 
-The `$count` with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.
+The **$count** with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.
 
-The $count system query option ignores any $top, $skip, or $expand query options, and returns the total count of results across all pages including only those results matching any specified $filter and $search.
+The **$count** system query option ignores any **$top**, **$skip**, or **$expand** query options, and returns the total count of results across all pages including only those results matching any specified **$filter** and **$search**.
 
 Example: return, along with the results, the total number of books in the collection
 
@@ -251,71 +251,69 @@ params:
 
 ### example
 
-*Node: In addition to the url and model, other parameters are optional
+**Node**: In addition to the url and model, other parameters are optional
 
-  odata.resource('book', {
-    // Resource aata structure definitions
-    // Optional types: String, Number, Date, Boolean, Array
-    author: String,
-    description: String,
-    genre: String,
-    id: String,
-    price: Number,
-    publish_date: Date,
-    title: String
-  })
-  // configure GET /resource/:id
-  .get()
-    .auth(function (req) {...}) // authorization verification, if false, client will get 401
-    .before(function (entity) {...}) // before callback
-    .after(function (entity) {...}) // after callback
-  // configure GET /resource
-  .getAll()
-    .auth(function (req) {...})
-    .before(function (entities) {...})
-    .after(function (entities) {...})
-  // configure POST /resource/:id
-  .post()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (originEntity, newEntity) {...})
-  // configure PUT /resource/:id
-  .put()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // configure DELETE /resource/:id
-  .delete()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // configure all of the above request
-  .all()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // 设置 OData Action
-  // 第一个参数为 action url, 第二个参数为 callback
-  // first param is action url, second param is action's callback
-  // when POST /resource/:id/50-off
-  .action('/50off', function(req, res, next){...})
-  // default orderby
-  .orderBy('date desc') 
-  // max skip limit
-  .maxSkip(10000) 
-  // max top limit
-  .maxTop(100)   
+    odata.resource('book', {
+      // Resource aata structure definitions
+      // Optional types: String, Number, Date, Boolean, Array
+      author: String,
+      description: String,
+      genre: String,
+      id: String,
+      price: Number,
+      publish_date: Date,
+      title: String
+    })
+    // configure GET /resource/:id
+    .get()
+      .auth(function (req) {...}) // authorization verification, if false, client will get 401
+      .before(function (entity) {...}) // before callback
+      .after(function (entity) {...}) // after callback
+    // configure GET /resource
+    .getAll()
+      .auth(function (req) {...})
+      .before(function (entities) {...})
+      .after(function (entities) {...})
+    // configure POST /resource/:id
+    .post()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (originEntity, newEntity) {...})
+    // configure PUT /resource/:id
+    .put()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // configure DELETE /resource/:id
+    .delete()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // configure all of the above request
+    .all()
+      .auth(function (req) {...})
+      .before(function (entity) {...})
+      .after(function (entity) {...})
+    // 设置 OData Action
+    // 第一个参数为 action url, 第二个参数为 callback
+    // first param is action url, second param is action's callback
+    // when POST /resource/:id/50-off
+    .action('/50off', function(req, res, next){...})
+    // default orderby
+    .orderBy('date desc') 
+    // max skip limit
+    .maxSkip(10000) 
+    // max top limit
+    .maxTop(100)   
 
 ## 5.2 Function
 
 Register a WEB API in OData service, for processing custom logic.
 
-```
    odata.get(url, callback, auth);
    odata.put(url, callback, auth);
    odata.post(url, callback, auth);
    odata.del(url, callback, auth);
-```
 
 ### Params
 
@@ -344,7 +342,7 @@ Some basic configuration for node-odata.
 
 ## 5.4 odata.use
 
-Use `odata.use` to add` Express` middleware.
+Use `odata.use` to add  **Express** middleware.
 
 ## 5.5 odata.listen
 

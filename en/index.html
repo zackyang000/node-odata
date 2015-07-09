@@ -81,7 +81,7 @@
 
 <h2 id="21-create">2.1 Create</h2>
 
-<p>After <code>node-odata</code> installation is complete, create * index.js * file and enter the following code:</p>
+<p>After <strong>node-odata</strong> installation is complete, create * index.js * file and enter the following code:</p>
 
 <pre><code>var odata = require('node-odata');
 
@@ -114,7 +114,7 @@ DELETE /odata/books/:id
 
 <h2 id="31-create">3.1 Create</h2>
 
-<p>Use <code>POST /odata/resource</code> to insert new data, it will return to the latest state of the resource.</p>
+<p>Use <strong>POST /odata/resource</strong> to insert new data, it will return to the latest state of the resource.</p>
 
 <pre class="shell"><code>curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
 HTTP/1.1 201 Created
@@ -133,7 +133,7 @@ Connection: keep-alive
 
 <h2 id="32-modify">3.2 Modify</h2>
 
-<p>Use <code>PUT /odata/resource/:id</code> to modify existing data, it will return to the latest state of the resource.</p>
+<p>Use <strong>PUT /odata/resource/:id</strong> to modify existing data, it will return to the latest state of the resource.</p>
 
 <pre class="shell"><code>curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
 HTTP/1.1 200 OK
@@ -152,7 +152,7 @@ Connection: keep-alive
 
 <h2 id="33-query">3.3 Query</h2>
 
-<p>Use <code>GET /odata/resource</code> to query resources list, result will be returned in the value.</p>
+<p>Use <strong>GET /odata/resource</strong> to query resources list, result will be returned in the value.</p>
 
 <pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/books
 HTTP/1.1 200 OK
@@ -173,7 +173,7 @@ Connection: keep-alive
 }
 </code></pre>
 
-<p>Use <code>GET /odata/resource/:id</code> to querey specific resource.</p>
+<p>Use <strong>GET /odata/resource/:id</strong> to querey specific resource.</p>
 
 <pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
 HTTP/1.1 200 OK
@@ -192,7 +192,7 @@ Connection: keep-alive
 
 <h2 id="34-remove">3.4 Remove</h2>
 
-<p>Use <code>DELETE /odata/resource/:id</code> to remove specific resource.</p>
+<p>Use <strong>DELETE /odata/resource/:id</strong> to remove specific resource.</p>
 
 <pre class="shell"><code>curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
 HTTP/1.1 200 OK
@@ -212,7 +212,7 @@ OK
 
 <h2 id="41-filter">4.1 $filter</h2>
 
-<p><code>$filter</code> for filter the data set.</p>
+<p><strong>$filter</strong> for filter the data set.</p>
 
 <p>Example: Returns a price below $ 10 books list</p>
 
@@ -252,7 +252,7 @@ OK
 
 <h2 id="42-orderby">4.2 $orderby</h2>
 
-<p><code>$orderby</code> for sort by fields.</p>
+<p><strong>$orderby</strong> for sort by fields.</p>
 
 <p>It can use a comma-separated to multiple sorting.</p>
 
@@ -265,7 +265,7 @@ OK
 
 <h2 id="43-top">4.3 $top</h2>
 
-<p><code>$top</code> for limits the number of items returned from a collection.</p>
+<p><strong>$top</strong> for limits the number of items returned from a collection.</p>
 
 <p>Example: return only the first five books of the Books entity set.</p>
 
@@ -274,7 +274,7 @@ OK
 
 <h2 id="44-skip">4.4 $skip</h2>
 
-<p><code>$skip</code> for excludes the first n items of the queried collection from the result.</p>
+<p><strong>$skip</strong> for excludes the first n items of the queried collection from the result.</p>
 
 <p>Example: return books starting with the 6th book of the Books entity set</p>
 
@@ -290,9 +290,9 @@ OK
 
 <h2 id="45-count">4.5 $count</h2>
 
-<p>The <code>$count</code> with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.</p>
+<p>The <strong>$count</strong> with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.</p>
 
-<p>The $count system query option ignores any $top, $skip, or $expand query options, and returns the total count of results across all pages including only those results matching any specified $filter and $search.</p>
+<p>The <strong>$count</strong> system query option ignores any <strong>$top</strong>, <strong>$skip</strong>, or <strong>$expand</strong> query options, and returns the total count of results across all pages including only those results matching any specified <strong>$filter</strong> and <strong>$search</strong>.</p>
 
 <p>Example: return, along with the results, the total number of books in the collection</p>
 
@@ -325,71 +325,70 @@ OK
 
 <h3 id="example">example</h3>
 
-<p>*Node: In addition to the url and model, other parameters are optional</p>
+<p><strong>Node</strong>: In addition to the url and model, other parameters are optional</p>
 
-<p>odata.resource('book', {
-    // Resource aata structure definitions
-    // Optional types: String, Number, Date, Boolean, Array
-    author: String,
-    description: String,
-    genre: String,
-    id: String,
-    price: Number,
-    publish_date: Date,
-    title: String
-  })
-  // configure GET /resource/:id
-  .get()
-    .auth(function (req) {...}) // authorization verification, if false, client will get 401
-    .before(function (entity) {...}) // before callback
-    .after(function (entity) {...}) // after callback
-  // configure GET /resource
-  .getAll()
-    .auth(function (req) {...})
-    .before(function (entities) {...})
-    .after(function (entities) {...})
-  // configure POST /resource/:id
-  .post()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (originEntity, newEntity) {...})
-  // configure PUT /resource/:id
-  .put()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // configure DELETE /resource/:id
-  .delete()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // configure all of the above request
-  .all()
-    .auth(function (req) {...})
-    .before(function (entity) {...})
-    .after(function (entity) {...})
-  // 设置 OData Action
-  // 第一个参数为 action url, 第二个参数为 callback
-  // first param is action url, second param is action's callback
-  // when POST /resource/:id/50-off
-  .action('/50off', function(req, res, next){...})
-  // default orderby
-  .orderBy('date desc') 
-  // max skip limit
-  .maxSkip(10000) 
-  // max top limit
-  .maxTop(100)   </p>
+<pre><code>odata.resource('book', {
+  // Resource aata structure definitions
+  // Optional types: String, Number, Date, Boolean, Array
+  author: String,
+  description: String,
+  genre: String,
+  id: String,
+  price: Number,
+  publish_date: Date,
+  title: String
+})
+// configure GET /resource/:id
+.get()
+  .auth(function (req) {...}) // authorization verification, if false, client will get 401
+  .before(function (entity) {...}) // before callback
+  .after(function (entity) {...}) // after callback
+// configure GET /resource
+.getAll()
+  .auth(function (req) {...})
+  .before(function (entities) {...})
+  .after(function (entities) {...})
+// configure POST /resource/:id
+.post()
+  .auth(function (req) {...})
+  .before(function (entity) {...})
+  .after(function (originEntity, newEntity) {...})
+// configure PUT /resource/:id
+.put()
+  .auth(function (req) {...})
+  .before(function (entity) {...})
+  .after(function (entity) {...})
+// configure DELETE /resource/:id
+.delete()
+  .auth(function (req) {...})
+  .before(function (entity) {...})
+  .after(function (entity) {...})
+// configure all of the above request
+.all()
+  .auth(function (req) {...})
+  .before(function (entity) {...})
+  .after(function (entity) {...})
+// 设置 OData Action
+// 第一个参数为 action url, 第二个参数为 callback
+// first param is action url, second param is action's callback
+// when POST /resource/:id/50-off
+.action('/50off', function(req, res, next){...})
+// default orderby
+.orderBy('date desc') 
+// max skip limit
+.maxSkip(10000) 
+// max top limit
+.maxTop(100)
+</code></pre>
 
 <h2 id="52-function">5.2 Function</h2>
 
 <p>Register a WEB API in OData service, for processing custom logic.</p>
 
-<p><code>
-   odata.get(url, callback, auth);
+<p>odata.get(url, callback, auth);
    odata.put(url, callback, auth);
    odata.post(url, callback, auth);
-   odata.del(url, callback, auth);
-</code></p>
+   odata.del(url, callback, auth);</p>
 
 <h3 id="params-2">Params</h3>
 
@@ -426,7 +425,7 @@ OK
 
 <h2 id="54-odatause">5.4 odata.use</h2>
 
-<p>Use <code>odata.use</code> to add<code>Express</code> middleware.</p>
+<p>Use <code>odata.use</code> to add  <strong>Express</strong> middleware.</p>
 
 <h2 id="55-odatalisten">5.5 odata.listen</h2>
 
