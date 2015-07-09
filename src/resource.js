@@ -85,6 +85,11 @@ resource.auth = function(fn) {
   return this;
 };
 
+resource.url = function(url) {
+  this._url = url;
+  return this;
+}
+
 resource._router = function(db, setting = {}) {
   // remove '/' if url is startwith it.
   if (this._url.indexOf('/') === 0) {
