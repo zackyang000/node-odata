@@ -35,6 +35,11 @@ resource.maxSkip = function(count) {
   return this;
 };
 
+resource.orderBy = function(field) {
+  this._orderby = field;
+  return this;
+};
+
 resource.get = function() {
   this._currentMethod = 'get';
   return this;
@@ -65,6 +70,11 @@ resource.after = function(fn) {
   return this;
 };
 
+resource.auth = function(fn) {
+  this._rest[this._currentMethod].auth = fn;
+  return this;
+};
+
 resource._router = function(db, setting = {}) {
   // remove '/' if url is startwith it.
   if (this.url.indexOf('/') === 0) {
@@ -82,7 +92,7 @@ resource._router = function(db, setting = {}) {
     options: {
       maxTop: min([setting.maxTop || 100000, this._maxTop || 100000]),
       maxSkip: min([setting.maxSkip || 100000, this._maxSkip || 100000]),
-      orderby: undefined,
+      orderby: this._orderby,
     },
     rest: this._rest,
     actions: this._actions,
