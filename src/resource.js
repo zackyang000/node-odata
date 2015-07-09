@@ -5,9 +5,9 @@ import rest from './rest';
 const resource = {};
 
 resource.init = function(name, model) {
-  this.name = name;
-  this.url = name;
-  this.model = model;
+  this._name = name;
+  this._url = name;
+  this._model = model;
   this._rest = {
     get: {},
     post: {},
@@ -68,7 +68,6 @@ resource.delete = function() {
 resource.all = function() {
   //TODO
   throw new Error('Not implemented');
-  return this;
 };
 
 resource.before = function(fn) {
@@ -88,16 +87,16 @@ resource.auth = function(fn) {
 
 resource._router = function(db, setting = {}) {
   // remove '/' if url is startwith it.
-  if (this.url.indexOf('/') === 0) {
-    this.url = this.url.substr(1);
+  if (this._url.indexOf('/') === 0) {
+    this._url = this._url.substr(1);
   }
 
   // not allow contain '/' in url.
-  if (this.url.indexOf('/') >= 0) {
-    throw new Error(`Url of resource[${this.name}] can\'t contain "/", it can only be allowed to exist in the beginning.`);
+  if (this._url.indexOf('/') >= 0) {
+    throw new Error(`Url of resource[${this._name}] can\'t contain "/", it can only be allowed to exist in the beginning.`);
   }
 
-  model.register(db, this.url, this.model);
+  model.register(db, this._url, this._model);
 
   const params = {
     options: {
@@ -109,7 +108,7 @@ resource._router = function(db, setting = {}) {
     actions: this._actions,
   };
 
-  return rest.getRouter(db, this.url, params);
+  return rest.getRouter(db, this._url, params);
 };
 
 export default resource;
