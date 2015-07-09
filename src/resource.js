@@ -19,8 +19,9 @@ resource.init = function(name, model) {
   return this;
 };
 
-resource.action = function(url, fn) {
+resource.action = function(url, fn, auth) {
   this._actions[url] = fn;
+  this._actions[url].auth = auth;
   return this;
 };
 
@@ -84,7 +85,7 @@ resource._router = function(db, setting = {}) {
       orderby: undefined,
     },
     rest: this._rest,
-    actions: this.actions,
+    actions: this._actions,
   };
 
   return rest.getRouter(db, this.url, params);

@@ -1,12 +1,12 @@
 "use strict";
 
-import { isNumber, min } from 'lodash';
+import { min } from 'lodash';
 
 // ?$top=10
 // ->
 // query.top(10)
 export default (query, top = 0, maxTop = 10000) => {
-  if (!isNumber(+top)) {
+  if (isNaN(+top)) {
     return;
   }
   top = min([maxTop, top]);

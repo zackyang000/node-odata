@@ -103,7 +103,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
   });
 
   for(let actionUrl in actions) {
-    let action = actions[url];
+    let action = actions[actionUrl];
     ((actionUrl, action) => {
       let fullUrl = `${resourceURL}/:id${actionUrl}`;
       if (enableOdataSyntax) {
