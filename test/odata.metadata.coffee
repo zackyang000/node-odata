@@ -1,3 +1,4 @@
+###
 should = require('should')
 request = require('supertest')
 odata = require('../.')
@@ -27,3 +28,4 @@ describe 'odata.metadata', ->
         res.body.resources.book.should.be.have.property('title')
         res.body.resources.book.title.should.be.equal('String')
         done()
+###
