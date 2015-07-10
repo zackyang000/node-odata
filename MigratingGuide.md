@@ -1,6 +1,29 @@
 Migrating from 0.6 to 0.7
 ===================
 
+## URL
+Modify url of resource to standard format. from `/resource/:id` to `/resource(:id)`.
+
+Before:
+
+```
+GET    /odata/books
+GET    /odata/books/:id
+POST   /odata/books
+PUT    /odata/books/:id
+DELETE /odata/books/:id
+```
+
+After:
+
+```
+GET    /odata/books
+GET    /odata/books(:id)
+POST   /odata/books
+PUT    /odata/books(:id)
+DELETE /odata/books(:id)
+```
+
 ## Resource register
 To simplify api, resource register change to **fluent API**. (see [detail](http://tossshinhwa.github.io/node-odata/en/#5-api))
 

@@ -15,7 +15,7 @@ var odata = require('node-odata');
 
 var server = odata('mongodb://localhost/my-app');
 
-server.resource('/books', { 
+server.resource('books', { 
   title: String, 
   price: Number 
 });
@@ -27,10 +27,10 @@ Registers the following routes:
 
 ```
 GET    /odata/books
-GET    /odata/books/:id
+GET    /odata/books(:id)
 POST   /odata/books
-PUT    /odata/books/:id
-DELETE /odata/books/:id
+PUT    /odata/books(:id)
+DELETE /odata/books(:id)
 ```
 
 Use the following OData query:
