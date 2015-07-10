@@ -26,6 +26,6 @@ describe 'rest.get.after', ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .get("/book/#{books[0].id}")
+          .get("/book(#{books[0].id})")
           .end()
 

@@ -14,40 +14,36 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
   let actions = params.actions || {};
 
   let resourceURL = `/${url}`;
-
-  let getUrl = `${resourceURL}/:id`;
-  if (enableOdataSyntax) {
-    getUrl = `${resourceURL}\\(:id\\)`;
-  }
+  let entityURL = `${resourceURL}\\(:id\\)`;
 
   let routes = [
     {
       method: 'post',
-      url: `${resourceURL}`,
+      url: resourceURL,
       controller: post,
       config: rest.post || {},
     },
     {
       method: 'put',
-      url: `${resourceURL}/:id`,
+      url: entityURL,
       controller: put,
       config: rest.put || {},
     },
     {
       method: 'delete',
-      url: `${resourceURL}/:id`,
+      url: entityURL,
       controller: del,
       config: rest.delete || rest.del || {},
     },
     {
       method: 'get',
-      url: getUrl,
+      url: entityURL,
       controller: get,
       config: rest.get || {},
     },
     {
       method: 'get',
-      url: `${resourceURL}`,
+      url: resourceURL,
       controller: getAll,
       config: rest.getAll || {},
     },
@@ -60,7 +56,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
   routes.map((route) => {
     router[route.method](route.url, (req, res, next) => {
       if (checkAuth(route.config.auth, req)) {
-        //TODO: should run controller func after before done. (use promise)
+        //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
         if (route.config.before) {
           if (route.method === 'post') {
             route.config.before(req.body);
@@ -105,10 +101,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
   for(let actionUrl in actions) {
     let action = actions[actionUrl];
     ((actionUrl, action) => {
-      let fullUrl = `${resourceURL}/:id${actionUrl}`;
-      if (enableOdataSyntax) {
-        fullUrl = `${resourceURL}\\(:id\\)${actionUrl}`;
-      }
+      let fullUrl = `${entityURL}${actionUrl}`;
       router.post(fullUrl, (req, res, next) => {
         if(checkAuth(action.auth)) {
           action(req, res, next);

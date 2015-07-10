@@ -1,7 +1,6 @@
 should = require('should')
 request = require('supertest')
 odata = require('../.')
-support = require('./support')
 
 PORT = 0
 entity = undefined
@@ -28,7 +27,7 @@ describe 'model.hidden.field', ->
 
   it "should work when get entity", (done) ->
     request("http://localhost:#{PORT}")
-      .get("/hidden-field/#{entity.id}")
+      .get("/hidden-field(#{entity.id})")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)

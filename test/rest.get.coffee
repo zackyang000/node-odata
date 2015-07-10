@@ -38,7 +38,7 @@ describe 'rest.get', ->
 
   it 'should return special resource', (done) ->
     request("http://localhost:#{PORT}")
-      .get("/book/#{books[0].id}")
+      .get("/book(#{books[0].id})")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)
@@ -53,5 +53,5 @@ describe 'rest.get', ->
 
   it 'should be 404 if special resource not found', (done) ->
     request("http://localhost:#{PORT}")
-      .get("/book/00000")
+      .get("/book(00000)")
       .expect(404, done)

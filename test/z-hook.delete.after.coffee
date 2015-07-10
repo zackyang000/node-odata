@@ -25,6 +25,6 @@ describe 'rest.delete.after', ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .del("/book/#{books[0].id}")
+          .del("/book(#{books[0].id})")
           .end()
 

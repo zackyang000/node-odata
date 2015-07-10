@@ -30,7 +30,7 @@ describe 'rest.put', ->
   it 'should modify resource', (done) ->
     books[0].title = 'modify title'
     request("http://localhost:#{PORT}")
-      .put("/book/#{books[0].id}")
+      .put("/book(#{books[0].id})")
       .send(books[0])
       .expect(200)
       .end (err, res) ->
@@ -43,7 +43,7 @@ describe 'rest.put', ->
     id = uuid.v4()
     title = 'new title'
     request("http://localhost:#{PORT}")
-      .put("/book/#{id}")
+      .put("/book(#{id})")
       .send
         title: title
       .expect(201)
@@ -63,6 +63,6 @@ describe 'rest.put', ->
 
   it "should 400 if with a wrong id", (done) ->
     request("http://localhost:#{PORT}")
-      .put("/book/wrong-id")
+      .put("/book(wrong-id)")
       .send(books[0])
       .expect(400, done)

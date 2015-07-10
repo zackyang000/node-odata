@@ -88,7 +88,7 @@ resource.auth = function(fn) {
 resource.url = function(url) {
   this._url = url;
   return this;
-}
+};
 
 resource._router = function(db, setting = {}) {
   // remove '/' if url is startwith it.

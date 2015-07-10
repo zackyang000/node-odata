@@ -28,7 +28,7 @@ describe 'rest.put.after', ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .put("/book/#{books[0].id}")
+          .put("/book(#{books[0].id})")
           .send
             title: 'new'
           .end()

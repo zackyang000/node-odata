@@ -33,7 +33,7 @@ describe 'odata.actions', ->
 
   it 'should work', (done) ->
     request("http://localhost:#{PORT}")
-      .post("/book/#{books[0].id}/50off")
+      .post("/book(#{books[0].id})/50off")
       .expect(200)
       .end (err, res) ->
         return done(err)  if(err)

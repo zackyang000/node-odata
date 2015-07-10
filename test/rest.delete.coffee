@@ -28,12 +28,12 @@ describe 'rest.delete', ->
 
   it 'should delete resource if it exist', (done) ->
     request("http://localhost:#{PORT}")
-      .del("/book/#{books[0].id}")
+      .del("/book(#{books[0].id})")
       .expect(200, done)
 
   it 'should be 404 if resource not exist', (done) ->
     request("http://localhost:#{PORT}")
-      .del("/book/00000")
+      .del("/book(00000)")
       .expect(404, done)
 
   it 'should be 404 if without id', (done) ->
@@ -46,5 +46,5 @@ describe 'rest.delete', ->
       .del("/book/#{books[1].id}")
       .end (err, res) ->
         request("http://localhost:#{PORT}")
-          .del("/odata/book/#{books[1].id}")
+          .del("/odata(book/#{books[1].id})")
           .expect(404, done)
