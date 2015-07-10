@@ -1,12 +1,16 @@
 REPORTER = dot
 
-run: compile jshint tests
-.PHONY: run
+.PHONY: run compile test test-cov jshint
+
+run:  jshint compile test
+
+jshint:
+	@node_modules/jshint/bin/jshint .
 
 compile: 
 	babel -d lib/ src/
 
-tests:
+test:
 	@node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
@@ -19,5 +23,3 @@ test-cov:
 		--require coffee-script/register \
 		test/*.coffee \
 
-jshint:
-	@node_modules/jshint/bin/jshint .
