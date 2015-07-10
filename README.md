@@ -26,11 +26,11 @@ server.listen(3000);
 Registers the following routes:
 
 ```
-GET    /odata/books
-GET    /odata/books(:id)
-POST   /odata/books
-PUT    /odata/books(:id)
-DELETE /odata/books(:id)
+GET    /books
+GET    /books(:id)
+POST   /books
+PUT    /books(:id)
+DELETE /books(:id)
 ```
 
 Use the following OData query:
