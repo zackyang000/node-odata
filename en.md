@@ -39,7 +39,7 @@ After **node-odata** installation is complete, create * index.js * file and ente
     
     var server = odata('mongodb://localhost/my-app');
     
-    server.resource('/books', { title: String, price: Number });
+    server.resource('books', { title: String, price: Number });
     
     server.listen(3000);
 
@@ -51,11 +51,11 @@ Enter the following command to start the OData service:
 
 Registers the following routes:
 
-    GET    /odata/books
-    GET    /odata/books/:id
-    POST   /odata/books
-    PUT    /odata/books/:id
-    DELETE /odata/books/:id
+    GET    /books
+    GET    /books(:id)
+    POST   /books
+    PUT    /books(:id)
+    DELETE /books(:id)
 
 # 3) Use service
 
@@ -63,9 +63,9 @@ You can use the [REST](http://zh.wikipedia.org/wiki/REST) style HTTP requests fo
 
 ## 3.1 Create
 
-Use **POST /odata/resource** to insert new data, it will return to the latest state of the resource.
+Use **POST /resource** to insert new data, it will return to the latest state of the resource.
 
-    $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books
+    $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books
     HTTP/1.1 201 Created
     Content-Type: application/json; charset=utf-8
     Content-Length: 97
@@ -81,9 +81,9 @@ Use **POST /odata/resource** to insert new data, it will return to the latest st
 
 ## 3.2 Modify
 
-Use **PUT /odata/resource/:id** to modify existing data, it will return to the latest state of the resource.
+Use **PUT /resource(:id)** to modify existing data, it will return to the latest state of the resource.
 
-    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
     Content-Length: 96
@@ -99,9 +99,9 @@ Use **PUT /odata/resource/:id** to modify existing data, it will return to the l
 
 ## 3.3 Query
 
-Use **GET /odata/resource** to query resources list, result will be returned in the value.
+Use **GET /resource** to query resources list, result will be returned in the value.
 
-    $ curl -i -X GET http://127.0.0.1:3000/odata/books
+    $ curl -i -X GET http://127.0.0.1:3000/books
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
     Content-Length: 402
@@ -119,9 +119,9 @@ Use **GET /odata/resource** to query resources list, result will be returned in 
       ]
     }
 
-Use **GET /odata/resource/:id** to querey specific resource.
+Use **GET /resource(:id)** to querey specific resource.
 
-    $ curl -i -X GET http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    $ curl -i -X GET http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
     Content-Length: 96
@@ -137,9 +137,9 @@ Use **GET /odata/resource/:id** to querey specific resource.
 
 ## 3.4 Remove
 
-Use **DELETE /odata/resource/:id** to remove specific resource.
+Use **DELETE /resource(:id)** to remove specific resource.
 
-    $ curl -i -X DELETE http://127.0.0.1:3000/odata/books/54b1d6117d0b3d6d5255bc30
+    $ curl -i -X DELETE http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
     HTTP/1.1 200 OK
     Content-Type: text/plain
     Content-Length: 2
@@ -160,7 +160,7 @@ Each keyword can be specified only once.
 
 Example: Returns a price below $ 10 books list
 
-	http://host/odata/books?$filter=price lt 10.00
+	http://host/books?$filter=price lt 10.00
 
 node-odata has supported operators:
 
@@ -183,7 +183,7 @@ node-odata also built a series of functions to support complex queries:
 || **Date Functions** || ||
 || year       || year(publish_date) eq 2000 ||
 
-*Note: More operators and functions will be implemented in the future. All the operators and functions defined in the OData protocol Refer to [here](http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398301).
+*Note: More operators and functions will be implemented in the future. All the operators and functions defined in the OData protocol Refer to [here](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc406398301).
 
 ## 4.2 $orderby
 
@@ -195,7 +195,7 @@ The expression can include the suffix asc for ascending or desc for descending, 
 
 Example: return all Books ordered by publish date in ascending order, then by price in descending order.
 
-	http://host/odata/books?$orderby=publish_date asc, price desc
+	http://host/books?$orderby=publish_date asc, price desc
 
 ## 4.3 $top
 
@@ -203,7 +203,7 @@ Example: return all Books ordered by publish date in ascending order, then by pr
 
 Example: return only the first five books of the Books entity set.
 
-	http://host/odata/books?$top=5
+	http://host/books?$top=5
 
 ## 4.4 $skip
 
@@ -211,13 +211,13 @@ Example: return only the first five books of the Books entity set.
 
 Example: return books starting with the 6th book of the Books entity set
 
-	http://host/odata/books?$skip=6
+	http://host/books?$skip=6
 
 Where $top and $skip are used together, $skip MUST be applied before $top, regardless of the order in which they appear in the request.
 
 Example: return the third through seventh books of the Books entity set
 
-	http://host/odata/books?$top=5&$skip=2
+	http://host/books?$top=5&$skip=2
 
 ## 4.5 $count
 
@@ -227,7 +227,7 @@ The **$count** system query option ignores any **$top**, **$skip**, or **$expand
 
 Example: return, along with the results, the total number of books in the collection
 
-	http://host/odata/books?$count=true
+	http://host/books?$count=true
 
 ## 4.6 metadata
 
@@ -253,7 +253,7 @@ params:
 
 **Node**: In addition to the url and model, other parameters are optional
 
-    odata.resource('book', {
+    server.resource('book', {
       // Resource aata structure definitions
       // Optional types: String, Number, Date, Boolean, Array
       author: String,
@@ -264,7 +264,7 @@ params:
       publish_date: Date,
       title: String
     })
-    // configure GET /resource/:id
+    // configure GET /resource(:id)
     .get()
       .auth(function (req) {...}) // authorization verification, if false, client will get 401
       .before(function (entity) {...}) // before callback
@@ -274,17 +274,17 @@ params:
       .auth(function (req) {...})
       .before(function (entities) {...})
       .after(function (entities) {...})
-    // configure POST /resource/:id
+    // configure POST /resource
     .post()
       .auth(function (req) {...})
       .before(function (entity) {...})
       .after(function (originEntity, newEntity) {...})
-    // configure PUT /resource/:id
+    // configure PUT /resource(:id)
     .put()
       .auth(function (req) {...})
       .before(function (entity) {...})
       .after(function (entity) {...})
-    // configure DELETE /resource/:id
+    // configure DELETE /resource(:id)
     .delete()
       .auth(function (req) {...})
       .before(function (entity) {...})
@@ -297,7 +297,7 @@ params:
     // 设置 OData Action
     // 第一个参数为 action url, 第二个参数为 callback
     // first param is action url, second param is action's callback
-    // when POST /resource/:id/50-off
+    // when POST /resource(:id)/50-off
     .action('/50off', function(req, res, next){...})
     // default orderby
     .orderBy('date desc') 
@@ -310,16 +310,16 @@ params:
 
 Register a WEB API in OData service, for processing custom logic.
 
-   odata.get(url, callback, auth);
-   odata.put(url, callback, auth);
-   odata.post(url, callback, auth);
-   odata.del(url, callback, auth);
+   server.get(url, callback, auth);
+   server.put(url, callback, auth);
+   server.post(url, callback, auth);
+   server.del(url, callback, auth);
 
 ### Params
 
 || **Name**                               || **Type**                            || **Details** ||
 || url      || string || Url of WEB API ||
-|| handle  || function || handle ||
+|| callback  || function || function handler ||
 || auth  || function (optional) || Authorization verification ||
 
 #### Example
@@ -330,21 +330,21 @@ Register a WEB API in OData service, for processing custom logic.
       });
   });
 
-## 5.3 odata.config.set / odata.config.get
+## 5.3 set / get
 
 Some basic configuration for node-odata.
 
 || **Allow Key**                               || **Value Type**                            || **Details** ||
 || db      || string || Configure mongoDB database Address ||
-|| prefix    || string || Configure the URL prefix, the default is '/ odata' ||
+|| prefix    || string || Configure the URL prefix, the default is '/' ||
 || maxTop  || int || Setting the global maximum number of allowed Query ||
 || maxSkip  || int || Setting the global maximum number of allowed skipped ||
 
-## 5.4 odata.use
+## 5.4 use
 
-Use `odata.use` to add  **Express** middleware.
+Use `server.use` to add  **Express** middleware.
 
-## 5.5 odata.listen
+## 5.5 listen
 
 On a given host and port monitoring requests.
 
