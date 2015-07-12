@@ -1,3 +1,7 @@
+# 0.7.1
+===================
+- Fixed put/post/delete of functions does not work.
+
 # 0.7.0
 ===================
 - Improved regist resource's API to fluent API. ([#3](https://github.com/TossShinHwa/node-odata/issues/3), [#22](https://github.com/TossShinHwa/node-odata/issues/22))
