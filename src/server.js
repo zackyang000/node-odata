@@ -58,20 +58,44 @@ server.resource = function(name, model) {
 };
 
 // expose functions method
-['get', 'put', 'del', 'post'].map((method) => {
-  server[method] = (url, handle, auth) => {
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    app[method](`${prefix}${url}`, function(req, res, next) {
-      if (checkAuth(route.config.auth, req)) {
-        handle(req, res, next);
-      }
-      else {
-        res.status(401).end();
-      }
-    });
-  };
-});
+server.post = function (url, callback, auth) {
+  const app = this.get('app');
+  const prefix = this.get('prefix');
+  app.post(`${prefix}${url}`, function(req, res, next) {
+    if (checkAuth(auth, req)) {
+      callback(req, res, next);
+    }
+    else {
+      res.status(401).end();
+    }
+  });
+};
+
+server.put = function (url, callback, auth) {
+  const app = this.get('app');
+  const prefix = this.get('prefix');
+  app.put(`${prefix}${url}`, function(req, res, next) {
+    if (checkAuth(auth, req)) {
+      callback(req, res, next);
+    }
+    else {
+      res.status(401).end();
+    }
+  });
+};
+
+server.delete = function (url, callback, auth) {
+  const app = this.get('app');
+  const prefix = this.get('prefix');
+  app.delete(`${prefix}${url}`, function(req, res, next) {
+    if (checkAuth(auth, req)) {
+      callback(req, res, next);
+    }
+    else {
+      res.status(401).end();
+    }
+  });
+};
 
 server.repository = function(name) {
   return getRepository(this._db, name);
@@ -89,8 +113,8 @@ server.use = function(...args) {
   this._app.use.apply(this._app, args);
 };
 
-server.get = function(key, handle, auth) {
-  if (handle === undefined) {
+server.get = function(key, callback, auth) {
+  if (callback === undefined) {
     return this._settings[key];
   }
   // TODO: Need to refactor, same as L70-L80
@@ -98,7 +122,7 @@ server.get = function(key, handle, auth) {
   const prefix = this.get('prefix');
   app.get(`${prefix}${key}`, function(req, res, next) {
     if (checkAuth(auth, req)) {
-      handle(req, res, next);
+      callback(req, res, next);
     }
     else {
       res.status(401).end();
