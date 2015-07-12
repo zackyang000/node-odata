@@ -219,7 +219,15 @@ Example: return the third through seventh books of the Books entity set
 
 	http://host/books?$top=5&$skip=2
 
-## 4.5 $count
+## 4.5 $select
+
+**$select** for requests that the service return only the properties requested by the client. 
+
+Example:  return title and price of resource only.
+
+	http://host/books?$select=title, price
+
+## 4.6 $count
 
 The **$count** with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.
 
@@ -229,7 +237,7 @@ Example: return, along with the results, the total number of books in the collec
 
 	http://host/books?$count=true
 
-## 4.6 metadata
+## 4.7 $metadata
 
 TODO
 

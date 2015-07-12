@@ -32,8 +32,9 @@
     <li><div><a href="#42-orderby">4.2 $orderby</a></div></li>
     <li><div><a href="#43-top">4.3 $top</a></div></li>
     <li><div><a href="#44-skip">4.4 $skip</a></div></li>
-    <li><div><a href="#45-count">4.5 $count</a></div></li>
-    <li><div><a href="#46-metadata">4.6 metadata</a></div></li>
+    <li><div><a href="#45-select">4.5 $select</a></div></li>
+    <li><div><a href="#46-count">4.6 $count</a></div></li>
+    <li><div><a href="#47-metadata">4.7 $metadata</a></div></li>
   </ul></li>
   <li><div><a href="#5-api">5) API</a></div>
   <ul>
@@ -288,7 +289,16 @@ OK
 <pre><code>http://host/books?$top=5&amp;$skip=2
 </code></pre>
 
-<h2 id="45-count">4.5 $count</h2>
+<h2 id="45-select">4.5 $select</h2>
+
+<p><strong>$select</strong> for requests that the service return only the properties requested by the client. </p>
+
+<p>Example:  return title and price of resource only.</p>
+
+<pre><code>http://host/books?$select=title, price
+</code></pre>
+
+<h2 id="46-count">4.6 $count</h2>
 
 <p>The <strong>$count</strong> with a value of true specifies that the total count of items within a collection matching the request be returned along with the result.</p>
 
@@ -299,7 +309,7 @@ OK
 <pre><code>http://host/books?$count=true
 </code></pre>
 
-<h2 id="46-metadata">4.6 metadata</h2>
+<h2 id="47-metadata">4.7 $metadata</h2>
 
 <p>TODO</p>
 

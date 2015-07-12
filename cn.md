@@ -222,7 +222,15 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 	http://host/books?$top=5&$skip=2
 
-## 4.5 $count
+## 4.5 $select
+
+**$select** 关键字用于让客户端指定 resource 仅需返回的字段. 多个字段之间使用逗号分隔.
+
+如: 仅返回书的名字和价格
+
+	http://host/books?$select=title, price
+
+## 4.6 $count
 
 当指定 **$count** 关键字的值为 `true` 的时候, 它将返回当前查询数据集的总条数.
 
@@ -232,7 +240,7 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 	http://host/books?$count=true
 
-## 4.6 metadata
+## 4.7 $metadata
 
 TODO
 
