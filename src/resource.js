@@ -1,3 +1,5 @@
+"use strict";
+
 import { min } from 'lodash';
 import model from './model';
 import rest from './rest';

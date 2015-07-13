@@ -1,3 +1,5 @@
+"use strict";
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
@@ -26,7 +28,6 @@ server.init = function(db, prefix) {
   this.defaultConfiguration(db, prefix);
 
   this._resources = [];
-  this.Resource = Resource;
 
   // metadata
   // this._app.get(this.settings.prefix || '/', (req, res, next) => {
@@ -110,6 +111,10 @@ server.listen = function (...args) {
 };
 
 server.use = function(...args) {
+  if (args.length === 1 && args[0] instanceof Resource) {
+    this._resources.push(args[0]);
+    return;
+  }
   this._app.use.apply(this._app, args);
 };
 
