@@ -2,15 +2,12 @@ var odata = require('../../');
 
 server = odata('mongodb://localhost/odata-test');
 
-server.register({
-    url: '/users',
-    model: {
-        name: String,
-        password: {
-          type: String,
-          select: false
-        }
-    }
+server.resource('users', {
+  name: String,
+  password: {
+    type: String,
+    select: false
+  }
 });
 
 server.listen(3000, function(){

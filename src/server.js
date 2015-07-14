@@ -50,10 +50,7 @@ server.resource = function(name, model) {
     return this._resources.name;
   }
 
-  const resource = {};
-  /*jshint -W103 */
-  resource.__proto__ = Resource;
-  resource.init(name, model);
+  const resource = new Resource(name, model);
   this._resources.push(resource);
   return resource;
 };

@@ -13,10 +13,7 @@ const server = function(db, prefix) {
 };
 
 server.Resource = function(name, model) {
-  const resource = {};
-  /*jshint -W103 */
-  resource.__proto__ = Resource;
-  resource.init(name, model);
+  return new Resource(name, model);
 };
 
 server.Function = function() {
