@@ -23,11 +23,14 @@ server.init = function(db, prefix) {
   this._app.use(cors());
   this._app.disable('x-powered-by');
   this._mongoose = mongoose;
-
   this._settings = {};
   this.defaultConfiguration(db, prefix);
 
+  // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
+  // Should mix _resources object and resources object: _resources + resource = resources.
+  // Encapsulation to a object, separate mognoose, try to use *repository pattern*.
   this._resources = [];
+  this.resources = {}; 
 
   // metadata
   // this._app.get(this.settings.prefix || '/', (req, res, next) => {
@@ -49,7 +52,6 @@ server.resource = function(name, model) {
   if (model === undefined) {
     return this._resources.name;
   }
-
   const resource = new Resource(name, model);
   this._resources.push(resource);
   return resource;
@@ -95,14 +97,11 @@ server.delete = function (url, callback, auth) {
   });
 };
 
-server.repository = function(name) {
-  return getRepository(this._db, name);
-};
-
 server.listen = function (...args) {
   this._resources.map((resource) => {
     const router = resource._router(this._db, this._settings);
     this._app.use(this.get('prefix'), router);
+    this.resources[resource._name] = this._db.model(resource._name);
   });
   return this._app.listen.apply(this._app, args);
 };
