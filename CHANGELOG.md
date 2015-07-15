@@ -1,8 +1,16 @@
-# 0.7.1
+# 0.7.3 (2015-07-15)
+===================
+- Improved API to use mongoose: from server.repository.get(name) to server.resources.name
+
+# 0.7.2 (2015-07-14)
+===================
+- Add Resource and Function object for odata.
+
+# 0.7.1 (2015-07-12)
 ===================
 - Fixed put/post/delete of functions does not work.
 
-# 0.7.0
+# 0.7.0 (2015-07-10)
 ===================
 - Improved regist resource's API to fluent API. ([#3](https://github.com/TossShinHwa/node-odata/issues/3), [#22](https://github.com/TossShinHwa/node-odata/issues/22))
 - Fix function named `before` of resource will not be execute. ([#31](https://github.com/TossShinHwa/node-odata/issues/31))
