@@ -59,13 +59,13 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
         //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
         if (route.config.before) {
           if (route.method === 'post') {
-            route.config.before(req.body);
+            route.config.before(req.body, req, res);
           } else {
             mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
               if (err) {
                 return;
               }
-              route.config.before(entity);
+              route.config.before(entity, req, res);
             });
           }
         }
@@ -81,7 +81,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
             res.end();
           }
           if (route.config.after) {
-            route.config.after(result.entity, result.originEntity);
+            route.config.after(result.entity, result.originEntity, req, res);
           }
         }, (err) => {
           if (err.status) {
