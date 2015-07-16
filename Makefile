@@ -1,4 +1,4 @@
-REPORTER = dot
+REPORTER = spec
 
 .PHONY: run compile test test-cov jshint
 
