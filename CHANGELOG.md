@@ -9,11 +9,11 @@
 
 0.7.2 (2015-07-14)
 ===================
-- Add Resource and Function object for odata.
+- Add `Resource` and `Function` object for odata.
 
 0.7.1 (2015-07-12)
 ===================
-- Fixed put/post/delete of functions does not work.
+- Fixed `put/post/delete` of functions does not work.
 
 0.7.0 (2015-07-10)
 ===================
