@@ -3,10 +3,11 @@
 import _ from 'lodash';
 import { Router } from 'express';
 import model from './../model';
+import list from './list';
 import post from './post';
 import put from './put';
 import del from './delete';
-import { get, getAll } from './get';
+import get from './get';
 
 const getRouter = (_conn, url, params, enableOdataSyntax) => {
   let options = params.options || {};
@@ -44,8 +45,8 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
     {
       method: 'get',
       url: resourceURL,
-      controller: getAll,
-      config: rest.getAll || {},
+      controller: list,
+      config: rest.list || {},
     },
   ];
 
@@ -60,6 +61,8 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
         if (route.config.before) {
           if (route.method === 'post') {
             route.config.before(req.body, req, res);
+          } if (route.method === 'get' && route.url === resourceURL) {
+              route.config.before(req, res);
           } else {
             mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
               if (err) {

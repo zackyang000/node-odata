@@ -10,6 +10,7 @@ class Resource {
     this._url = name;
     this._model = model;
     this._rest = {
+      list: {},
       get: {},
       post: {},
       put: {},
@@ -40,13 +41,13 @@ class Resource {
     return this;
   }
 
-  get() {
-    this._currentMethod = 'get';
+  list() {
+    this._currentMethod = 'list';
     return this;
   }
 
-  getAll() {
-    this._currentMethod = 'getAll';
+  get() {
+    this._currentMethod = 'get';
     return this;
   }
 
