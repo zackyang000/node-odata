@@ -5,7 +5,7 @@
 
 0.7.3 (2015-07-15)
 ===================
-- Improved API to use mongoose: from server.repository.get(name) to server.resources.name
+- Improved API to use mongoose: from `server.repository.get(name)` to `server.resources.name`
 
 0.7.2 (2015-07-14)
 ===================
@@ -36,7 +36,7 @@
 
 0.4.0 (2015-04-09)
 ===================
-- Optimized initialization method: odata -> odata()
+- Optimized initialization method: from `odata` to `odata()`
 - Fix maxTop and maxSkip of global-limit in options is not work. ([#14](https://github.com/TossShinHwa/node-odata/issues/14))
 
 0.3.0 (2015-01-20)
