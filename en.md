@@ -278,10 +278,10 @@ params:
       .before(function (entity) {...}) // before callback
       .after(function (entity) {...}) // after callback
     // configure GET /resource
-    .getAll()
+    .list()
       .auth(function (req) {...})
-      .before(function (entities) {...})
-      .after(function (entities) {...})
+      .before(function () {...})
+      .after(function (data) {...})
     // configure POST /resource
     .post()
       .auth(function (req) {...})
@@ -318,10 +318,10 @@ params:
 
 Register a WEB API in OData service, for processing custom logic.
 
-   server.get(url, callback, auth);
-   server.put(url, callback, auth);
-   server.post(url, callback, auth);
-   server.del(url, callback, auth);
+    server.get(url, callback, auth);
+    server.put(url, callback, auth);
+    server.post(url, callback, auth);
+    server.delete(url, callback, auth);
 
 ### Params
 

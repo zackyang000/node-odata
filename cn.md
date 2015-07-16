@@ -279,10 +279,10 @@ TODO
       .before(function (entity) {...}) // 在请求前执行的 callback
       .after(function (entity) {...}) //在请求完成后执行的 callback
     // 配置 GET /resource
-    .getAll()
+    .list()
       .auth(function (req) {...})
-      .before(function (entities) {...})
-      .after(function (entities) {...})
+      .before(function () {...})
+      .after(function (data) {...})
     // 配置 POST /resource
     .post()
       .auth(function (req) {...})
@@ -318,10 +318,10 @@ TODO
 
 在 OData 中注册一个 WEB API, 用于处理自定义的逻辑.
 
-   server.get(url, callback, auth);
-   server.put(url, callback, auth);
-   server.post(url, callback, auth);
-   server.del(url, callback, auth);
+    server.get(url, callback, auth);
+    server.put(url, callback, auth);
+    server.post(url, callback, auth);
+    server.delete(url, callback, auth);
 
 ### 参数
 
