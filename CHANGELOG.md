@@ -1,3 +1,8 @@
+# 0.7.4 (2015-07-16)
+===================
+- Improved API to config resource: from resource.getAll() to resource.list()
+- Fixed resource.getAll does not work.
+
 # 0.7.3 (2015-07-15)
 ===================
 - Improved API to use mongoose: from server.repository.get(name) to server.resources.name
