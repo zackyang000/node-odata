@@ -2,11 +2,9 @@
 
 import express from 'express';
 
-class Function {
+export default class Function {
   constructor() {
     return express.Router();
   }
 }
-
-export default Function;
 

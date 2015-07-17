@@ -7,9 +7,9 @@ import skipParser from '../parser/skipParser';
 import topParser from '../parser/topParser';
 import selectParser from '../parser/selectParser';
 
-export default (req, mongooseModel) => {
+export default (req, MongooseModel) => {
   return new Promise((resolve, reject) => {
-    mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
+    MongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
       if (err) {
         return reject(err);
       }

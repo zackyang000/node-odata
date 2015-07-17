@@ -4,7 +4,7 @@ import { min } from 'lodash';
 import model from './model';
 import rest from './rest';
 
-class Resource {
+export default class Resource {
   constructor(name, model) {
     this._name = name;
     this._url = name;
@@ -136,6 +136,4 @@ function hook(resource, pos, fn) {
   });
   return resource;
 }
-
-export default Resource;
 

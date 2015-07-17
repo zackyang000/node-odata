@@ -7,45 +7,44 @@ import skipParser from '../parser/skipParser';
 import topParser from '../parser/topParser';
 import selectParser from '../parser/selectParser';
 
-export default (req, mongooseModel, options) => {
+export default (req, MongooseModel, options) => {
   return new Promise((resolve, reject) => {
     let resData = {};
 
-    let query = mongooseModel.find();
+    let query = MongooseModel.find();
 
     let errHandle = (err) => {
       err.status = 500;
       return reject(err);
     };
-    let err;
 
-    /*jshint -W084 */
-    if(err = countParser(resData, mongooseModel, req.query.$count, req.query.$filter)) {
+    let err = countParser(resData, MongooseModel, req.query.$count, req.query.$filter);
+    if(err) {
       return errHandle(err);
     }
 
-    /*jshint -W084 */
-    if(err = filterParser(query, req.query.$filter)) {
+    err = filterParser(query, req.query.$filter);
+    if(err) {
       return errHandle(err);
     }
 
-    /*jshint -W084 */
-    if(err = orderbyParser(query, req.query.$orderby || options.orderby)) {
+    err = orderbyParser(query, req.query.$orderby || options.orderby);
+    if(err) {
       return errHandle(err);
     }
 
-    /*jshint -W084 */
-    if(err = skipParser(query, req.query.$skip, options.maxSkip)) {
+    err = skipParser(query, req.query.$skip, options.maxSkip);
+    if(err) {
       return errHandle(err);
     }
 
-    /*jshint -W084 */
-    if(err = topParser(query, req.query.$top, options.maxTop)) {
+    err = topParser(query, req.query.$top, options.maxTop);
+    if(err) {
       return errHandle(err);
     }
 
-    /*jshint -W084 */
-    if(err = selectParser(query, req.query.$select)) {
+    err = selectParser(query, req.query.$select);
+    if(err) {
       return errHandle(err);
     }
 

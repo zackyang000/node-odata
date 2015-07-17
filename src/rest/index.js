@@ -9,7 +9,7 @@ import put from './put';
 import del from './delete';
 import get from './get';
 
-const getRouter = (_conn, url, params, enableOdataSyntax) => {
+const getRouter = (_conn, url, params) => {
   let options = params.options || {};
   let rest = params.rest || {};
   let actions = params.actions || {};
