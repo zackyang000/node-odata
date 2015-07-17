@@ -67,7 +67,6 @@ class Resource {
   }
 
   all() {
-    //TODO
     throw new Error('Not implemented');
   }
 
@@ -77,7 +76,15 @@ class Resource {
   }
 
   after(fn) {
-    this._rest[this._currentMethod].after = fn;
+    if (this._rest[this._currentMethod].after) {
+      let _fn = this._rest[this._currentMethod].after;
+      this._rest[this._currentMethod].after = function(...args) {
+        _fn.apply(this, args);
+        fn.apply(this, args);
+      };
+    } else {
+      this._rest[this._currentMethod].after = fn;
+    }
     return this;
   }
 

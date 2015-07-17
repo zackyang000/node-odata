@@ -13,14 +13,13 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'rest.list.after', ->
+describe 'hook.list.after', ->
   it 'should work', (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
     server.resource 'book', bookSchema
       .list()
-        .after (entity) ->
-          entity.should.be.have.property('value')
+        .before () ->
           done()
     support conn, (books) ->
       s = server.listen PORT, ->

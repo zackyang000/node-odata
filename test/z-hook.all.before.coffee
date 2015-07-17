@@ -1,4 +1,4 @@
-hook = require('should')
+should = require('should')
 request = require('supertest')
 odata = require('../.')
 support = require('./support')
@@ -13,13 +13,13 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'hook.get.after', ->
+describe 'hook.all.before', ->
   it 'should work', (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
     server.resource 'book', bookSchema
-      .get()
-        .after (entity) ->
+      .all()
+        .before (entity) ->
           entity.should.be.have.property('title')
           done()
     support conn, (books) ->
@@ -28,4 +28,5 @@ describe 'hook.get.after', ->
         request("http://localhost:#{PORT}")
           .get("/book(#{books[0].id})")
           .end()
+
 

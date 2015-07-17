@@ -13,7 +13,7 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'rest.post.before', ->
+describe 'hook.post.before', ->
   it 'should work', (done) ->
     conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
