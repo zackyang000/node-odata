@@ -61,7 +61,7 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
         if (route.config.before) {
           if (route.method === 'post') {
             route.config.before(req.body, req, res);
-          } if (route.method === 'get' && route.url === resourceURL) {
+          } else if (route.method === 'get' && route.url === resourceURL) {
               route.config.before(req, res);
           } else {
             mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {

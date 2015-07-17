@@ -1,7 +1,9 @@
 should = require('should')
 request = require('supertest')
-odata = require('../.')
-support = require('./support')
+odata = require('../../.')
+support = require('../support')
+
+conn = 'mongodb://localhost/odata-test'
 
 bookSchema =
   author: String
@@ -11,26 +13,19 @@ bookSchema =
   publish_date: Date
   title: String
 
-conn = 'mongodb://localhost/odata-test'
-
-describe 'hook.put.after', ->
+describe 'hook.list.before', ->
   it 'should work', (done) ->
     PORT = 0
     server = odata(conn)
     server.resource 'book', bookSchema
-      .put()
-        .after (newEntity, oldEntity) ->
-          newEntity.should.be.have.property('title')
-          oldEntity.should.be.have.property('title')
-          newEntity.title.should.not.be.equal(oldEntity.title)
+      .list()
+        .before () ->
           done()
     support conn, (books) ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .put("/book(#{books[0].id})")
-          .send
-            title: 'new'
+          .get("/book")
           .end()
 
   it 'should work with multiple hooks', (done) ->
@@ -38,14 +33,15 @@ describe 'hook.put.after', ->
     doneTwice = -> doneTwice = done
     server = odata(conn)
     server.resource 'book', bookSchema
-      .put()
-        .after () -> doneTwice()
-        .after () -> doneTwice()
+      .list()
+        .before (entity) ->
+          doneTwice()
+        .before (entity) ->
+          doneTwice()
     support conn, (books) ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .put("/book(#{books[0].id})")
-          .send
-            title: 'new'
+          .get("/book")
           .end()
+

@@ -1,7 +1,9 @@
 should = require('should')
 request = require('supertest')
-odata = require('../.')
-support = require('./support')
+odata = require('../../.')
+support = require('../support')
+
+conn = 'mongodb://localhost/odata-test'
 
 bookSchema =
   author: String
@@ -14,7 +16,6 @@ bookSchema =
 describe 'hook.delete.after', ->
   it 'should work', (done) ->
     PORT = 0
-    conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
     server.resource 'book', bookSchema
       .delete()
@@ -30,7 +31,6 @@ describe 'hook.delete.after', ->
   it 'should work with multiple hooks', (done) ->
     PORT = 0
     doneTwice = -> doneTwice = done
-    conn = 'mongodb://localhost/odata-test'
     server = odata(conn)
     server.resource 'book', bookSchema
       .delete()

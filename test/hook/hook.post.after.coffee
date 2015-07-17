@@ -1,9 +1,9 @@
 should = require('should')
 request = require('supertest')
-odata = require('../.')
-support = require('./support')
+odata = require('../../.')
+support = require('../support')
 
-PORT = 0
+conn = 'mongodb://localhost/odata-test'
 
 bookSchema =
   author: String
@@ -15,13 +15,32 @@ bookSchema =
 
 describe 'hook.post.after', ->
   it 'should work', (done) ->
-    conn = 'mongodb://localhost/odata-test'
+    PORT = 0
     server = odata(conn)
     server.resource 'book', bookSchema
       .post()
         .after (entity) ->
           entity.should.be.have.property('title')
           done()
+    support conn, (books) ->
+      s = server.listen PORT, ->
+        PORT = s.address().port
+        request("http://localhost:#{PORT}")
+          .post("/book")
+          .send
+            title: 'new'
+          .end()
+
+  it 'should work with multiple hooks', (done) ->
+    PORT = 0
+    doneTwice = -> doneTwice = done
+    server = odata(conn)
+    server.resource 'book', bookSchema
+      .post()
+        .after (entity) ->
+          doneTwice()
+        .after (entity) ->
+          doneTwice()
     support conn, (books) ->
       s = server.listen PORT, ->
         PORT = s.address().port

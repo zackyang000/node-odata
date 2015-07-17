@@ -67,25 +67,16 @@ class Resource {
   }
 
   all() {
-    throw new Error('Not implemented');
+    this._currentMethod = 'all';
+    return this;
   }
 
   before(fn) {
-    this._rest[this._currentMethod].before = fn;
-    return this;
+    return hook(this, 'before', fn);
   }
 
   after(fn) {
-    if (this._rest[this._currentMethod].after) {
-      let _fn = this._rest[this._currentMethod].after;
-      this._rest[this._currentMethod].after = function(...args) {
-        _fn.apply(this, args);
-        fn.apply(this, args);
-      };
-    } else {
-      this._rest[this._currentMethod].after = fn;
-    }
-    return this;
+    return hook(this, 'after', fn);
   }
 
   auth(fn) {
@@ -123,6 +114,27 @@ class Resource {
 
     return rest.getRouter(db, this._url, params);
   }
+}
+
+function hook(resource, pos, fn) {
+  let method = resource._currentMethod;
+  if (method === 'all') {
+    method = ['get', 'post', 'put', 'delete', 'list'];
+  } else {
+    method = [ method ];
+  }
+  method.map(function(method) {
+    if (resource._rest[method][pos]) {
+      let _fn = resource._rest[method][pos];
+      resource._rest[method][pos] = function(...args) {
+        _fn.apply(resource, args);
+        fn.apply(resource, args);
+      };
+    } else {
+      resource._rest[method][pos] = fn;
+    }
+  });
+  return resource;
 }
 
 export default Resource;

@@ -1,9 +1,9 @@
 should = require('should')
 request = require('supertest')
-odata = require('../.')
-support = require('./support')
+odata = require('../../.')
+support = require('../support')
 
-PORT = 0
+conn = 'mongodb://localhost/odata-test'
 
 bookSchema =
   author: String
@@ -13,18 +13,22 @@ bookSchema =
   publish_date: Date
   title: String
 
-describe 'hook.list.after', ->
+describe 'hook.all.before', ->
   it 'should work', (done) ->
-    conn = 'mongodb://localhost/odata-test'
+    PORT = 0
+    doneTwice = -> doneTwice = done
     server = odata(conn)
     server.resource 'book', bookSchema
-      .list()
+      .all()
         .before () ->
-          done()
+          doneTwice()
     support conn, (books) ->
       s = server.listen PORT, ->
         PORT = s.address().port
         request("http://localhost:#{PORT}")
-          .get("/book")
-          .end()
+          .get("/book(#{books[0].id})")
+          .end ->
+            request("http://localhost:#{PORT}")
+              .get("/book")
+              .end()
 
