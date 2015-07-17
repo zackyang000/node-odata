@@ -1,15 +1,11 @@
 "use strict";
 
-import express from 'express';
-import proto from './server';
+import Server from './server';
 import Resource from './resource';
+import func from './function';
 
 const server = function(db, prefix) {
-  const server = {};
-  /*jshint -W103 */
-  server.__proto__ = proto;
-  server.init(db, prefix);
-  return server;
+  return new Server(db, prefix);
 };
 
 server.Resource = function(name, model) {
@@ -17,7 +13,7 @@ server.Resource = function(name, model) {
 };
 
 server.Function = function() {
-  return express.Router();
+  return new func();
 };
 
 export default server;
