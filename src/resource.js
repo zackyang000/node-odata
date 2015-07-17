@@ -9,7 +9,7 @@ export default class Resource {
     this._name = name;
     this._url = name;
     this._model = model;
-    this._rest = {
+    this._hooks = {
       list: {},
       get: {},
       post: {},
@@ -80,7 +80,7 @@ export default class Resource {
   }
 
   auth(fn) {
-    this._rest[this._currentMethod].auth = fn;
+    this._hooks[this._currentMethod].auth = fn;
     return this;
   }
 
@@ -108,7 +108,7 @@ export default class Resource {
         maxSkip: min([setting.maxSkip || 100000, this._maxSkip || 100000]),
         orderby: this._orderby,
       },
-      rest: this._rest,
+      hooks: this._hooks,
       actions: this._actions,
     };
 
@@ -124,14 +124,14 @@ function hook(resource, pos, fn) {
     method = [ method ];
   }
   method.map(function(method) {
-    if (resource._rest[method][pos]) {
-      let _fn = resource._rest[method][pos];
-      resource._rest[method][pos] = function(...args) {
+    if (resource._hooks[method][pos]) {
+      let _fn = resource._hooks[method][pos];
+      resource._hooks[method][pos] = function(...args) {
         _fn.apply(resource, args);
         fn.apply(resource, args);
       };
     } else {
-      resource._rest[method][pos] = fn;
+      resource._hooks[method][pos] = fn;
     }
   });
   return resource;

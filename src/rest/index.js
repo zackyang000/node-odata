@@ -10,43 +10,43 @@ import del from './delete';
 import get from './get';
 
 const getRouter = (_conn, url, params) => {
-  let options = params.options || {};
-  let rest = params.rest || {};
+  let hooks = params.hooks || {};
   let actions = params.actions || {};
+  let options = params.options || {};
 
-  let resourceURL = `/${url}`;
-  let entityURL = `${resourceURL}\\(:id\\)`;
+  let resourceListURL = `/${url}`;
+  let resourceURL = `${resourceListURL}\\(:id\\)`;
 
   let routes = [
     {
       method: 'post',
-      url: resourceURL,
+      url: resourceListURL,
       controller: post,
-      config: rest.post || {},
+      hooks: hooks.post || {},
     },
     {
       method: 'put',
-      url: entityURL,
+      url: resourceURL,
       controller: put,
-      config: rest.put || {},
+      hooks: hooks.put || {},
     },
     {
       method: 'delete',
-      url: entityURL,
+      url: resourceURL,
       controller: del,
-      config: rest.delete || rest.del || {},
-    },
-    {
-      method: 'get',
-      url: entityURL,
-      controller: get,
-      config: rest.get || {},
+      hooks: hooks.delete || hooks.del || {},
     },
     {
       method: 'get',
       url: resourceURL,
+      controller: get,
+      hooks: hooks.get || {},
+    },
+    {
+      method: 'get',
+      url: resourceListURL,
       controller: list,
-      config: rest.list || {},
+      hooks: hooks.list || {},
     },
   ];
 
@@ -56,19 +56,19 @@ const getRouter = (_conn, url, params) => {
   let router = Router();
   routes.map((route) => {
     router[route.method](route.url, (req, res, next) => {
-      if (checkAuth(route.config.auth, req)) {
+      if (checkAuth(route.hooks.auth, req)) {
         //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
-        if (route.config.before) {
+        if (route.hooks.before) {
           if (route.method === 'post') {
-            route.config.before(req.body, req, res);
-          } else if (route.method === 'get' && route.url === resourceURL) {
-              route.config.before(req, res);
+            route.hooks.before(req.body, req, res);
+          } else if (route.method === 'get' && route.url === resourceListURL) {
+              route.hooks.before(req, res);
           } else {
             mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
               if (err) {
                 return;
               }
-              route.config.before(entity, req, res);
+              route.hooks.before(entity, req, res);
             });
           }
         }
@@ -83,8 +83,8 @@ const getRouter = (_conn, url, params) => {
           else {
             res.end();
           }
-          if (route.config.after) {
-            route.config.after(result.entity, result.originEntity, req, res);
+          if (route.hooks.after) {
+            route.hooks.after(result.entity, result.originEntity, req, res);
           }
         }, (err) => {
           if (err.status) {
@@ -104,7 +104,7 @@ const getRouter = (_conn, url, params) => {
   for(let actionUrl in actions) {
     let action = actions[actionUrl];
     ((actionUrl, action) => {
-      let fullUrl = `${entityURL}${actionUrl}`;
+      let fullUrl = `${resourceURL}${actionUrl}`;
       router.post(fullUrl, (req, res, next) => {
         if(checkAuth(action.auth)) {
           action(req, res, next);
