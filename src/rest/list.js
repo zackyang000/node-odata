@@ -18,6 +18,8 @@ export default (req, MongooseModel, options) => {
       return reject(err);
     };
 
+
+    // TODO: use Promise
     let err = countParser(resData, MongooseModel, req.query.$count, req.query.$filter);
     if(err) {
       return errHandle(err);
