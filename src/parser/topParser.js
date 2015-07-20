@@ -5,12 +5,12 @@ import { min } from 'lodash';
 // ?$top=10
 // ->
 // query.top(10)
-export default (query, top = 0, maxTop = 10000) => {
+export default (query, top, maxTop) => {
   if (isNaN(+top)) {
     return;
   }
   top = min([maxTop, top]);
-  if (top < 0) {
+  if (top <= 0) {
     return;
   }
   query.limit(top);

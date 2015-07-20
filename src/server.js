@@ -22,7 +22,11 @@ class Server {
     this._app.use(cors());
     this._app.disable('x-powered-by');
     this._mongoose = mongoose;
-    this._settings = {};
+    this._settings = {
+      maxTop: 10000,
+      maxSkip: 10000,
+      orderby: undefined,
+    };
     this.defaultConfiguration(db, prefix);
 
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.

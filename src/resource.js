@@ -17,7 +17,11 @@ export default class Resource {
       delete: {},
     };
     this._actions = {};
-    this._options = {};
+    this._options = {
+      maxTop: 10000,
+      maxSkip: 10000,
+      orderby: undefined,
+    };
   }
 
   action(url, fn, auth) {
@@ -104,9 +108,9 @@ export default class Resource {
 
     const params = {
       options: {
-        maxTop: min([setting.maxTop || 100000, this._maxTop || 100000]),
-        maxSkip: min([setting.maxSkip || 100000, this._maxSkip || 100000]),
-        orderby: this._orderby,
+        maxTop: min([setting.maxTop, this._maxTop]),
+        maxSkip: min([setting.maxSkip, this._maxSkip]),
+        orderby: this._orderby || setting.orderby,
       },
       hooks: this._hooks,
       actions: this._actions,

@@ -18,41 +18,47 @@ export default (req, MongooseModel, options) => {
       return reject(err);
     };
 
+    let params = {
+      count: req.query.$count,
+      filter: req.query.$filter,
+      orderby: req.query.$orderby,
+      skip: req.query.$skip,
+      top: req.query.$top,
+      select: req.query.$select,
+      // TODO expand: req.query.$expand,
+      // TODO search: req.query.$search,
+    };
 
     // TODO: use Promise
-    let err = countParser(resData, MongooseModel, req.query.$count, req.query.$filter);
+    let err = countParser(resData, MongooseModel, params.count, req.query.$filter);
     if(err) {
       return errHandle(err);
     }
 
-    err = filterParser(query, req.query.$filter);
+    err = filterParser(query, params.filter);
     if(err) {
       return errHandle(err);
     }
 
-    err = orderbyParser(query, req.query.$orderby || options.orderby);
+    err = orderbyParser(query, params.orderby || options.orderby);
     if(err) {
       return errHandle(err);
     }
 
-    err = skipParser(query, req.query.$skip, options.maxSkip);
+    err = skipParser(query, params.skip, options.maxSkip);
     if(err) {
       return errHandle(err);
     }
 
-    err = topParser(query, req.query.$top, options.maxTop);
+    err = topParser(query, params.top, options.maxTop);
     if(err) {
       return errHandle(err);
     }
 
-    err = selectParser(query, req.query.$select);
+    err = selectParser(query, params.select);
     if(err) {
       return errHandle(err);
     }
-
-    // TODO
-    // $expand=Customers/Orders
-    // $search
 
     query.exec((err, data) => {
       resData.value = data;

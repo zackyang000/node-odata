@@ -35,7 +35,7 @@ describe 'odata.query.skip', ->
         res.body.value.length.should.be.equal(books.length - 1)
         done()
 
-  it 'should not items when skip over count of items', (done) ->
+  it 'should ignore when skip over count of items', (done) ->
     request("http://localhost:#{PORT}")
       .get("/book?$skip=1024")
       .expect(200)
