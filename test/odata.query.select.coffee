@@ -57,7 +57,6 @@ describe 'odata.query.select', ->
         return done(err)  if(err)
         res.body.value[0].should.be.have.property('price')
         res.body.value[0].should.be.have.property('title')
-        res.body.value[0].should.be.not.have.property('id')
         done()
 
   it 'should select id field', (done) ->

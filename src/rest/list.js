@@ -61,6 +61,9 @@ export default (req, MongooseModel, options) => {
     }
 
     query.exec((err, data) => {
+      if (err) {
+        reject(err);
+      }
       resData.value = data;
       return resolve({entity: resData});
     });
