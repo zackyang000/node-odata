@@ -76,11 +76,13 @@ export default class Resource {
   }
 
   before(fn) {
-    return hook(this, 'before', fn);
+    hook(this, 'before', fn);
+    return this;
   }
 
   after(fn) {
-    return hook(this, 'after', fn);
+    hook(this, 'after', fn);
+    return this;
   }
 
   auth(fn) {
@@ -138,6 +140,5 @@ function hook(resource, pos, fn) {
       resource._hooks[method][pos] = fn;
     }
   });
-  return resource;
 }
 
