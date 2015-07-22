@@ -14,7 +14,6 @@ export default (req, MongooseModel, options) => {
     let query = MongooseModel.find();
 
     let errHandle = (err) => {
-      err.status = 500;
       return reject(err);
     };
 

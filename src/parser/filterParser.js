@@ -40,7 +40,7 @@ export default (query, $filter) => {
     let item = condition[i];
     let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
     if (conditionArr.length !== 3) {
-      return new Error("Syntax error at '#{item}'.");
+      return new Error(`Syntax error at '${item}'.`);
     }
     let [key, odataOperator, value] = conditionArr;
     value = validator.formatValue(value);

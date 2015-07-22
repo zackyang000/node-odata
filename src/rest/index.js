@@ -87,12 +87,7 @@ const getRouter = (_conn, url, params) => {
             route.hooks.after(result.entity, result.originEntity, req, res);
           }
         }, (err) => {
-          if (err.status) {
-            res.status(err.status).send(err.text || '');
-          }
-          else {
-            next(err);
-          }
+          next(err);
         });
       }
       else {
