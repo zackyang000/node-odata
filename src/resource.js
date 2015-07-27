@@ -106,9 +106,10 @@ export default class Resource {
       throw new Error(`Url of resource[${this._name}] can\'t contain "/", it can only be allowed to exist in the beginning.`);
     }
 
-    model.register(db, this._url, this._model);
+    let mongooseModel = model.register(db, this._url, this._model);
 
     const params = {
+      url: this._url,
       options: {
         maxTop: min([setting.maxTop, this._maxTop]),
         maxSkip: min([setting.maxSkip, this._maxSkip]),
@@ -118,7 +119,7 @@ export default class Resource {
       actions: this._actions,
     };
 
-    return rest.getRouter(db, this._url, params);
+    return rest.getRouter(mongooseModel, params);
   }
 }
 

@@ -8,7 +8,8 @@ import put from './put';
 import del from './delete';
 import get from './get';
 
-const getRouter = (_conn, url, params) => {
+const getRouter = (mongooseModel, params) => {
+  let url = params.url;
   let hooks = params.hooks || {};
   let actions = params.actions || {};
   let options = params.options || {};
@@ -48,8 +49,6 @@ const getRouter = (_conn, url, params) => {
       hooks: hooks.list || {},
     },
   ];
-
-  let mongooseModel = model.get(_conn, url);
 
   /*jshint -W064 */
   let router = Router();
