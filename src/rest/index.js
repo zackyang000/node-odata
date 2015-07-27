@@ -1,6 +1,5 @@
 "use strict";
 
-import _ from 'lodash';
 import { Router } from 'express';
 import model from './../model';
 import list from './list';
