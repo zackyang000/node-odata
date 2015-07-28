@@ -1,19 +1,13 @@
 "use strict";
 
 import { Router } from 'express';
-import model from './../model';
 import list from './list';
 import post from './post';
 import put from './put';
 import del from './delete';
 import get from './get';
 
-const getRouter = (mongooseModel, params) => {
-  let url = params.url;
-  let hooks = params.hooks || {};
-  let actions = params.actions || {};
-  let options = params.options || {};
-
+const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
   let resourceListURL = `/${url}`;
   let resourceURL = `${resourceListURL}\\(:id\\)`;
 
@@ -22,31 +16,31 @@ const getRouter = (mongooseModel, params) => {
       method: 'post',
       url: resourceListURL,
       controller: post,
-      hooks: hooks.post || {},
+      hooks: hooks.post,
     },
     {
       method: 'put',
       url: resourceURL,
       controller: put,
-      hooks: hooks.put || {},
+      hooks: hooks.put,
     },
     {
       method: 'delete',
       url: resourceURL,
       controller: del,
-      hooks: hooks.delete || hooks.del || {},
+      hooks: hooks.delete || hooks.del,
     },
     {
       method: 'get',
       url: resourceURL,
       controller: get,
-      hooks: hooks.get || {},
+      hooks: hooks.get,
     },
     {
       method: 'get',
       url: resourceListURL,
       controller: list,
-      hooks: hooks.list || {},
+      hooks: hooks.list,
     },
   ];
 
@@ -85,7 +79,11 @@ const getRouter = (mongooseModel, params) => {
             route.hooks.after(result.entity, result.originEntity, req, res);
           }
         }, (err) => {
-          next(err);
+          if (err.status) {
+            res.status(err.status).send(err.text);
+          } else {
+            next(err);
+          }
         });
       }
       else {
