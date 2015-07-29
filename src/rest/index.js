@@ -1,5 +1,6 @@
 "use strict";
 
+import http from 'http';
 import { Router } from 'express';
 import list from './list';
 import post from './post';
@@ -15,80 +16,45 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'post',
       url: resourceListURL,
-      controller: post,
-      hooks: hooks.post,
+      ctrl: post,
+      hook: hooks.post,
     },
     {
       method: 'put',
       url: resourceURL,
-      controller: put,
-      hooks: hooks.put,
+      ctrl: put,
+      hook: hooks.put,
     },
     {
       method: 'delete',
       url: resourceURL,
-      controller: del,
-      hooks: hooks.delete || hooks.del,
+      ctrl: del,
+      hook: hooks.delete,
     },
     {
       method: 'get',
       url: resourceURL,
-      controller: get,
-      hooks: hooks.get,
+      ctrl: get,
+      hook: hooks.get,
     },
     {
       method: 'get',
       url: resourceListURL,
-      controller: list,
-      hooks: hooks.list,
+      ctrl: list,
+      hook: hooks.list,
     },
   ];
 
-  /*jshint -W064 */
   let router = Router();
   routes.map((route) => {
-    router[route.method](route.url, (req, res, next) => {
-      if (checkAuth(route.hooks.auth, req)) {
-        //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
-        if (route.hooks.before) {
-          if (route.method === 'post') {
-            route.hooks.before(req.body, req, res);
-          } else if (route.method === 'get' && route.url === resourceListURL) {
-              route.hooks.before(req, res);
-          } else {
-            mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
-              if (err) {
-                return;
-              }
-              route.hooks.before(entity, req, res);
-            });
-          }
-        }
-        route.controller(req, mongooseModel, options).then((result = {}) => {
-          res.status(result.status || 200);
-          if (result.text) {
-            res.send(result.text);
-          }
-          else if (result.entity) {
-            res.jsonp(result.entity);
-          }
-          else {
-            res.end();
-          }
-          if (route.hooks.after) {
-            route.hooks.after(result.entity, result.originEntity, req, res);
-          }
-        }).catch(function(err) {
-          if (err.status) {
-            res.status(err.status).send(err.text);
-          } else {
-            next(err);
-          }
-        });
-      }
-      else {
-        res.status(401).end();
-      }
+    let { method, url, ctrl, hook } = route;
+    router[method](url, (req, res, next) => {
+      authorizePipe(req, res, hook.auth)
+      .then(function() { return beforePipe(req, res, hook.before); })
+      .then(function() { return ctrl(req, mongooseModel, options); })
+      .then(function(result) { return respondPipe(req, res, result); })
+      .then(function(data) { return afterPipe(req, res, hook.after, data); })
+      .catch(function(result) { errorPipe(req, res, result); });
     });
   });
 
@@ -116,5 +82,51 @@ const checkAuth = (auth, req) => {
   }
   return auth(req);
 };
+
+function authorizePipe(req, res, auth) {
+  return new Promise((resolve, reject) => {
+    if (auth !== undefined) {
+      if (!auth(req, res)) {
+        return reject({ status: 401 });
+      }
+    }
+    resolve();
+  });
+}
+
+function beforePipe(req, res, before) {
+  return new Promise((resolve, reject) => {
+    if (before) {
+      before(req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function respondPipe(req, res, result) {
+  return new Promise((resolve, reject) => {
+    let status = result.status || 200;
+    let data = result.entity;
+    res.status(status).jsonp(data);
+    resolve(data);
+  });
+}
+
+function afterPipe(req, res, after, data) {
+  return new Promise((resolve, reject) => {
+    if (after) {
+      after(data, req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function errorPipe(req, res, result) {
+  return new Promise((resolve, reject) => {
+    let status = result.status || 200;
+    let text = result.text || http.STATUS_CODES[status];
+    res.status(status).send(text);
+  });
+}
 
 export default { getRouter };

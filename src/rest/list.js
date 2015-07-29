@@ -30,14 +30,14 @@ export default (req, MongooseModel, options) => {
           content[result.key] = result.value;
         }
       });
-      resolve({entity: content});
+      resolve({ entity: content });
     }).catch(function(err){
       reject({status: 500, text: err});
     });
   });
 };
 
-function countQuery (model, { count, filter }) {
+function countQuery(model, { count, filter }) {
   return new Promise((resolve, reject) => {
     countParser(model, count, filter).then(function (count) {
       if (count !== undefined) {
@@ -51,7 +51,7 @@ function countQuery (model, { count, filter }) {
   });
 }
 
-function dataQuery (model, { filter, orderby, skip, top, select }, options) {
+function dataQuery(model, { filter, orderby, skip, top, select }, options) {
   return new Promise((resolve, reject) => {
     let query = model.find();
     filterParser(query, filter).then(function() {
