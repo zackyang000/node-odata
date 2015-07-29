@@ -78,7 +78,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
           if (route.hooks.after) {
             route.hooks.after(result.entity, result.originEntity, req, res);
           }
-        }, (err) => {
+        }).catch(function(err) {
           if (err.status) {
             res.status(err.status).send(err.text);
           } else {

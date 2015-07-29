@@ -32,7 +32,7 @@ export default (req, MongooseModel, options) => {
       });
       resolve({entity: content});
     }).catch(function(err){
-      reject({status: 500}, {text: err});
+      reject({status: 500, text: err});
     });
   });
 };
@@ -70,7 +70,6 @@ function dataQuery (model, { filter, orderby, skip, top, select }, options) {
         resolve({ key: 'value', value: data });
       });
     }).catch(function(err) {
-      console.log(err);
       reject(err);
     });
   });
