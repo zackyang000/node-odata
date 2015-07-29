@@ -20,19 +20,17 @@ export default (req, MongooseModel, options) => {
       // TODO search: req.query.$search,
     };
 
-    let data = {};
     Promise.all([
       countQuery(MongooseModel, params),
       dataQuery(MongooseModel, params, options),
     ]).then(function(results) {
+      let content = {};
       results.map(function(result) {
-        if (typeof result === 'number') {
-          data['@odata.count'] = result;
-        } else if (result instanceof Array) {
-          data.value = result;
+        if (result && result.key) {
+          content[result.key] = result.value;
         }
       });
-      return resolve({entity: data});
+      resolve({entity: content});
     }).catch(function(err){
       reject({status: 500}, {text: err});
     });
@@ -40,7 +38,17 @@ export default (req, MongooseModel, options) => {
 };
 
 function countQuery (model, { count, filter }) {
-  return countParser(model, count, filter);
+  return new Promise((resolve, reject) => {
+    countParser(model, count, filter).then(function (count) {
+      if (count !== undefined) {
+        resolve({ key: '@odata.count', value: count });
+      } else {
+        resolve();
+      }
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
 }
 
 function dataQuery (model, { filter, orderby, skip, top, select }, options) {
@@ -76,7 +84,7 @@ function dataQuery (model, { filter, orderby, skip, top, select }, options) {
       if (err) {
         return reject(err);
       }
-      resolve(data);
+      resolve({ key: 'value', value: data });
     });
   });
 }
