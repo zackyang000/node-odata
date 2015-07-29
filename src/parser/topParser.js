@@ -6,12 +6,15 @@ import { min } from 'lodash';
 // ->
 // query.top(10)
 export default (query, top, maxTop) => {
-  if (isNaN(+top)) {
-    return;
-  }
-  top = min([maxTop, top]);
-  if (top <= 0) {
-    return;
-  }
-  query.limit(top);
+  return new Promise((resolve, reject) => {
+    if (isNaN(+top)) {
+      return resolve();
+    }
+    top = min([maxTop, top]);
+    if (top <= 0) {
+      return resolve();
+    }
+    query.limit(top);
+    resolve();
+  });
 };

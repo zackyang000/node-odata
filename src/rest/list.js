@@ -54,37 +54,24 @@ function countQuery (model, { count, filter }) {
 function dataQuery (model, { filter, orderby, skip, top, select }, options) {
   return new Promise((resolve, reject) => {
     let query = model.find();
-
-    let err = filterParser(query, filter);
-    if(err) {
-      return reject(err);
-    }
-
-    err = orderbyParser(query, orderby || options.orderby);
-    if(err) {
-      return reject(err);
-    }
-
-    err = skipParser(query, skip, options.maxSkip);
-    if(err) {
-      return reject(err);
-    }
-
-    err = topParser(query, top, options.maxTop);
-    if(err) {
-      return reject(err);
-    }
-
-    err = selectParser(query, select);
-    if(err) {
-      return reject(err);
-    }
-
-    query.exec((err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve({ key: 'value', value: data });
+    filterParser(query, filter).then(function() {
+      orderbyParser(query, orderby || options.orderby);
+    }).then(function() {
+      skipParser(query, skip, options.maxSkip);
+    }).then(function() {
+      topParser(query, top, options.maxTop);
+    }).then(function() {
+      selectParser(query, select);
+    }).then(function() {
+      query.exec((err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve({ key: 'value', value: data });
+      });
+    }).catch(function(err) {
+      console.log(err);
+      reject(err);
     });
   });
 }
