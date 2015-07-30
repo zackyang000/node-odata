@@ -46,6 +46,8 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
   ];
 
   let router = Router();
+
+  // add REST routes.
   routes.map((route) => {
     let { method, url, ctrl, hook } = route;
     router[method](url, (req, res, next) => {
@@ -58,29 +60,17 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     });
   });
 
-  for(let actionUrl in actions) {
-    let action = actions[actionUrl];
-    ((actionUrl, action) => {
-      let fullUrl = `${resourceURL}${actionUrl}`;
-      router.post(fullUrl, (req, res, next) => {
-        if(checkAuth(action.auth)) {
-          action(req, res, next);
-        }
-        else {
-          res.status(401).end();
-        }
-      });
-    })(actionUrl, action);
-  }
+  // add ACTION routes.
+  Object.keys(actions).map(function(url) {
+    let action = actions[url];
+    router.post(`${resourceURL}${url}`, (req, res, next) => {
+      authorizePipe(req, res, action.auth).then(function() {
+        action(req, res, next);
+      }).catch(function(result) { errorPipe(req, res, result); });
+    });
+  });
 
   return router;
-};
-
-const checkAuth = (auth, req) => {
-  if (!auth) {
-    return true;
-  }
-  return auth(req);
 };
 
 function authorizePipe(req, res, auth) {
