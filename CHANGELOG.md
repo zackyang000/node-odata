@@ -1,4 +1,4 @@
-0.7.6 (2015-07-31)
+0.7.6 (2015-07-30)
 ===================
 - Fixed it can not be saved,when edit the entity at put-before-hook. [#37](https://github.com/TossShinHwa/node-odata/issues/37)
 - Fixed parse error details can not be displayed on the client.
