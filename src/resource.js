@@ -86,7 +86,15 @@ export default class Resource {
   }
 
   auth(fn) {
-    this._hooks[this._currentMethod].auth = fn;
+    let method = resource._currentMethod;
+    if (method === 'all') {
+      method = ['get', 'post', 'put', 'delete', 'list'];
+    } else {
+      method = [ method ];
+    }
+    method.map(function(method) {
+      this._hooks[method].auth = fn;
+    });
     return this;
   }
 
