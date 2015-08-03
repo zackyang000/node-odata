@@ -32,6 +32,7 @@ class Server {
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
     // Should mix _resources object and resources object: _resources + resource = resources.
     // Encapsulation to a object, separate mognoose, try to use *repository pattern*.
+    // 这里也许应该让 resources 支持 odata 查询的, 以方便直接在代码中使用 OData 查询方式来进行数据筛选, 达到隔离 mongo 的效果.
     this._resources = [];
     this.resources = {}; 
 
