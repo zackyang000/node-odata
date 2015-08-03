@@ -1,5 +1,6 @@
 "use strict";
 
+import express from 'express';
 import Server from './server';
 import Resource from './Resource';
 import Func from './Function';
@@ -15,5 +16,7 @@ server.Resource = function(name, model) {
 server.Function = function() {
   return new Func();
 };
+
+server._express = express;
 
 export default server;
