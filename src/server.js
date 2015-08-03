@@ -9,7 +9,7 @@ import { min } from 'lodash';
 import parser from './metadata/parser';
 import model from './model';
 import rest from './rest';
-import Resource from './resource';
+import Resource from './Resource';
 import { get as getRepository } from './model';
 
 class Server {
@@ -60,7 +60,6 @@ class Server {
     return resource;
   }
 
-  // expose functions method
   post(url, callback, auth) {
     const app = this.get('app');
     const prefix = this.get('prefix');
@@ -160,5 +159,8 @@ function checkAuth (auth, req) {
   return auth(req);
 }
 
-// expose privite object for special situation.
+function handler({ app, method, url, callback, auth }) {
+
+}
+
 export default Server;

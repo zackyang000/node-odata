@@ -1,8 +1,8 @@
 "use strict";
 
 import Server from './server';
-import Resource from './resource';
-import Func from './function';
+import Resource from './Resource';
+import Func from './Function';
 
 const server = function(db, prefix) {
   return new Server(db, prefix);
