@@ -86,7 +86,7 @@ export default class Resource {
   }
 
   auth(fn) {
-    let method = resource._currentMethod;
+    let method = this._currentMethod;
     if (method === 'all') {
       method = ['get', 'post', 'put', 'delete', 'list'];
     } else {
