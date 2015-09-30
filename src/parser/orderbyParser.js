@@ -1,24 +1,33 @@
-"use strict";
+'use strict';
 
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 // ?$skip=10
 // ->
 // query.skip(10)
-export default (query, $orderby) => {
-  if (!$orderby) {
-    return;
-  }
 
-  let order = {};
-  let orderbyArr = $orderby.split(',');
-
-  orderbyArr.map((item) => {
-    let data = item.trim().split(' ');
-    if(data.length > 2) {
-      return new Error(`odata: Syntax error at '${$orderby}', it's should be like 'ReleaseDate asc, Rating desc'`);
+exports['default'] = function (query, $orderby) {
+  return new Promise(function (resolve, reject) {
+    if (!$orderby) {
+      return resolve();
     }
-    let key = data[0].trim();
-    let value = data[1] || 'asc';
-    order[key] = value;
+
+    var order = {};
+    var orderbyArr = $orderby.split(',');
+
+    orderbyArr.map(function (item) {
+      var data = item.trim().split(' ');
+      if (data.length > 2) {
+        return reject('odata: Syntax error at \'' + $orderby + '\', it\'s should be like \'ReleaseDate asc, Rating desc\'');
+      }
+      var key = data[0].trim();
+      var value = data[1] || 'asc';
+      order[key] = value;
+    });
+    query.sort(order);
+    resolve();
   });
-  query.sort(order);
 };
+
+module.exports = exports['default'];

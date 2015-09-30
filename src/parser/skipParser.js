@@ -1,17 +1,27 @@
 "use strict";
 
-import { min } from 'lodash';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _lodash = require("lodash");
 
 // ?$skip=10
 // ->
 // query.skip(10)
-export default (query, skip = 0, maxSkip = 10000) => {
-  if (isNaN(+skip)) {
-    return;
-  }
-  skip = min([maxSkip, skip]);
-  if (skip < 0) {
-    return;
-  }
-  query.skip(skip);
+
+exports["default"] = function (query, skip, maxSkip) {
+  return new Promise(function (resolve, reject) {
+    if (isNaN(+skip)) {
+      return resolve();
+    }
+    skip = (0, _lodash.min)([maxSkip, skip]);
+    if (skip <= 0) {
+      return resolve();
+    }
+    query.skip(skip);
+    resolve();
+  });
 };
+
+module.exports = exports["default"];
