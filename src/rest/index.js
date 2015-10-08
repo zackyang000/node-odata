@@ -1,126 +1,160 @@
-"use strict";
+'use strict';
 
-import _ from 'lodash';
-import { Router } from 'express';
-import model from './../model';
-import post from './post';
-import put from './put';
-import del from './delete';
-import { get, getAll } from './get';
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-const getRouter = (_conn, url, params, enableOdataSyntax) => {
-  let options = params.options || {};
-  let rest = params.rest || {};
-  let actions = params.actions || {};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  let resourceURL = `/${url}`;
-  let entityURL = `${resourceURL}\\(:id\\)`;
+var _http = require('http');
 
-  let routes = [
-    {
-      method: 'post',
+var _http2 = _interopRequireDefault(_http);
+
+var _express = require('express');
+
+var _list = require('./list');
+
+var _list2 = _interopRequireDefault(_list);
+
+var _post = require('./post');
+
+var _post2 = _interopRequireDefault(_post);
+
+var _put = require('./put');
+
+var _put2 = _interopRequireDefault(_put);
+
+var _delete = require('./delete');
+
+var _delete2 = _interopRequireDefault(_delete);
+
+var _get = require('./get');
+
+var _get2 = _interopRequireDefault(_get);
+
+var _patch = require('./patch');
+
+var _patch2 = _interopRequireDefault(_patch);
+
+var getRouter = function getRouter(mongooseModel, _ref) {
+  var url = _ref.url;
+  var hooks = _ref.hooks;
+  var actions = _ref.actions;
+  var options = _ref.options;
+
+  var resourceListURL = '/' + url;
+  var resourceURL = '' + resourceListURL + '\\(:id\\)';
+
+  var routes = [{
+    method: 'post',
+    url: resourceListURL,
+    ctrl: _post2['default'],
+    hook: hooks.post }, {
+    method: 'put',
+    url: resourceURL,
+    ctrl: _put2['default'],
+    hook: hooks.put }, {
+    method: 'delete',
+    url: resourceURL,
+    ctrl: _delete2['default'],
+    hook: hooks['delete'] }, {
+    method: 'get',
+    url: resourceURL,
+    ctrl: _get2['default'],
+    hook: hooks.get }, {
+    method: 'get',
+    url: resourceListURL,
+    ctrl: _list2['default'],
+    hook: hooks.list }, {
+      method: 'patch',
       url: resourceURL,
-      controller: post,
-      config: rest.post || {},
-    },
-    {
-      method: 'put',
-      url: entityURL,
-      controller: put,
-      config: rest.put || {},
-    },
-    {
-      method: 'delete',
-      url: entityURL,
-      controller: del,
-      config: rest.delete || rest.del || {},
-    },
-    {
-      method: 'get',
-      url: entityURL,
-      controller: get,
-      config: rest.get || {},
-    },
-    {
-      method: 'get',
-      url: resourceURL,
-      controller: getAll,
-      config: rest.getAll || {},
-    },
-  ];
+      ctrl: _patch2['default'],
+      hook: hooks.patch }];
 
-  let mongooseModel = model.get(_conn, url);
+  var router = (0, _express.Router)();
 
-  /*jshint -W064 */
-  let router = Router();
-  routes.map((route) => {
-    router[route.method](route.url, (req, res, next) => {
-      if (checkAuth(route.config.auth, req)) {
-        //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
-        if (route.config.before) {
-          if (route.method === 'post') {
-            route.config.before(req.body);
-          } else {
-            mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
-              if (err) {
-                return;
-              }
-              route.config.before(entity);
-            });
-          }
-        }
-        route.controller(req, mongooseModel, options).then((result = {}) => {
-          res.status(result.status || 200);
-          if (result.text) {
-            res.send(result.text);
-          }
-          else if (result.entity) {
-            res.jsonp(result.entity);
-          }
-          else {
-            res.end();
-          }
-          if (route.config.after) {
-            route.config.after(result.entity, result.originEntity);
-          }
-        }, (err) => {
-          if (err.status) {
-            res.status(err.status).send(err.text || '');
-          }
-          else {
-            next(err);
-          }
-        });
-      }
-      else {
-        res.status(401).end();
-      }
+  // add REST routes.
+  routes.map(function (route) {
+    var method = route.method;
+    var url = route.url;
+    var ctrl = route.ctrl;
+    var hook = route.hook;
+
+    router[method](url, function (req, res, next) {
+      authorizePipe(req, res, hook.auth).then(function () {
+        return beforePipe(req, res, hook.before);
+      }).then(function () {
+        return ctrl(req, mongooseModel, options);
+      }).then(function (result) {
+        return respondPipe(req, res, result);
+      }).then(function (data) {
+        return afterPipe(req, res, hook.after, data);
+      })['catch'](function (result) {
+        errorPipe(req, res, result);
+      });
     });
   });
 
-  for(let actionUrl in actions) {
-    let action = actions[actionUrl];
-    ((actionUrl, action) => {
-      let fullUrl = `${entityURL}${actionUrl}`;
-      router.post(fullUrl, (req, res, next) => {
-        if(checkAuth(action.auth)) {
-          action(req, res, next);
-        }
-        else {
-          res.status(401).end();
-        }
+  // add ACTION routes.
+  Object.keys(actions).map(function (url) {
+    var action = actions[url];
+    router.post('' + resourceURL + '' + url, function (req, res, next) {
+      authorizePipe(req, res, action.auth).then(function () {
+        action(req, res, next);
+      })['catch'](function (result) {
+        errorPipe(req, res, result);
       });
-    })(actionUrl, action);
-  }
+    });
+  });
 
   return router;
 };
 
-const checkAuth = (auth, req) => {
-  if (!auth) {
-    return true;
-  }
-  return auth(req);
-};
+function authorizePipe(req, res, auth) {
+  return new Promise(function (resolve, reject) {
+    if (auth !== undefined) {
+      if (!auth(req, res)) {
+        return reject({ status: 401 });
+      }
+    }
+    resolve();
+  });
+}
 
-export default { getRouter };
+function beforePipe(req, res, before) {
+  return new Promise(function (resolve, reject) {
+    if (before) {
+      before(req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function respondPipe(req, res, result) {
+  return new Promise(function (resolve, reject) {
+    var status = result.status || 200;
+    var data = result.entity;
+    res.status(status).jsonp(data);
+    resolve(data);
+  });
+}
+
+function afterPipe(req, res, after, data) {
+  return new Promise(function (resolve, reject) {
+    if (after) {
+      after(data, req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function errorPipe(req, res, result) {
+  return new Promise(function (resolve, reject) {
+    var status = result.status || 200;
+    var text = result.text || _http2['default'].STATUS_CODES[status];
+    res.status(status).send(text);
+  });
+}
+
+exports['default'] = { getRouter: getRouter };
+module.exports = exports['default'];

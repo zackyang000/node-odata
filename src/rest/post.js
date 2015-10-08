@@ -1,18 +1,23 @@
 "use strict";
 
-export default (req, mongooseModel) => {
-  return new Promise((resolve, reject) => {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function (req, MongooseModel) {
+  return new Promise(function (resolve, reject) {
     if (!Object.keys(req.body).length) {
-      return reject({status: 422});
+      return reject({ status: 422 });
     }
 
-    /* jshint -W055 */
-    let entity = new mongooseModel(req.body);
-    entity.save((err) => {
+    var entity = new MongooseModel(req.body);
+    entity.save(function (err) {
       if (err) {
         return reject(err);
       }
-      return resolve({status: 201, entity: entity});
+      return resolve({ status: 201, entity: entity });
     });
   });
 };
+
+module.exports = exports["default"];
