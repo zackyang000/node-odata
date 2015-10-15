@@ -29,9 +29,9 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     },
     {
       method: 'patch',
-      url: entityURL,
+      url: resourceURL,
       controller: patch,
-      config: rest.patch || {},
+      config: hooks.patch,
     },
     {
       method: 'delete',
