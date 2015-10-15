@@ -1,8 +1,8 @@
 "use strict";
 
-export default (req, mongooseModel) => {
+export default (req, MongooseModel) => {
   return new Promise((resolve, reject) => {
-    mongooseModel.remove({_id: req.params.id}, (err, result) => {
+    MongooseModel.remove({_id: req.params.id}, (err, result) => {
       if (err) {
         return reject(err);
       }

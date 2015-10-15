@@ -21,7 +21,7 @@ describe 'odata.actions', ->
     server = odata(conn)
     server.resource 'book', bookSchema
       .action '/50off', (req, res, next) ->
-        server.repository('book').findById req.params.id, (err, book) ->
+        server.resources.book.findById req.params.id, (err, book) ->
           book.price = +(book.price / 2).toFixed(2)
           book.save (err) ->
             res.jsonp(book)

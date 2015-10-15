@@ -36,7 +36,7 @@ describe 'odata.query.top', ->
         res.body.value.length.should.be.equal(1)
         done()
 
-  it 'should 500 when top not a number', (done) ->
+  it 'should iginre when top not a number', (done) ->
     request("http://localhost:#{PORT}")
       .get("/book?$top=not-a-number")
       .expect(200)

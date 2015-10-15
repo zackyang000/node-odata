@@ -1,6 +1,6 @@
 {
   "name": "node-odata",
-  "version": "0.7.0",
+  "version": "0.7.6",
   "private": false,
   "description": "A module for easily create a REST API based on oData protocol",
   "main": "index.js",

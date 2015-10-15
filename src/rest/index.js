@@ -1,34 +1,31 @@
 "use strict";
 
-import _ from 'lodash';
+import http from 'http';
 import { Router } from 'express';
-import model from './../model';
+import list from './list';
 import post from './post';
 import put from './put';
 import del from './delete';
 import patch from './patch';
-import { get, getAll } from './get';
+import get from './get';
 
-const getRouter = (_conn, url, params, enableOdataSyntax) => {
-  let options = params.options || {};
-  let rest = params.rest || {};
-  let actions = params.actions || {};
 
-  let resourceURL = `/${url}`;
-  let entityURL = `${resourceURL}\\(:id\\)`;
+const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
+  let resourceListURL = `/${url}`;
+  let resourceURL = `${resourceListURL}\\(:id\\)`;
 
   let routes = [
     {
       method: 'post',
-      url: resourceURL,
-      controller: post,
-      config: rest.post || {},
+      url: resourceListURL,
+      ctrl: post,
+      hook: hooks.post,
     },
     {
       method: 'put',
-      url: entityURL,
-      controller: put,
-      config: rest.put || {},
+      url: resourceURL,
+      ctrl: put,
+      hook: hooks.put,
     },
     {
       method: 'patch',
@@ -38,96 +35,96 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
     },
     {
       method: 'delete',
-      url: entityURL,
-      controller: del,
-      config: rest.delete || rest.del || {},
-    },
-    {
-      method: 'get',
-      url: entityURL,
-      controller: get,
-      config: rest.get || {},
+      url: resourceURL,
+      ctrl: del,
+      hook: hooks.delete,
     },
     {
       method: 'get',
       url: resourceURL,
-      controller: getAll,
-      config: rest.getAll || {},
+      ctrl: get,
+      hook: hooks.get,
+    },
+    {
+      method: 'get',
+      url: resourceListURL,
+      ctrl: list,
+      hook: hooks.list,
     },
   ];
 
-  let mongooseModel = model.get(_conn, url);
-
-  /*jshint -W064 */
   let router = Router();
+
+  // add REST routes.
   routes.map((route) => {
-    router[route.method](route.url, (req, res, next) => {
-      if (checkAuth(route.config.auth, req)) {
-        //TODO: should run controller func after before done. [use app.post(url, auth, before, fn, after)]
-        if (route.config.before) {
-          if (route.method === 'post') {
-            route.config.before(req.body);
-          } else {
-            mongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
-              if (err) {
-                return;
-              }
-              route.config.before(entity);
-            });
-          }
-        }
-        route.controller(req, mongooseModel, options).then((result = {}) => {
-          res.status(result.status || 200);
-          if (result.text) {
-            res.send(result.text);
-          }
-          else if (result.entity) {
-            res.jsonp(result.entity);
-          }
-          else {
-            res.end();
-          }
-          if (route.config.after) {
-            route.config.after(result.entity, result.originEntity);
-          }
-        }, (err) => {
-          if (err.status) {
-            res.status(err.status).send(err.text || '');
-          }
-          else {
-            next(err);
-          }
-        });
-      }
-      else {
-        res.status(401).end();
-      }
+    let { method, url, ctrl, hook } = route;
+    router[method](url, (req, res, next) => {
+      authorizePipe(req, res, hook.auth)
+      .then(function() { return beforePipe(req, res, hook.before); })
+      .then(function() { return ctrl(req, mongooseModel, options); })
+      .then(function(result) { return respondPipe(req, res, result); })
+      .then(function(data) { return afterPipe(req, res, hook.after, data); })
+      .catch(function(result) { errorPipe(req, res, result); });
     });
   });
 
-  for(let actionUrl in actions) {
-    let action = actions[actionUrl];
-    ((actionUrl, action) => {
-      let fullUrl = `${entityURL}${actionUrl}`;
-      router.post(fullUrl, (req, res, next) => {
-        if(checkAuth(action.auth)) {
-          action(req, res, next);
-        }
-        else {
-          res.status(401).end();
-        }
-      });
-    })(actionUrl, action);
-  }
+  // add ACTION routes.
+  Object.keys(actions).map(function(url) {
+    let action = actions[url];
+    router.post(`${resourceURL}${url}`, (req, res, next) => {
+      authorizePipe(req, res, action.auth).then(function() {
+        action(req, res, next);
+      }).catch(function(result) { errorPipe(req, res, result); });
+    });
+  });
 
   return router;
 };
 
-const checkAuth = (auth, req) => {
-  if (!auth) {
-    return true;
-  }
-  return auth(req);
-};
+function authorizePipe(req, res, auth) {
+  return new Promise((resolve, reject) => {
+    if (auth !== undefined) {
+      if (!auth(req, res)) {
+        return reject({ status: 401 });
+      }
+    }
+    resolve();
+  });
+}
+
+function beforePipe(req, res, before) {
+  return new Promise((resolve, reject) => {
+    if (before) {
+      before(req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function respondPipe(req, res, result) {
+  return new Promise((resolve, reject) => {
+    let status = result.status || 200;
+    let data = result.entity;
+    res.status(status).jsonp(data);
+    resolve(data);
+  });
+}
+
+function afterPipe(req, res, after, data) {
+  return new Promise((resolve, reject) => {
+    if (after) {
+      after(data, req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function errorPipe(req, res, result) {
+  return new Promise((resolve, reject) => {
+    let status = result.status || 200;
+    let text = result.text || http.STATUS_CODES[status];
+    res.status(status).send(text);
+  });
+}
 
 export default { getRouter };

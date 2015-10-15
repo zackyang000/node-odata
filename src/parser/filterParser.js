@@ -21,65 +21,67 @@
 import functions from './functionsParser';
 
 export default (query, $filter) => {
-  if (!$filter) {
-    return;
-  }
-
-  const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-  const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-
-  let condition;
-  if (stringHelper.has($filter, 'and')) {
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
-  }
-  else {
-    condition = [ $filter.trim() ];
-  }
-
-  for (let i = 0; i < condition.length; i++) {
-    let item = condition[i];
-    let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
-    if (conditionArr.length !== 3) {
-      return new Error("Syntax error at '#{item}'.");
+  return new Promise((resolve, reject) => {
+    if (!$filter) {
+      return resolve();
     }
-    let [key, odataOperator, value] = conditionArr;
-    value = validator.formatValue(value);
 
-    // handle query-functions
-    let queryFunctions = ['indexof', 'year'];
-    for (let i = 0; i < queryFunctions.length; i++) {
-      let queryFunction = queryFunctions[i];
-      if (key.indexOf(`${queryFunction}(`) === 0) {
-        functions[queryFunction](query, key, odataOperator, value);
-        return;
+    const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+    const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+
+    let condition;
+    if (stringHelper.has($filter, 'and')) {
+      condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
+    }
+    else {
+      condition = [ $filter.trim() ];
+    }
+
+    condition.map(function(item) {
+      let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
+      if (conditionArr.length !== 3) {
+        return reject(`Syntax error at '${item}'.`);
       }
-    }
+      let [key, odataOperator, value] = conditionArr;
 
-    switch(odataOperator) {
-      case 'eq':
-        query.where(key).equals(value);
-        break;
-      case 'ne':
-        query.where(key).ne(value);
-        break;
-      case 'gt':
-        query.where(key).gt(value);
-        break;
-      case 'ge':
-        query.where(key).gte(value);
-        break;
-      case 'lt':
-        query.where(key).lt(value);
-        break;
-      case 'le':
-        query.where(key).lte(value);
-        break;
-      default:
-        return new Error("Incorrect operator at '#{item}'.");
-    }
-  }
+      let { val, err } = validator.formatValue(value);
+      if (err) {
+        return reject(err);
+      }
+
+      // function query
+      let functionKey = key.substring(0, key.indexOf('('));
+      if (functionKey in { indexof: 1, year: 1 }) {
+        functions[functionKey](query, key, odataOperator, val);
+      } else {
+      // operator query
+        switch(odataOperator) {
+          case 'eq':
+            query.where(key).equals(val);
+            break;
+          case 'ne':
+            query.where(key).ne(val);
+            break;
+          case 'gt':
+            query.where(key).gt(val);
+            break;
+          case 'ge':
+            query.where(key).gte(val);
+            break;
+          case 'lt':
+            query.where(key).lt(val);
+            break;
+          case 'le':
+            query.where(key).lte(val);
+            break;
+          default:
+            return reject("Incorrect operator at '#{item}'.");
+        }
+      }
+    });
+    resolve();
+  });
 };
-
 
 const stringHelper = {
   has : (str, key) => {
@@ -105,17 +107,16 @@ const stringHelper = {
 const validator = {
   formatValue : (value) => {
     if (value === 'true') {
-      return true;
+      value = true;
+    } else if (value === 'false') {
+      value = false;
+    } else if (+value === +value) {
+      value = +value;
+    } else if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
+      value = value.slice(1, -1);
+    } else {
+      return ({ err: `Syntax error at '${value}'.` });
     }
-    if (value === 'false') {
-      return false;
-    }
-    if (+value === +value) {
-      return +value;
-    }
-    if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
-      return value.slice(1, -1);
-    }
-    return new Error(`Syntax error at '${value}'.`);
+    return ({ val: value });
   }
 };

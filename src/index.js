@@ -1,14 +1,22 @@
 "use strict";
 
-import proto from './server';
+import express from 'express';
+import Server from './server';
+import Resource from './Resource';
+import Func from './Function';
 
-const createService = function(db, prefix) {
-  const server = {};
-
-  /*jshint -W103 */
-  server.__proto__ = proto;
-  server.init(db, prefix);
-  return server;
+const server = function(db, prefix) {
+  return new Server(db, prefix);
 };
 
-export default createService;
+server.Resource = function(name, model) {
+  return new Resource(name, model);
+};
+
+server.Function = function() {
+  return new Func();
+};
+
+server._express = express;
+
+export default server;
