@@ -12,6 +12,7 @@ resource.init = function(name, model) {
     get: {},
     post: {},
     put: {},
+    patch: {},
     delete: {},
   };
   this._actions = {};
@@ -57,6 +58,11 @@ resource.post = function() {
 
 resource.put = function() {
   this._currentMethod = 'put';
+  return this;
+};
+
+resource.patch = function() {
+  this._currentMethod = 'patch';
   return this;
 };
 

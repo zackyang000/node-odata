@@ -58,7 +58,7 @@ server.resource = function(name, model) {
 };
 
 // expose functions method
-['get', 'put', 'del', 'post'].map((method) => {
+['get', 'put', 'del','patch', 'post'].map((method) => {
   server[method] = (url, handle, auth) => {
     const app = this.get('app');
     const prefix = this.get('prefix');
