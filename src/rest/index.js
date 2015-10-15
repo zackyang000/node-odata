@@ -6,6 +6,7 @@ import model from './../model';
 import post from './post';
 import put from './put';
 import del from './delete';
+import patch from './patch';
 import { get, getAll } from './get';
 
 const getRouter = (_conn, url, params, enableOdataSyntax) => {
@@ -28,6 +29,12 @@ const getRouter = (_conn, url, params, enableOdataSyntax) => {
       url: entityURL,
       controller: put,
       config: rest.put || {},
+    },
+    {
+      method: 'patch',
+      url: entityURL,
+      controller: patch,
+      config: rest.patch || {},
     },
     {
       method: 'delete',
