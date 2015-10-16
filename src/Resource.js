@@ -4,7 +4,7 @@ import { min } from 'lodash';
 import model from './model';
 import rest from './rest';
 
-export default class Resource {
+export default class {
   constructor(name, model) {
     this._name = name;
     this._url = name;
