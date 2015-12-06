@@ -21,7 +21,6 @@
 import functions from './functionsParser';
 
 export default (query, $filter) => {
-<<<<<<< HEAD
   return new Promise((resolve, reject) => {
     if (!$filter) {
       return resolve();
@@ -29,29 +28,13 @@ export default (query, $filter) => {
 
     const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
     const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-=======
-  if (!$filter) {
-    return;
-  }
-
-  const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-  const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-  const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-
-  let condition;
-  if (stringHelper.has($filter, 'and')) {
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
-  }else if(stringHelper.has($filter, 'or')){
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR).map((s) => stringHelper.removeEndOf(s, 'or').trim());
-  }
-  else {
-    condition = [ $filter.trim() ];
-  }
->>>>>>> e3a394e9efce0a8454aed6ab3360d308f9c421d5
+    const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
 
     let condition;
     if (stringHelper.has($filter, 'and')) {
       condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
+    }else if(stringHelper.has($filter, 'or')){
+      condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR).map((s) => stringHelper.removeEndOf(s, 'or').trim());
     }
     else {
       condition = [ $filter.trim() ];
