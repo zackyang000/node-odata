@@ -3,6 +3,7 @@ var odata = require('../../');
 var server = odata('mongodb://localhost/odata-test');
 
 var bookInfo = {
+  _id: require('mongoose').Schema.ObjectId,
   author: String,
   description: String,
   genre: String,

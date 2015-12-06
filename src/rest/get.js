@@ -2,7 +2,7 @@
 
 export default (req, MongooseModel) => {
   return new Promise((resolve, reject) => {
-    MongooseModel.findOne({ _id: req.params.id }, (err, entity) => {
+    MongooseModel.findById(req.params.id, (err, entity) => {
       if (err) {
         return reject(err);
       }
