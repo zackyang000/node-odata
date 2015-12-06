@@ -29,3 +29,4 @@ server.listen(3000, function(){
   console.log('OData services has started, you can visit by http://localhost:3000/book');
 });
 
+module.exports = server;
