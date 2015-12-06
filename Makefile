@@ -8,7 +8,7 @@ jshint:
 	@node_modules/jshint/bin/jshint .
 
 compile: 
-	babel -d lib/ src/
+	node_modules/.bin/babel -d lib/ src/
 
 test:
 	@node_modules/mocha/bin/mocha\
