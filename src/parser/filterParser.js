@@ -42,7 +42,6 @@ export default (query, $filter) => {
 
     condition.map(function(item) {
       let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
-      console.log(conditionArr)
       if (conditionArr.length !== 3) {
         return reject(`Syntax error at '${item}'.`);
       }
