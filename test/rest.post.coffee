@@ -5,12 +5,9 @@ odata = require('../.')
 PORT = 0
 
 bookSchema =
-  author: String
-  description: String
-  genre: String
-  price: Number
-  publish_date: Date
-  title: String
+  title:
+    type: String
+    unique: true
 
 describe 'rest.post', ->
   before (done) ->
@@ -25,16 +22,33 @@ describe 'rest.post', ->
     request("http://localhost:#{PORT}")
       .post("/book")
       .send
-        title: 'Steve Jobs'
+        title: Math.random()
       .expect(201)
       .end (err, res) ->
         return done(err)  if(err)
         res.body.should.be.have.property('id')
         res.body.should.be.have.property('title')
-        res.body.title.should.be.equal('Steve Jobs')
         done()
 
   it 'should be 422 if post without data', (done) ->
     request("http://localhost:#{PORT}")
       .post("/book")
       .expect(422, done)
+
+  it 'should be 500 if same title already exist.', (done) ->
+    title = Math.random()
+    request("http://localhost:#{PORT}")
+      .post("/book")
+      .send
+        title: title
+      .expect(201)
+      .end (err, res) ->
+        request("http://localhost:#{PORT}")
+          .post("/book")
+          .send
+            title: title
+          .expect(500)
+          .end (err, res) ->
+            return done(err)  if(err)
+            console.log(res.error.text)
+            done()
