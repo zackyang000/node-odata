@@ -50,5 +50,6 @@ describe 'rest.post', ->
           .expect(500)
           .end (err, res) ->
             return done(err)  if(err)
-            console.log(res.error.text)
+            res.should.be.have.property('error')
+            res.error.should.be.have.property('text')
             done()
