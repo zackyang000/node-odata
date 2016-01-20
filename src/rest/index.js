@@ -9,7 +9,6 @@ import del from './delete';
 import patch from './patch';
 import get from './get';
 
-
 const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
   let resourceListURL = `/${url}`;
   let resourceURL = `${resourceListURL}\\(:id\\)`;
@@ -62,7 +61,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
       authorizePipe(req, res, hook.auth)
       .then(function() { return beforePipe(req, res, hook.before); })
       .then(function() { return ctrl(req, mongooseModel, options); })
-      .then(function(result) { return respondPipe(req, res, result); })
+      .then(function(result) { return respondPipe(req, res, result || {}); })
       .then(function(data) { return afterPipe(req, res, hook.after, data); })
       .catch(function(err) { errorPipe(req, res, err); });
     });
