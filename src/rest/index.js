@@ -64,7 +64,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
       .then(function() { return ctrl(req, mongooseModel, options); })
       .then(function(result) { return respondPipe(req, res, result); })
       .then(function(data) { return afterPipe(req, res, hook.after, data); })
-      .catch(function(result) { errorPipe(req, res, result); });
+      .catch(function(err) { errorPipe(req, res, err); });
     });
   });
 
@@ -119,10 +119,10 @@ function afterPipe(req, res, after, data) {
   });
 }
 
-function errorPipe(req, res, result) {
+function errorPipe(req, res, err) {
   return new Promise((resolve, reject) => {
-    let status = result.status || 200;
-    let text = result.text || http.STATUS_CODES[status];
+    let status = err.status || 500;
+    let text = err.text || err.message || http.STATUS_CODES[status];
     res.status(status).send(text);
   });
 }
