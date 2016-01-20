@@ -27,8 +27,8 @@ export default (query, $filter) => {
     }
 
     const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-    const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
     const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+    const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
 
     let condition;
     if (stringHelper.has($filter, 'and')) {
@@ -42,6 +42,7 @@ export default (query, $filter) => {
 
     condition.map(function(item) {
       let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
+      console.log(conditionArr)
       if (conditionArr.length !== 3) {
         return reject(`Syntax error at '${item}'.`);
       }
