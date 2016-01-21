@@ -46,7 +46,10 @@ GET ...
 
 ## Current State
 
-node-odata is currently at an alpha stage, it is stable but not 100% feature complete. node-odata is written by ECMAScript 6 then compiled to ECMAScript 5 by [babel](https://babeljs.io/). It currently have to dependent on MongoDB yet. The current target is to add more features and make other database adapter (eg. MySQL, PostgreSQL).
+node-odata is currently at an beta stage, it is stable but not 100% feature complete. 
+node-odata is written by ECMAScript 6 then compiled by [babel](https://babeljs.io/).
+It currently have to dependent on MongoDB yet. 
+The current target is to add more features (eg. $metadata) and make to support other database. (eg. MySQL, PostgreSQL).
 
 ## Installation
 
@@ -63,7 +66,7 @@ npm install node-odata
 
 ## Demo
 
-[Live demo](http://books.zackyang.com/odata/books) and try it:
+[Live demo](http://books.zackyang.com/book) and try it:
 
 * GET [/book?$select=title, author](http://books.zackyang.com/book?$select=title, author)
 * GET [/book?$top=3&$skip=2](http://books.zackyang.com/book?$top=3&$skip=2)
@@ -84,7 +87,7 @@ npm install node-odata
   	* [x] ge
   * [ ] Logical Operators
   	* [x] and
-  	* [ ] or
+  	* [x] or
   	* [ ] not
   * [ ] Comparison Operators
     * [ ] has
