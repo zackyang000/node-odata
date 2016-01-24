@@ -1,6 +1,6 @@
 mongoose = require('mongoose')
 books = require('./books.json')
-id = require('../../lib/model/idPlugin')
+id = require('../../lib/model/idPlugin').default
 
 bookSchema =
   author: String

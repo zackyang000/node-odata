@@ -1,2 +1,2 @@
 require('es6-shim');
-module.exports = exports = require("./lib");
+module.exports = require("./lib").default;
