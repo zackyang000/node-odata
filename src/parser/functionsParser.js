@@ -1,5 +1,3 @@
-"use strict";
-
 // indexof(CompanyName,'X') eq 1
 const indexof = (query, key, odataOperator, value) => {
   let target;

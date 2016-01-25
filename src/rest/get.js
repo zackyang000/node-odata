@@ -1,5 +1,3 @@
-"use strict";
-
 export default (req, MongooseModel) => {
   return new Promise((resolve, reject) => {
     MongooseModel.findById(req.params.id, (err, entity) => {

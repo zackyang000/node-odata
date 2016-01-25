@@ -1,5 +1,3 @@
-"use strict";
-
 // Operator  Description             Example
 // Comparison Operators
 // eq        Equal                   Address/City eq 'Redmond'

@@ -1,5 +1,3 @@
-"use strict";
-
 import filterParser from './filterParser';
 
 // ?$skip=10

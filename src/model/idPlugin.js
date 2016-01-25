@@ -1,10 +1,6 @@
-"use strict";
-
 import uuid from 'node-uuid';
 
-
 export default function(schema, options) {
-
   // add _id to schema.
   if (!schema.paths._id) {
     schema.add({
@@ -20,8 +16,8 @@ export default function(schema, options) {
     schema.virtual('id').get(function() {
       return this._id;
     });
-    schema.set('toObject', {virtuals: true});
-    schema.set('toJSON', {virtuals: true});
+    schema.set('toObject', { virtuals: true });
+    schema.set('toJSON', { virtuals: true });
   }
 
   // reomove _id when serialization.

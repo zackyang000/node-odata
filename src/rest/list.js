@@ -1,5 +1,3 @@
-"use strict";
-
 import countParser from '../parser/countParser';
 import filterParser from '../parser/filterParser';
 import orderbyParser from '../parser/orderbyParser';

@@ -1,5 +1,3 @@
-"use strict";
-
 import express from 'express';
 
 export default class {
@@ -7,4 +5,3 @@ export default class {
     return express.Router();
   }
 }
-

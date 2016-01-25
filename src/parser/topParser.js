@@ -1,5 +1,3 @@
-"use strict";
-
 import { min } from 'lodash';
 
 // ?$top=10

@@ -1,5 +1,3 @@
-"use strict";
-
 // ?$skip=10
 // ->
 // query.skip(10)

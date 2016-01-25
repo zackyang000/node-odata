@@ -1,16 +1,13 @@
-"use strict";
-
 import express from 'express';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import { min } from 'lodash';
-import parser from './metadata/parser';
-import model from './model';
-import rest from './rest';
 import Resource from './Resource';
-import { get as getRepository } from './model';
+
+function checkAuth(auth, req) {
+  return !auth || auth(req);
+}
 
 class Server {
   constructor(db, prefix) {
@@ -46,7 +43,7 @@ class Server {
     // });
   }
 
-  defaultConfiguration(db, prefix = '' ) {
+  defaultConfiguration(db, prefix = '') {
     this.set('app', this._app);
     this.set('db', db);
     this.set('prefix', prefix);
@@ -64,11 +61,10 @@ class Server {
   post(url, callback, auth) {
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.post(`${prefix}${url}`, function(req, res, next) {
+    app.post(`${prefix}${url}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
-      }
-      else {
+      } else {
         res.status(401).end();
       }
     });
@@ -77,11 +73,10 @@ class Server {
   put(url, callback, auth) {
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.put(`${prefix}${url}`, function(req, res, next) {
+    app.put(`${prefix}${url}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
-      }
-      else {
+      } else {
         res.status(401).end();
       }
     });
@@ -90,11 +85,10 @@ class Server {
   delete(url, callback, auth) {
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.delete(`${prefix}${url}`, function(req, res, next) {
+    app.delete(`${prefix}${url}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
-      }
-      else {
+      } else {
         res.status(401).end();
       }
     });
@@ -103,11 +97,10 @@ class Server {
   patch(url, callback, auth) {
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.patch(`${prefix}${url}`, function(req, res, next) {
+    app.patch(`${prefix}${url}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
-      }
-      else {
+      } else {
         res.status(401).end();
       }
     });
@@ -137,44 +130,39 @@ class Server {
     // TODO: Need to refactor, same as L70-L80
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.get(`${prefix}${key}`, function(req, res, next) {
+    app.get(`${prefix}${key}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
-      }
-      else {
+      } else {
         res.status(401).end();
       }
     });
   }
 
   set(key, val) {
+    // Extra processing
     switch (key) {
       case 'db':
         this._db = mongoose.createConnection(val);
+        this._settings[key] = val;
         break;
       case 'prefix':
-        if (val === '/') {
-          val = '';
+        let prefix = val;
+        if (prefix === '/') {
+          prefix = '';
         }
-        if ( val.length > 0 && val[0] !== '/') {
-          val = '/' + val;
+        if (prefix.length > 0 && prefix[0] !== '/') {
+          prefix = `/${prefix}`;
         }
+        this._settings[key] = prefix;
+        break;
+      default:
+        this._settings[key] = val;
         break;
     }
-    this._settings[key] = val;
     return this;
   }
 }
 
-function checkAuth (auth, req) {
-  if (!auth) {
-    return true;
-  }
-  return auth(req);
-}
-
-function handler({ app, method, url, callback, auth }) {
-
-}
 
 export default Server;

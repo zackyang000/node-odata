@@ -1,5 +1,3 @@
-"use strict";
-
 export default (req, MongooseModel) => {
   return new Promise((resolve, reject) => {
     if (!Object.keys(req.body).length) {

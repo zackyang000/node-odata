@@ -1,5 +1,3 @@
-"use strict";
-
 import http from 'http';
 import { Router } from 'express';
 import list from './list';
