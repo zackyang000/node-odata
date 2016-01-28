@@ -1,19 +1,13 @@
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-exports["default"] = function (req, MongooseModel) {
-    return new Promise(function (resolve, reject) {
-        if (!Object.keys(req.body).length) {
-            return reject({ status: 422 });
-        }
-        MongooseModel.findOneAndUpdate({ _id: req.params.id },req.body,{"new":true},function(err,entity){
-            if (err) {
-                return reject(err);
-            }
-            return resolve({ status: 201, entity: entity });
-        });
+export default (req, MongooseModel) => new Promise((resolve, reject) => {
+  MongooseModel.findOne({ id: req.params.id }, (err, entity) => {
+    if (err) {
+      return reject(err);
+    }
+    MongooseModel.update({ id: req.params.id }, { ...entity, ...req.body }, (err1) => {
+      if (err1) {
+        return reject(err1);
+      }
+      return resolve({ entity: req.body, originEntity: entity });
     });
-};
-
-module.exports = exports["default"];
+  });
+});
