@@ -1,12 +1,32 @@
-import { min } from 'lodash';
 import model from './model';
 import rest from './rest';
+import { min } from './utils';
+
+function hook(resource, pos, fn) {
+  let method = resource._currentMethod;
+  if (method === 'all') {
+    method = ['get', 'post', 'put', 'delete', 'patch', 'list'];
+  } else {
+    method = [method];
+  }
+  method.map((curr) => {
+    if (resource._hooks[curr][pos]) {
+      const _fn = resource._hooks[method][pos];
+      resource._hooks[curr][pos] = (...args) => {
+        _fn.apply(resource, args);
+        fn.apply(resource, args);
+      };
+    } else {
+      resource._hooks[curr][pos] = fn;
+    }
+  });
+}
 
 export default class {
-  constructor(name, model) {
+  constructor(name, userModel) {
     this._name = name;
     this._url = name;
-    this._model = model;
+    this._model = userModel;
     this._hooks = {
       list: {},
       get: {},
@@ -92,12 +112,12 @@ export default class {
   auth(fn) {
     let method = this._currentMethod;
     if (method === 'all') {
-      method = ['get', 'post', 'put', 'delete', 'list'];
+      method = ['get', 'post', 'put', 'delete', 'patch', 'list'];
     } else {
-      method = [ method ];
+      method = [method];
     }
-    method.map(function(method) {
-      this._hooks[method].auth = fn;
+    method.map((curr) => {
+      this._hooks[curr].auth = fn;
     });
     return this;
   }
@@ -115,10 +135,11 @@ export default class {
 
     // not allow contain '/' in url.
     if (this._url.indexOf('/') >= 0) {
-      throw new Error(`Url of resource[${this._name}] can't contain "/", it can only be allowed to exist in the beginning.`);
+      throw new Error(`Url of resource[${this._name}] can't contain "/",`
+                      + `it can only be allowed to exist in the beginning.`);
     }
 
-    let mongooseModel = model.register(db, this._url, this._model);
+    const mongooseModel = model.register(db, this._url, this._model);
 
     const params = {
       url: this._url,
@@ -134,24 +155,3 @@ export default class {
     return rest.getRouter(mongooseModel, params);
   }
 }
-
-function hook(resource, pos, fn) {
-  let method = resource._currentMethod;
-  if (method === 'all') {
-    method = ['get', 'post', 'put', 'delete', 'list'];
-  } else {
-    method = [ method ];
-  }
-  method.map(function(method) {
-    if (resource._hooks[method][pos]) {
-      let _fn = resource._hooks[method][pos];
-      resource._hooks[method][pos] = function(...args) {
-        _fn.apply(resource, args);
-        fn.apply(resource, args);
-      };
-    } else {
-      resource._hooks[method][pos] = fn;
-    }
-  });
-}
-

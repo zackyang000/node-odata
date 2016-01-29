@@ -1,18 +1,16 @@
-import { min } from 'lodash';
+import { min } from './../utils';
 
 // ?$skip=10
 // ->
 // query.skip(10)
-export default (query, skip, maxSkip) => {
-  return new Promise((resolve, reject) => {
-    if (isNaN(+skip)) {
-      return resolve();
-    }
-    skip = min([maxSkip, skip]);
-    if (skip <= 0) {
-      return resolve();
-    }
-    query.skip(skip);
-    resolve();
-  });
-};
+export default (query, skip, maxSkip) => new Promise((resolve) => {
+  if (isNaN(+skip)) {
+    return resolve();
+  }
+  const _skip = min([maxSkip, skip]);
+  if (_skip <= 0) {
+    return resolve();
+  }
+  query.skip(_skip);
+  resolve();
+});

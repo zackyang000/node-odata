@@ -1,18 +1,16 @@
-import { min } from 'lodash';
+import { min } from './../utils';
 
 // ?$top=10
 // ->
 // query.top(10)
-export default (query, top, maxTop) => {
-  return new Promise((resolve, reject) => {
-    if (isNaN(+top)) {
-      return resolve();
-    }
-    top = min([maxTop, top]);
-    if (top <= 0) {
-      return resolve();
-    }
-    query.limit(top);
-    resolve();
-  });
-};
+export default (query, top, maxTop) => new Promise((resolve) => {
+  if (isNaN(+top)) {
+    return resolve();
+  }
+  const _top = min([maxTop, top]);
+  if (_top <= 0) {
+    return resolve();
+  }
+  query.limit(_top);
+  resolve();
+});

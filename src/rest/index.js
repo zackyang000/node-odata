@@ -7,11 +7,82 @@ import del from './delete';
 import patch from './patch';
 import get from './get';
 
-const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
-  let resourceListURL = `/${url}`;
-  let resourceURL = `${resourceListURL}\\(:id\\)`;
+function authorizePipe(req, res, auth) {
+  return new Promise((resolve, reject) => {
+    if (auth !== undefined) {
+      if (!auth(req, res)) {
+        return reject({ status: 401 });
+      }
+    }
+    resolve();
+  });
+}
 
-  let routes = [
+function beforePipe(req, res, before) {
+  return new Promise((resolve) => {
+    if (before) {
+      before(req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function respondPipe(req, res, result) {
+  return new Promise((resolve) => {
+    const status = result.status || 200;
+    const data = result.entity;
+    res.status(status).jsonp(data);
+    resolve(data);
+  });
+}
+
+function afterPipe(req, res, after, data) {
+  return new Promise((resolve) => {
+    if (after) {
+      after(data, req.body, req, res);
+    }
+    resolve();
+  });
+}
+
+function errorPipe(req, res, err) {
+  return new Promise(() => {
+    const status = err.status || 500;
+    const text = err.text || err.message || http.STATUS_CODES[status];
+    res.status(status).send(text);
+  });
+}
+
+function addRestRoutes(router, routes, mongooseModel, options) {
+  routes.map((route) => {
+    const { method, url, ctrl, hook } = route;
+    router[method](url, (req, res) => {
+      authorizePipe(req, res, hook.auth)
+      .then(() => beforePipe(req, res, hook.before))
+      .then(() => ctrl(req, mongooseModel, options))
+      .then((result) => respondPipe(req, res, result || {}))
+      .then((data) => afterPipe(req, res, hook.after, data))
+      .catch((err) => errorPipe(req, res, err));
+    });
+  });
+}
+
+function addActionRoutes(router, resourceURL, actions) {
+  Object.keys(actions).map((url) => {
+    const action = actions[url];
+    router.post(`${resourceURL}${url}`, (req, res, next) => {
+      authorizePipe(req, res, action.auth)
+        .then(() => action(req, res, next))
+        .catch((result) => errorPipe(req, res, result));
+    });
+  });
+}
+
+const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
+  const resourceListURL = `/${url}`;
+  const resourceURL = `${resourceListURL}\\(:id\\)`;
+
+  const routes = [
     {
       method: 'post',
       url: resourceListURL,
@@ -50,78 +121,10 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     },
   ];
 
-  let router = Router();
-
-  // add REST routes.
-  routes.map((route) => {
-    let { method, url, ctrl, hook } = route;
-    router[method](url, (req, res, next) => {
-      authorizePipe(req, res, hook.auth)
-      .then(function() { return beforePipe(req, res, hook.before); })
-      .then(function() { return ctrl(req, mongooseModel, options); })
-      .then(function(result) { return respondPipe(req, res, result || {}); })
-      .then(function(data) { return afterPipe(req, res, hook.after, data); })
-      .catch(function(err) { errorPipe(req, res, err); });
-    });
-  });
-
-  // add ACTION routes.
-  Object.keys(actions).map(function(url) {
-    let action = actions[url];
-    router.post(`${resourceURL}${url}`, (req, res, next) => {
-      authorizePipe(req, res, action.auth).then(function() {
-        action(req, res, next);
-      }).catch(function(result) { errorPipe(req, res, result); });
-    });
-  });
-
+  const router = Router();
+  addRestRoutes(router, routes, mongooseModel, options);
+  addActionRoutes(router, resourceURL, actions);
   return router;
 };
-
-function authorizePipe(req, res, auth) {
-  return new Promise((resolve, reject) => {
-    if (auth !== undefined) {
-      if (!auth(req, res)) {
-        return reject({ status: 401 });
-      }
-    }
-    resolve();
-  });
-}
-
-function beforePipe(req, res, before) {
-  return new Promise((resolve, reject) => {
-    if (before) {
-      before(req.body, req, res);
-    }
-    resolve();
-  });
-}
-
-function respondPipe(req, res, result) {
-  return new Promise((resolve, reject) => {
-    let status = result.status || 200;
-    let data = result.entity;
-    res.status(status).jsonp(data);
-    resolve(data);
-  });
-}
-
-function afterPipe(req, res, after, data) {
-  return new Promise((resolve, reject) => {
-    if (after) {
-      after(data, req.body, req, res);
-    }
-    resolve();
-  });
-}
-
-function errorPipe(req, res, err) {
-  return new Promise((resolve, reject) => {
-    let status = err.status || 500;
-    let text = err.text || err.message || http.STATUS_CODES[status];
-    res.status(status).send(text);
-  });
-}
 
 export default { getRouter };
