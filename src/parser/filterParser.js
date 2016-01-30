@@ -18,72 +18,6 @@
 
 import functions from './functionsParser';
 
-export default (query, $filter) => {
-  return new Promise((resolve, reject) => {
-    if (!$filter) {
-      return resolve();
-    }
-
-    const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-    const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-    const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-
-    let condition;
-    if (stringHelper.has($filter, 'and')) {
-      condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
-    }else if(stringHelper.has($filter, 'or')){
-      condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR).map((s) => stringHelper.removeEndOf(s, 'or').trim());
-    }
-    else {
-      condition = [ $filter.trim() ];
-    }
-
-    condition.map(function(item) {
-      let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
-      if (conditionArr.length !== 3) {
-        return reject(`Syntax error at '${item}'.`);
-      }
-      let [key, odataOperator, value] = conditionArr;
-
-      let { val, err } = validator.formatValue(value);
-      if (err) {
-        return reject(err);
-      }
-
-      // function query
-      let functionKey = key.substring(0, key.indexOf('('));
-      if (functionKey in { indexof: 1, year: 1 }) {
-        functions[functionKey](query, key, odataOperator, val);
-      } else {
-      // operator query
-        switch(odataOperator) {
-          case 'eq':
-            query.where(key).equals(val);
-            break;
-          case 'ne':
-            query.where(key).ne(val);
-            break;
-          case 'gt':
-            query.where(key).gt(val);
-            break;
-          case 'ge':
-            query.where(key).gte(val);
-            break;
-          case 'lt':
-            query.where(key).lt(val);
-            break;
-          case 'le':
-            query.where(key).lte(val);
-            break;
-          default:
-            return reject("Incorrect operator at '#{item}'.");
-        }
-      }
-    });
-    resolve();
-  });
-};
-
 const stringHelper = {
   has : (str, key) => {
     return str.indexOf(key) >= 0;
@@ -121,3 +55,67 @@ const validator = {
     return ({ val: value });
   }
 };
+
+export default (query, $filter) => new Promise((resolve, reject) => {
+  if (!$filter) {
+    return resolve();
+  }
+
+  const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+  const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+  const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
+
+  let condition;
+  if (stringHelper.has($filter, 'and')) {
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
+  }else if(stringHelper.has($filter, 'or')){
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR).map((s) => stringHelper.removeEndOf(s, 'or').trim());
+  }
+  else {
+    condition = [ $filter.trim() ];
+  }
+
+  condition.map(function(item) {
+    let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
+    if (conditionArr.length !== 3) {
+      return reject(`Syntax error at '${item}'.`);
+    }
+    let [key, odataOperator, value] = conditionArr;
+
+    let { val, err } = validator.formatValue(value);
+    if (err) {
+      return reject(err);
+    }
+
+    // function query
+    let functionKey = key.substring(0, key.indexOf('('));
+    if (functionKey in { indexof: 1, year: 1 }) {
+      functions[functionKey](query, key, odataOperator, val);
+    } else {
+    // operator query
+      switch(odataOperator) {
+        case 'eq':
+          query.where(key).equals(val);
+          break;
+        case 'ne':
+          query.where(key).ne(val);
+          break;
+        case 'gt':
+          query.where(key).gt(val);
+          break;
+        case 'ge':
+          query.where(key).gte(val);
+          break;
+        case 'lt':
+          query.where(key).lt(val);
+          break;
+        case 'le':
+          query.where(key).lte(val);
+          break;
+        default:
+          return reject("Incorrect operator at '#{item}'.");
+      }
+    }
+  });
+  resolve();
+});
