@@ -19,19 +19,13 @@
 import functions from './functionsParser';
 
 const stringHelper = {
-  has : (str, key) => {
-    return str.indexOf(key) >= 0;
-  },
+  has: (str, key) => str.indexOf(key) >= 0,
 
-  isBeginWith : (str, key) => {
-    return str.indexOf(key) === 0;
-  },
+  isBeginWith: (str, key) => str.indexOf(key) === 0,
 
-  isEndWith : (str, key) => {
-    return str.lastIndexOf(key) === (str.length - key.length);
-  },
+  isEndWith: (str, key) => str.lastIndexOf(key) === (str.length - key.length),
 
-  removeEndOf : (str, key) => {
+  removeEndOf: (str, key) => {
     if (stringHelper.isEndWith(str, key)) {
       return str.substr(0, str.length - key.length);
     }
@@ -40,19 +34,20 @@ const stringHelper = {
 };
 
 const validator = {
-  formatValue : (value) => {
+  formatValue: (value) => {
+    let val = undefined;
     if (value === 'true') {
-      value = true;
+      val = true;
     } else if (value === 'false') {
-      value = false;
+      val = false;
     } else if (+value === +value) {
-      value = +value;
+      val = +value;
     } else if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
-      value = value.slice(1, -1);
+      val = value.slice(1, -1);
     } else {
       return ({ err: `Syntax error at '${value}'.` });
     }
-    return ({ val: value });
+    return ({ val });
   }
 };
 
@@ -67,33 +62,36 @@ export default (query, $filter) => new Promise((resolve, reject) => {
 
   let condition;
   if (stringHelper.has($filter, 'and')) {
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS).map((s) => stringHelper.removeEndOf(s, 'and').trim());
-  }else if(stringHelper.has($filter, 'or')){
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR).map((s) => stringHelper.removeEndOf(s, 'or').trim());
-  }
-  else {
-    condition = [ $filter.trim() ];
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS)
+      .map((con) => stringHelper.removeEndOf(con, 'and').trim());
+  } else if (stringHelper.has($filter, 'or')) {
+    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR)
+      .map((con) => stringHelper.removeEndOf(con, 'or').trim());
+  } else {
+    condition = [$filter.trim()];
   }
 
-  condition.map(function(item) {
-    let conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE).map((s) => s.trim()).filter((n) => n);
+  condition.map((item) => {
+    const conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE)
+      .map((con) => con.trim())
+      .filter((con) => con);
     if (conditionArr.length !== 3) {
       return reject(`Syntax error at '${item}'.`);
     }
-    let [key, odataOperator, value] = conditionArr;
+    const [key, odataOperator, value] = conditionArr;
 
-    let { val, err } = validator.formatValue(value);
+    const { val, err } = validator.formatValue(value);
     if (err) {
       return reject(err);
     }
 
     // function query
-    let functionKey = key.substring(0, key.indexOf('('));
+    const functionKey = key.substring(0, key.indexOf('('));
     if (functionKey in { indexof: 1, year: 1 }) {
       functions[functionKey](query, key, odataOperator, val);
     } else {
     // operator query
-      switch(odataOperator) {
+      switch (odataOperator) {
         case 'eq':
           query.where(key).equals(val);
           break;
