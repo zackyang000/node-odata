@@ -9,6 +9,7 @@ function hook(resource, pos, fn) {
   } else {
     method = [method];
   }
+  /*eslint-disable */
   method.map((curr) => {
     if (resource._hooks[curr][pos]) {
       const _fn = resource._hooks[method][pos];
@@ -20,6 +21,7 @@ function hook(resource, pos, fn) {
       resource._hooks[curr][pos] = fn;
     }
   });
+  /*eslint-enable */
 }
 
 export default class {

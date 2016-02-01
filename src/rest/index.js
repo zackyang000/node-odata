@@ -121,7 +121,9 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     },
   ];
 
+  /*eslint-disable */
   const router = Router();
+  /*eslint-enable */
   addRestRoutes(router, routes, mongooseModel, options);
   addActionRoutes(router, resourceURL, actions);
   return router;

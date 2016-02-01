@@ -1,6 +1,7 @@
 import uuid from 'node-uuid';
 
-export default function(schema, options) {
+/*eslint-disable */
+export default function (schema) {
   // add _id to schema.
   if (!schema.paths._id) {
     schema.add({
@@ -13,7 +14,7 @@ export default function(schema, options) {
 
   // display value of _id when request id.
   if (!schema.paths.id) {
-    schema.virtual('id').get(function() {
+    schema.virtual('id').get(function getId() {
       return this._id;
     });
     schema.set('toObject', { virtuals: true });
@@ -27,7 +28,7 @@ export default function(schema, options) {
   if (!schema.options.toJSON) {
     schema.options.toJSON = {};
   }
-  const remove = function(doc, ret, options) {
+  const remove = (doc, ret) => {
     delete ret._id;
     if (!ret.id) {
       delete ret.id;
@@ -38,10 +39,11 @@ export default function(schema, options) {
   schema.options.toJSON.transform = remove;
 
   // genarate _id.
-  schema.pre('save', function(next) {
+  schema.pre('save', function preSave(next) {
     if (this.isNew && !this._id) {
       this._id = uuid.v4();
     }
     return next();
   });
 }
+/*eslint-enable */
