@@ -26,12 +26,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "es6-shim": "0.31.2",
     "express": "4.12.0",
     "body-parser": "1.13.1",
     "method-override": "2.3.3",
     "cors": "2.4.2",
-    "lodash": "3.6.0",
     "mongoose": "4.0.3",
     "node-uuid": "1.4.3"
   },
