@@ -37,7 +37,7 @@
     "babel": "6.3.26",
     "babel-cli": "6.4.0",
     "babel-core": "6.4.0",
-    "babel-eslint": "5.0.0-beta6",
+    "babel-eslint": "5.0.0-beta9",
     "babel-helpers": "6.4.0",
     "babel-loader": "6.2.1",
     "babel-polyfill": "6.3.14",
