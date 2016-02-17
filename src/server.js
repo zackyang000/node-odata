@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import Resource from './Resource';
+import Resource from './resource';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
