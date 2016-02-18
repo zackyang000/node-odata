@@ -1,5 +1,9 @@
 0.7.7 (2016-01-20)
 ===================
+- fixed require's file name case for case-sensitive filesystems. [#46](https://github.com/TossShinHwa/node-odata/issues/46)
+
+0.7.7 (2016-01-20)
+===================
 - fixed http state code not be correct when mongodb throw a internal error. [#45](https://github.com/TossShinHwa/node-odata/issues/45)
 
 0.7.6 (2015-07-30)
