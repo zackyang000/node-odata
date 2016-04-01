@@ -1,9 +1,6 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import methodOverride from 'method-override';
+import createExpress from './express';
 import mongoose from 'mongoose';
-import cors from 'cors';
-import Resource from './Resource';
+import Resource from './ODataResource';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -11,13 +8,7 @@ function checkAuth(auth, req) {
 
 class Server {
   constructor(db, prefix) {
-    this._app = express();
-    this._app.use(bodyParser.urlencoded({ extended: true }));
-    this._app.use(bodyParser.json());
-    this._app.use(methodOverride());
-    this._app.use(express.query());
-    this._app.use(cors());
-    this._app.disable('x-powered-by');
+    this._app = createExpress();
     this._mongoose = mongoose;
     this._settings = {
       maxTop: 10000,
