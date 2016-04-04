@@ -67,4 +67,11 @@ const year = (query, fnKey, odataOperator, value) => {
   }
 };
 
-export default { indexof, year };
+// contains(CompanyName,'icrosoft')
+const contains = (query, fnKey, odataOperator, value) => {
+  let [key, target] = fnKey.substring(fnKey.indexOf('(') + 1, fnKey.indexOf(')')).split(',');
+  [key, target] = [key.trim(), target.trim()];
+  query.$where(`this.${key}.indexOf(${target}) != -1`);
+};
+
+export default { indexof, year, contains };
