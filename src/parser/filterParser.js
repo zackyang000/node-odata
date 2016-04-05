@@ -87,7 +87,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
 
     // function query
     const functionKey = key.substring(0, key.indexOf('('));
-    if (functionKey in { indexof: 1, year: 1 }) {
+    if (functionKey in { indexof: 1, year: 1, contains: 1 }) {
       functions[functionKey](query, key, odataOperator, val);
     } else {
     // operator query

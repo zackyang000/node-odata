@@ -94,7 +94,7 @@ npm install node-odata
     * [ ] has
   * [ ] String Functions
   	* [x] indexof
-  	* [ ] contains
+  	* [x] contains
   	* [ ] endswith
   	* [ ] startswith
   	* [ ] length
