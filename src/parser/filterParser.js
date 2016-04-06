@@ -18,6 +18,8 @@
 
 import functions from './functionsParser';
 
+const OPERATORS_KEYS = ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'has'];
+
 const stringHelper = {
   has: (str, key) => str.indexOf(key) >= 0,
 
@@ -58,7 +60,6 @@ export default (query, $filter) => new Promise((resolve, reject) => {
 
   const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
   const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-  const SPLIT_KEY_OPERATOR_AND_VALUE = /(.+?)(?: (?=(?:[^']*'[^']*')*[^']*$)|$)/g;
 
   let condition;
   if (stringHelper.has($filter, 'and')) {
@@ -72,25 +73,48 @@ export default (query, $filter) => new Promise((resolve, reject) => {
   }
 
   condition.map((item) => {
-    const conditionArr = item.match(SPLIT_KEY_OPERATOR_AND_VALUE)
-      .map((con) => con.trim())
-      .filter((con) => con);
-    if (conditionArr.length !== 3) {
+    // parse "indexof(title,'X1ML') gt 0"
+    const conditionArr = [];
+    const items = item.split(' ');
+    const keys = [];
+    for (const i of item.split(' ')) {
+      // parse "indexof(title,'X1ML') gt 0"
+      if (OPERATORS_KEYS.indexOf(i) > -1) {
+        items.shift();
+        conditionArr.push(keys.join(' ').trim());
+        conditionArr.push(i);
+        conditionArr.push(items.join(' ').trim());
+        break;
+      }
+      keys.push(items.shift());
+    }
+    if (conditionArr.length === 0) {
+      // parse "contains(title,'X1ML')"
+      conditionArr.push(item);
+    }
+    if (conditionArr.length !== 3 && conditionArr.length !== 1) {
       return reject(`Syntax error at '${item}'.`);
     }
     const [key, odataOperator, value] = conditionArr;
 
-    const { val, err } = validator.formatValue(value);
-    if (err) {
-      return reject(err);
+    let val = undefined;
+    if (value !== undefined) {
+      const result = validator.formatValue(value);
+      if (result.err) {
+        return reject(result.err);
+      }
+      val = result.val;
     }
 
     // function query
     const functionKey = key.substring(0, key.indexOf('('));
-    if (functionKey in { indexof: 1, year: 1, contains: 1 }) {
+    if (['indexof', 'year', 'contains'].indexOf(functionKey) > -1) {
       functions[functionKey](query, key, odataOperator, val);
     } else {
-    // operator query
+      if (conditionArr.length === 1) {
+        return reject(`Syntax error at '${item}'.`);
+      }
+      // operator query
       switch (odataOperator) {
         case 'eq':
           query.where(key).equals(val);
