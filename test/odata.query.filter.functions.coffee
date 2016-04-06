@@ -27,6 +27,26 @@ describe 'odata.query.filter.functions', ->
         PORT = s.address().port
         done()
 
+  describe '[contains]', ->
+    it 'should filter items', (done) ->
+      request("http://localhost:#{PORT}")
+        .get("/book?$filter=contains(title,'i')")
+        .expect(200)
+        .end (err, res) ->
+          return done(err)  if(err)
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.title.indexOf('i') >= 1)
+          done()
+    it 'should filter items when it has extra spaces in query string', (done) ->
+      request("http://localhost:#{PORT}")
+        .get("/book?$filter=contains(title,'Visual Studio')")
+        .expect(200)
+        .end (err, res) ->
+          return done(err)  if(err)
+          res.body.value.length.should.greaterThan(0)
+          res.body.value.should.matchEach((item) -> item.title.indexOf('Visual Studio') >= 0)
+          done()
+
   describe '[indexof]', ->
     it 'should filter items', (done) ->
       request("http://localhost:#{PORT}")
