@@ -25,6 +25,13 @@ const convertToOperator = (odataOperator) => {
   return operator;
 };
 
+// contains(CompanyName,'icrosoft')
+const contains = (query, fnKey) => {
+  let [key, target] = fnKey.substring(fnKey.indexOf('(') + 1, fnKey.indexOf(')')).split(',');
+  [key, target] = [key.trim(), target.trim()];
+  query.$where(`this.${key}.indexOf(${target}) != -1`);
+};
+
 // indexof(CompanyName,'X') eq 1
 const indexof = (query, fnKey, odataOperator, value) => {
   let [key, target] = fnKey.substring(fnKey.indexOf('(') + 1, fnKey.indexOf(')')).split(',');
@@ -65,13 +72,6 @@ const year = (query, fnKey, odataOperator, value) => {
     default:
       throw new Error('Invalid operator code, expected one of ["==", "!=", ">", ">=", "<", "<="].');
   }
-};
-
-// contains(CompanyName,'icrosoft')
-const contains = (query, fnKey, odataOperator, value) => {
-  let [key, target] = fnKey.substring(fnKey.indexOf('(') + 1, fnKey.indexOf(')')).split(',');
-  [key, target] = [key.trim(), target.trim()];
-  query.$where(`this.${key}.indexOf(${target}) != -1`);
 };
 
 export default { indexof, year, contains };
