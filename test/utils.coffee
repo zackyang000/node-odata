@@ -14,8 +14,3 @@ describe 'min', ->
     utils.min(['a', 1]).should.be.equal(1)
     utils.min([1, 1]).should.be.equal(1)
     done()
-
-describe 'min', ->
-  it 'should work', (done) ->
-    utils.min([1, 10, 100]).should.be.equal(1)
-    done()
