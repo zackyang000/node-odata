@@ -59,19 +59,8 @@ export default (query, $filter) => new Promise((resolve, reject) => {
     return resolve();
   }
 
-  const SPLIT_MULTIPLE_CONDITIONS = /(.+?)(?:and(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-  const SPLIT_MULTIPLE_CONDITIONS_OR = /(.+?)(?:or(?=(?:[^']*'[^']*')*[^']*$)|$)/g;
-
-  let condition;
-  if (stringHelper.has($filter, 'and')) {
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS)
-      .map((con) => stringHelper.removeEndOf(con, 'and').trim());
-  } else if (stringHelper.has($filter, 'or')) {
-    condition = $filter.match(SPLIT_MULTIPLE_CONDITIONS_OR)
-      .map((con) => stringHelper.removeEndOf(con, 'or').trim());
-  } else {
-    condition = [$filter.trim()];
-  }
+  const condition = split($filter, ['and', 'or'])
+    .filter((item) => (item !== 'and' && item !== 'or'));
 
   condition.map((item) => {
     // parse "indexof(title,'X1ML') gt 0"
