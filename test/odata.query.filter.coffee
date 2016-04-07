@@ -37,6 +37,14 @@ describe 'odata.query.filter', ->
           res.body.value.length.should.be.equal(1)
           res.body.value[0].title.should.be.equal(books[1].title)
           done()
+    it 'should filter items when field has keyword', (done) ->
+      request("http://localhost:#{PORT}")
+        .get("/book?$filter=author eq 'Ralls, Kim'")
+        .expect(200)
+        .end (err, res) ->
+          return done(err)  if(err)
+          res.body.value.length.should.be.equal(1)
+          done()
     it 'should filter items when it has extra spaces at begin', (done) ->
       request("http://localhost:#{PORT}")
         .get("/book?$filter=   title eq '#{books[1].title}'")
