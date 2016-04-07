@@ -17,6 +17,7 @@
 //   http://host/service/Categories?$filter=Products/$count lt 10
 
 import functions from './functionsParser';
+import { split } from '../utils';
 
 const OPERATORS_KEYS = ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'has'];
 
@@ -74,20 +75,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
 
   condition.map((item) => {
     // parse "indexof(title,'X1ML') gt 0"
-    const conditionArr = [];
-    const items = item.split(' ');
-    const keys = [];
-    for (const i of item.split(' ')) {
-      // parse "indexof(title,'X1ML') gt 0"
-      if (OPERATORS_KEYS.indexOf(i) > -1) {
-        items.shift();
-        conditionArr.push(keys.join(' ').trim());
-        conditionArr.push(i);
-        conditionArr.push(items.join(' ').trim());
-        break;
-      }
-      keys.push(items.shift());
-    }
+    const conditionArr = split(item, OPERATORS_KEYS);
     if (conditionArr.length === 0) {
       // parse "contains(title,'X1ML')"
       conditionArr.push(item);
