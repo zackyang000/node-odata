@@ -47,6 +47,8 @@ const validator = {
       val = +value;
     } else if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
       val = value.slice(1, -1);
+    } else if (value === 'null') {
+      val = value;
     } else {
       return ({ err: `Syntax error at '${value}'.` });
     }
@@ -90,6 +92,18 @@ export default (query, $filter) => new Promise((resolve, reject) => {
     } else {
       if (conditionArr.length === 1) {
         return reject(`Syntax error at '${item}'.`);
+      }
+      if (value === 'null') {
+        switch (odataOperator) {
+          case 'eq':
+            query.exists(key, false);
+            return resolve();
+          case 'ne':
+            query.exists(key, true);
+            return resolve();
+          default:
+            break;
+        }
       }
       // operator query
       switch (odataOperator) {
