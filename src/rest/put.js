@@ -1,5 +1,5 @@
 function _updateEntity(resolve, reject, MongooseModel, req, entity) {
-  MongooseModel.update({ id: entity.id }, req.body, (err) => {
+  MongooseModel.findByIdAndUpdate(entity.id, req.body, (err) => {
     if (err) {
       return reject(err);
     }
