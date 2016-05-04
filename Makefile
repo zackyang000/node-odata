@@ -2,7 +2,7 @@ REPORTER = dot
 
 .PHONY: run compile test test-cov lint
 
-run:  lint compile test
+run: lint compile test
 
 lint:
 	node_modules/.bin/eslint src/
