@@ -107,7 +107,7 @@ class Server {
   }
 
   use(...args) {
-    if (args.length === 1 && args[0] instanceof Resource) {
+    if (args[0] instanceof Resource) {
       this._resources.push(args[0]);
       return;
     }
