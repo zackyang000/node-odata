@@ -1,3 +1,11 @@
+0.7.11 (2016-05-23)
+===================
+- Fixed return value have no id when put resource.
+
+0.7.11 (2016-05-04)
+===================
+Fixed update with PUT not working when use a complex model. [#55](https://github.com/TossShinHwa/node-odata/issues/55)
+
 0.7.10 (2016-04-09)
 ===================
 - Support null value for query. [#52](https://github.com/TossShinHwa/node-odata/issues/52)
