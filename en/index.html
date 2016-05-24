@@ -120,15 +120,14 @@ DELETE /books(:id)
 <pre class="shell"><code>curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books
 HTTP/1.1 201 Created
 Content-Type: application/json; charset=utf-8
-Content-Length: 97
+Content-Length: 83
 Date: Sun, 11 Jan 2015 01:46:57 GMT
 Connection: keep-alive
 
 {
-  "__v": 0,
   "title": "title of book",
   "price": 19.99,
-  "_id": "54b1d6117d0b3d6d5255bc30"
+  "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
 }
 </code></pre>
 
@@ -136,18 +135,17 @@ Connection: keep-alive
 
 <p>Use <strong>PUT /resource(:id)</strong> to modify existing data, it will return to the latest state of the resource.</p>
 
-<pre class="shell"><code>curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+<pre class="shell"><code>curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Content-Length: 96
+Content-Length: 82
 Date: Sun, 11 Jan 2015 01:50:11 GMT
 Connection: keep-alive
 
 {
-  "_id": "54b1d6117d0b3d6d5255bc30",
   "title": "title of book",
   "price": 9.99,
-  "__v": 0
+  "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
 }
 </code></pre>
 
@@ -158,17 +156,16 @@ Connection: keep-alive
 <pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/books
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Content-Length: 402
+Content-Length: 94
 Date: Sun, 11 Jan 2015 01:52:49 GMT
 Connection: keep-alive
 
 {
   "value": [
     {
-      "_id": "54b1d6117d0b3d6d5255bc30",
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
       "title": "title of book",
-      "price": 9.99,
-      "__v": 0
+      "price": 9.99
     }
   ]
 }
@@ -176,18 +173,17 @@ Connection: keep-alive
 
 <p>Use <strong>GET /resource(:id)</strong> to querey specific resource.</p>
 
-<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+<pre class="shell"><code>curl -i -X GET http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Content-Length: 96
+Content-Length: 82
 Date: Sun, 11 Jan 2015 01:54:49 GMT
 Connection: keep-alive
 
 {
-  "_id": "54b1d6117d0b3d6d5255bc30",
+  "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
   "title": "title of book",
-  "price": 9.99,
-  "__v": 0
+  "price": 9.99
 }
 </code></pre>
 
@@ -195,14 +191,12 @@ Connection: keep-alive
 
 <p>Use <strong>DELETE /resource(:id)</strong> to remove specific resource.</p>
 
-<pre class="shell"><code>curl -i -X DELETE http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+<pre class="shell"><code>curl -i -X DELETE http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
 HTTP/1.1 200 OK
 Content-Type: text/plain
-Content-Length: 2
+Content-Length: 0
 Date: Sun, 11 Jan 2015 01:56:21 GMT
 Connection: keep-alive
-
-OK
 </code></pre>
 
 <h1 id="4-odata-query">4) OData Query</h1>

@@ -68,33 +68,31 @@ Use **POST /resource** to insert new data, it will return to the latest state of
     $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books
     HTTP/1.1 201 Created
     Content-Type: application/json; charset=utf-8
-    Content-Length: 97
+    Content-Length: 83
     Date: Sun, 11 Jan 2015 01:46:57 GMT
     Connection: keep-alive
 
     {
-      "__v": 0,
       "title": "title of book",
       "price": 19.99,
-      "_id": "54b1d6117d0b3d6d5255bc30"
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
     }
 
 ## 3.2 Modify
 
 Use **PUT /resource(:id)** to modify existing data, it will return to the latest state of the resource.
 
-    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 96
+    Content-Length: 82
     Date: Sun, 11 Jan 2015 01:50:11 GMT
     Connection: keep-alive
 
     {
-      "_id": "54b1d6117d0b3d6d5255bc30",
       "title": "title of book",
       "price": 9.99,
-      "__v": 0
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
     }
 
 ## 3.3 Query
@@ -104,49 +102,45 @@ Use **GET /resource** to query resources list, result will be returned in the va
     $ curl -i -X GET http://127.0.0.1:3000/books
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 402
+    Content-Length: 94
     Date: Sun, 11 Jan 2015 01:52:49 GMT
     Connection: keep-alive
 
     {
       "value": [
         {
-          "_id": "54b1d6117d0b3d6d5255bc30",
+          "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
           "title": "title of book",
-          "price": 9.99,
-          "__v": 0
+          "price": 9.99
         }
       ]
     }
 
 Use **GET /resource(:id)** to querey specific resource.
 
-    $ curl -i -X GET http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X GET http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 96
+    Content-Length: 82
     Date: Sun, 11 Jan 2015 01:54:49 GMT
     Connection: keep-alive
 
     {
-      "_id": "54b1d6117d0b3d6d5255bc30",
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
       "title": "title of book",
-      "price": 9.99,
-      "__v": 0
+      "price": 9.99
     }
 
 ## 3.4 Remove
 
 Use **DELETE /resource(:id)** to remove specific resource.
 
-    $ curl -i -X DELETE http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X DELETE http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: text/plain
-    Content-Length: 2
+    Content-Length: 0
     Date: Sun, 11 Jan 2015 01:56:21 GMT
     Connection: keep-alive
-
-    OK
 
 # 4) OData Query
 

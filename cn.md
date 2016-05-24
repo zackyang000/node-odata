@@ -71,33 +71,31 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
     $ curl -i -X POST -d '{"title": "title of book", "price": 19.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books
     HTTP/1.1 201 Created
     Content-Type: application/json; charset=utf-8
-    Content-Length: 97
+    Content-Length: 83
     Date: Sun, 11 Jan 2015 01:46:57 GMT
     Connection: keep-alive
 
     {
-      "__v": 0,
       "title": "title of book",
       "price": 19.99,
-      "_id": "54b1d6117d0b3d6d5255bc30"
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
     }
 
 ## 3.2 修改
 
 使用 **PUT /resource(:id)** 修改已有的数据, 它将返回 resource 修改后的状态.
 
-    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X PUT -d '{"title": "title of book", "price": 9.99}' -H "Content-Type: application/json" http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 96
+    Content-Length: 82
     Date: Sun, 11 Jan 2015 01:50:11 GMT
     Connection: keep-alive
 
     {
-      "_id": "54b1d6117d0b3d6d5255bc30",
       "title": "title of book",
       "price": 9.99,
-      "__v": 0
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498"
     }
 
 ## 3.3 查询
@@ -107,49 +105,47 @@ node-odata 的运行需要依赖于 [NodeJS](http://nodejs.org/) 和 [MongoDB](h
     $ curl -i -X GET http://127.0.0.1:3000/books
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 402
+    Content-Length: 94
     Date: Sun, 11 Jan 2015 01:52:49 GMT
     Connection: keep-alive
 
     {
       "value": [
         {
-          "_id": "54b1d6117d0b3d6d5255bc30",
+          "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
           "title": "title of book",
-          "price": 9.99,
-          "__v": 0
+          "price": 9.99
         }
       ]
     }
 
 使用 **GET /resource(:id)** 查询特定 resource.
 
-    $ curl -i -X GET http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X GET http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=utf-8
-    Content-Length: 96
+    Content-Length: 82
     Date: Sun, 11 Jan 2015 01:54:49 GMT
     Connection: keep-alive
 
     {
-      "_id": "54b1d6117d0b3d6d5255bc30",
+      "id": "44cc0da1-7372-43ed-a514-98d5fd6d8498",
       "title": "title of book",
-      "price": 9.99,
-      "__v": 0
+      "price": 9.99
     }
 
 ## 3.4 删除
 
 使用 **DELETE /resource(:id)** 删除指定 resource.
 
-    $ curl -i -X DELETE http://127.0.0.1:3000/books(54b1d6117d0b3d6d5255bc30)
+    $ curl -i -X DELETE http://127.0.0.1:3000/books(44cc0da1-7372-43ed-a514-98d5fd6d8498)
     HTTP/1.1 200 OK
     Content-Type: text/plain
-    Content-Length: 2
+    Content-Length: 0
     Date: Sun, 11 Jan 2015 01:56:21 GMT
     Connection: keep-alive
 
-    OK
+
 
 # 4) OData 查询
 
