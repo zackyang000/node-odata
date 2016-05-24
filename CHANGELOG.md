@@ -1,4 +1,4 @@
-0.7.11 (2016-05-23)
+0.7.12 (2016-05-23)
 ===================
 - Fixed return value have no id when put resource.
 
