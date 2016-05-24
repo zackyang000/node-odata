@@ -3,7 +3,9 @@ function _updateEntity(resolve, reject, MongooseModel, req, entity) {
     if (err) {
       return reject(err);
     }
-    return resolve({ entity: req.body, originEntity: entity });
+    const newEntity = req.body;
+    newEntity.id = entity.id;
+    return resolve({ entity: newEntity, originEntity: entity });
   });
 }
 
