@@ -31,7 +31,7 @@
     "method-override": "2.3.3",
     "cors": "2.4.2",
     "mongoose": "4.0.3",
-    "node-uuid": "1.4.3"
+    "node-uuid": "1.4.7"
   },
   "devDependencies": {
     "babel": "6.3.26",
