@@ -1,10 +1,26 @@
-0.7.7 (2016-01-20)
+0.7.12 (2016-05-23)
 ===================
-- fixed require's file name case for case-sensitive filesystems. [#46](https://github.com/TossShinHwa/node-odata/issues/46)
+- Fixed return value have no id when put resource.
+
+0.7.11 (2016-05-04)
+===================
+Fixed update with PUT not working when use a complex model. [#55](https://github.com/TossShinHwa/node-odata/issues/55)
+
+0.7.10 (2016-04-09)
+===================
+- Support null value for query. [#52](https://github.com/TossShinHwa/node-odata/issues/52)
+
+0.7.9 (2016-04-08)
+===================
+- Fixed If inside an 'and' expression, a property contains the string 'and' (like 'brand'), it crashes. [#49](https://github.com/TossShinHwa/node-odata/issues/49)
+
+0.7.8 (2016-01-20)
+===================
+- Fixed require's file name case for case-sensitive filesystems. [#46](https://github.com/TossShinHwa/node-odata/issues/46)
 
 0.7.7 (2016-01-20)
 ===================
-- fixed http state code not be correct when mongodb throw a internal error. [#45](https://github.com/TossShinHwa/node-odata/issues/45)
+- Fixed http state code not be correct when mongodb throw a internal error. [#45](https://github.com/TossShinHwa/node-odata/issues/45)
 
 0.7.6 (2015-07-30)
 ===================

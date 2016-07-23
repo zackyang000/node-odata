@@ -1,9 +1,11 @@
 function _updateEntity(resolve, reject, MongooseModel, req, entity) {
-  MongooseModel.update({ id: entity.id }, req.body, (err) => {
+  MongooseModel.findByIdAndUpdate(entity.id, req.body, (err) => {
     if (err) {
       return reject(err);
     }
-    return resolve({ entity: req.body, originEntity: entity });
+    const newEntity = req.body;
+    newEntity.id = entity.id;
+    return resolve({ entity: newEntity, originEntity: entity });
   });
 }
 
