@@ -7,14 +7,14 @@ run: lint compile test
 lint:
 	node_modules/.bin/eslint src/
 
-compile: 
+compile:
 	node_modules/.bin/babel src --out-dir lib
 
 test:
 	@node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
-		test/*.coffee 
+		test/*.coffee
 
 test-cov:
 	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \

@@ -28,7 +28,7 @@ module.exports = (conn, callback) ->
 
   db = mongoose.createConnection(conn)
   model = db.model('book', schema)
-  
+
   model.remove {}, (err, result) ->
     books.map (item) ->
       entity = new model(item)

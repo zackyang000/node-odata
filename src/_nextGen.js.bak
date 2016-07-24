@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Resource from './ODataResource';
 
 const model = {
@@ -17,31 +18,26 @@ export default class Book extends Resource {
   @queryable({ pageSize: 10, maxTop: 100 })
   async onGetList(next) {
     const entities = await next();
-    console.log(entities);
   }
 
   async onGet(next) {
     // do something before
     const entity = await next();
-    console.log(entity);
     // dosomething after
   }
 
   async onCreate(next) {
     const entity = await next();
-    console.log(entity);
   }
 
   @checkUserAuth
   async onRemove(next) {
     const entity = await next();
-    console.log(entity);
   }
 
   @checkUserAuth
   async onUpdate(next) {
     const entity = await next();
-    console.log(entity);
   }
 
   @router['/50off']

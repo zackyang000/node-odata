@@ -11,9 +11,7 @@ describe 'model.custom.id', ->
   before (done) ->
     server = odata('mongodb://localhost/odata-test')
     server.resource('complex-model', {
-        p1: [{
-            p2: String
-        }]
+        p1: [{ p2: String }]
     })
     s = server.listen PORT, ->
       PORT = s.address().port
@@ -23,9 +21,7 @@ describe 'model.custom.id', ->
     request("http://localhost:#{PORT}")
       .post('/complex-model')
       .send
-        p1: [{
-          p2: 'origin'
-        }]
+        p1: [{ p2: 'origin' }]
       .expect(201)
       .end (err, res) ->
         return done(err)  if(err)
@@ -33,9 +29,7 @@ describe 'model.custom.id', ->
         request("http://localhost:#{PORT}")
           .put("/complex-model(#{id})")
           .send
-            p1: [{
-              p2: 'new'
-            }]
+            p1: [{ p2: 'new' }]
           .expect(200)
           .end (err, res) ->
             return done(err)  if(err)
