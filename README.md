@@ -37,7 +37,7 @@ Use the following OData query:
 
 ```
 Example
-GET /books?$select=title, author
+GET /books?$select=id, title
 GET /books?$top=3&$skip=2
 GET /books?$orderby=price desc
 GET /books?$filter=price gt 10
