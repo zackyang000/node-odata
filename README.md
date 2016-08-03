@@ -69,7 +69,7 @@ npm install node-odata
 
 [Live demo](http://books.zackyang.com/book) and try it:
 
-* GET [/book?$select=title, author](http://books.zackyang.com/book?$select=title, author)
+* GET [/book?$select=id, title](http://books.zackyang.com/book?$select=id, title)
 * GET [/book?$top=3&$skip=2](http://books.zackyang.com/book?$top=3&$skip=2)
 * GET [/book?$orderby=price desc](http://books.zackyang.com/book?$orderby=price desc)
 * GET [/book?$filter=price gt 10](http://books.zackyang.com/book?$filter=price gt 10)
