@@ -14,11 +14,11 @@ test:
 	@node_modules/mocha/bin/mocha\
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
-		test/*.coffee
+		test/*.*
 
 test-cov:
 	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
-		./node_modules/mocha/bin/_mocha test/*.coffee -- \
+		./node_modules/mocha/bin/_mocha test/*.* -- \
 		--reporter $(REPORTER) \
 		--require coffee-script/register \
 		test/*.coffee \
