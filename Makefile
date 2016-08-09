@@ -23,3 +23,9 @@ test-cov:
 		--require coffee-script/register \
 		test/*.coffee \
 
+_test:
+	@node_modules/.bin/mocha\
+		--compilers js:babel-core/register \
+		--require babel-polyfill \
+		--reporter $(REPORTER) \
+		test/*.js
