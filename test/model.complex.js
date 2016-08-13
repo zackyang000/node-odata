@@ -1,7 +1,6 @@
-'use strict';
-
 // For issue: https://github.com/TossShinHwa/node-odata/issues/55
-require('should');
+
+import 'should';
 const request = require('supertest');
 
 require('./support');
