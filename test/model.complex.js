@@ -2,7 +2,7 @@
 
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port } from './support/utils';
+import { odata, conn, host, port } from './support/setup';
 
 describe('model.complex', () => {
   before((done) => {
