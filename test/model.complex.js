@@ -1,26 +1,17 @@
 // For issue: https://github.com/TossShinHwa/node-odata/issues/55
 
 import 'should';
-const request = require('supertest');
+import request from 'supertest';
+import { odata, conn, host, port } from './support/utils';
 
-require('./support');
-const odata = require('../.');
-
-let PORT = 0;
-
-describe('model.custom.id', () => {
+describe('model.complex', () => {
   before((done) => {
-    const server = odata('mongodb://localhost/odata-test');
-    server.resource('complex-model', {
-      p1: [{ p2: String }],
-    });
-    const result = server.listen(PORT, () => {
-      PORT = result.address().port;
-      done();
-    });
+    const server = odata(conn);
+    server.resource('complex-model', { p1: [{ p2: String }] });
+    server.listen(port, done);
   });
 
-  it('should work when PUT something', async function() {
+  it('should work when PUT a complex entity', async function() {
     const entity = await addResource();
     await updateResouce(entity.body.id);
     const res = await queryResource(entity.body.id);
@@ -30,7 +21,7 @@ describe('model.custom.id', () => {
 
 function addResource() {
   return new Promise((resolve, reject) => {
-    return request(`http://localhost:${PORT}`)
+    return request(host)
     .post('/complex-model')
     .send({ p1: [{ p2: 'origin' }] })
     .expect(201)
@@ -45,7 +36,7 @@ function addResource() {
 
 function updateResouce(id) {
   return new Promise((resolve, reject) => {
-    return request(`http://localhost:${PORT}`)
+    return request(host)
     .put(`/complex-model(${id})`)
     .send({ p1: [{ p2: 'new' }] })
     .expect(200)
@@ -60,7 +51,7 @@ function updateResouce(id) {
 
 function queryResource(id) {
   return new Promise((resolve, reject) => {
-    return request(`http://localhost:${PORT}`)
+    return request(host)
     .get(`/complex-model(${id})`)
     .expect(200)
     .end((err, res) => {
