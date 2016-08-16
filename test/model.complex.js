@@ -20,45 +20,18 @@ describe('model.complex', () => {
 });
 
 function addResource() {
-  return new Promise((resolve, reject) => {
-    return request(host)
-    .post('/complex-model')
-    .send({ p1: [{ p2: 'origin' }] })
-    .expect(201)
-    .end((err, res) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(res);
-    });
-  });
+  return request(host)
+  .post('/complex-model')
+  .send({ p1: [{ p2: 'origin' }] })
 }
 
 function updateResouce(id) {
-  return new Promise((resolve, reject) => {
-    return request(host)
-    .put(`/complex-model(${id})`)
-    .send({ p1: [{ p2: 'new' }] })
-    .expect(200)
-    .end((err, res) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(res);
-    });
-  });
+  return request(host)
+  .put(`/complex-model(${id})`)
+  .send({ p1: [{ p2: 'new' }] })
 }
 
 function queryResource(id) {
-  return new Promise((resolve, reject) => {
-    return request(host)
-    .get(`/complex-model(${id})`)
-    .expect(200)
-    .end((err, res) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(res);
-    });
-  });
+  return request(host)
+  .get(`/complex-model(${id})`)
 }
