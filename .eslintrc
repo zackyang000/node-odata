@@ -4,23 +4,11 @@
   "env": {
     "browser": true,
     "node": true,
-    "mocha": true
+    "mocha": true,
+    "es6": true
   },
   "rules": {
-    "comma-dangle": 0,
-    "indent": [2, 2, {"SwitchCase": 1}],
-    "no-console": 0,
-    "no-alert": 0,
-    "id-length": [2, {"min": 2, "max": 50, "properties": "never", "exceptions": ["$", "i"]}],
-    "babel/generator-star-spacing": 1,
-    "babel/new-cap": 1,
-    "babel/array-bracket-spacing": 1,
-    "babel/object-curly-spacing": 1,
-    "babel/object-shorthand": 1,
-    "babel/arrow-parens": 1,
-    "babel/no-await-in-loop": 1,
-    "babel/flow-object-type": 1,
-    "babel/func-params-comma-dangle": 1
+    "generator-star-spacing": 0
   },
   "plugins": [
     "babel"
