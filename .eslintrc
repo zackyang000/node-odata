@@ -8,7 +8,8 @@
     "es6": true
   },
   "rules": {
-    "generator-star-spacing": 0
+    "generator-star-spacing": 0,
+    "no-underscore-dangle": 0
   },
   "plugins": [
     "babel"
