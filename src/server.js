@@ -1,5 +1,5 @@
-import createExpress from './express';
 import mongoose from 'mongoose';
+import createExpress from './express';
 import Resource from './ODataResource';
 
 function checkAuth(auth, req) {
@@ -23,15 +23,6 @@ class Server {
     // 这里也许应该让 resources 支持 odata 查询的, 以方便直接在代码中使用 OData 查询方式来进行数据筛选, 达到隔离 mongo 的效果.
     this._resources = [];
     this.resources = {};
-
-    // metadata
-    // this._app.get(this.settings.prefix || '/', (req, res, next) => {
-    //   const resources = {};
-    //   this.resources.map(function(item){
-    //     resources[item.url] = parser.toMetadata(item.model);
-    //   });
-    //   res.json({ resources });
-    // });
   }
 
   defaultConfiguration(db, prefix = '') {
@@ -102,8 +93,9 @@ class Server {
       const router = resource._router(this._db, this._settings);
       this._app.use(this.get('prefix'), router);
       this.resources[resource._name] = this._db.model(resource._name);
+      return true;
     });
-    return this._app.listen.apply(this._app, args);
+    return this._app.listen(...args);
   }
 
   use(...args) {
@@ -111,7 +103,7 @@ class Server {
       this._resources.push(args[0]);
       return;
     }
-    this._app.use.apply(this._app, args);
+    this._app.use(...args);
   }
 
   get(key, callback, auth) {
@@ -121,7 +113,7 @@ class Server {
     // TODO: Need to refactor, same as L70-L80
     const app = this.get('app');
     const prefix = this.get('prefix');
-    app.get(`${prefix}${key}`, (req, res, next) => {
+    return app.get(`${prefix}${key}`, (req, res, next) => {
       if (checkAuth(auth, req)) {
         callback(req, res, next);
       } else {
@@ -133,11 +125,12 @@ class Server {
   set(key, val) {
     // Extra processing
     switch (key) {
-      case 'db':
+      case 'db': {
         this._db = mongoose.createConnection(val);
         this._settings[key] = val;
         break;
-      case 'prefix':
+      }
+      case 'prefix': {
         let prefix = val;
         if (prefix === '/') {
           prefix = '';
@@ -147,9 +140,11 @@ class Server {
         }
         this._settings[key] = prefix;
         break;
-      default:
+      }
+      default: {
         this._settings[key] = val;
         break;
+      }
     }
     return this;
   }
