@@ -120,6 +120,7 @@ export default class {
     }
     method.map((curr) => {
       this._hooks[curr].auth = fn;
+      return undefined;
     });
     return this;
   }
@@ -138,7 +139,7 @@ export default class {
     // not allow contain '/' in url.
     if (this._url.indexOf('/') >= 0) {
       throw new Error(`Url of resource[${this._name}] can't contain "/",`
-                      + `it can only be allowed to exist in the beginning.`);
+                      + 'it can only be allowed to exist in the beginning.');
     }
 
     const mongooseModel = model.register(db, this._url, this._model);
