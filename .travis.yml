@@ -12,7 +12,7 @@ before_script:
   - npm install --quiet
 
 script:
-  - make lint compile test-cov
+  - make compile test-cov
 
 after_script:
   - npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls

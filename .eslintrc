@@ -4,13 +4,14 @@
   "env": {
     "browser": true,
     "node": true,
-    "mocha": true
+    "mocha": true,
+    "es6": true
   },
   "rules": {
-    "comma-dangle": 0,
-    "indent": [2, 2, {"SwitchCase": 1}],
-    "no-console": 0,
-    "no-alert": 0,
-    "id-length": [2, {"min": 2, "max": 50, "properties": "never", "exceptions": ["$", "i"]}]
-  }
+    "generator-star-spacing": 0,
+    "no-underscore-dangle": 0
+  },
+  "plugins": [
+    "babel"
+  ]
 }
