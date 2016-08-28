@@ -14,7 +14,7 @@ function authorizePipe(req, res, auth) {
         return reject({ status: 401 });
       }
     }
-    resolve();
+    return resolve();
   });
 }
 
@@ -54,9 +54,9 @@ function errorPipe(req, res, err) {
 }
 
 function addRestRoutes(router, routes, mongooseModel, options) {
-  routes.map((route) => {
+  return routes.map((route) => {
     const { method, url, ctrl, hook } = route;
-    router[method](url, (req, res) => {
+    return router[method](url, (req, res) => {
       authorizePipe(req, res, hook.auth)
       .then(() => beforePipe(req, res, hook.before))
       .then(() => ctrl(req, mongooseModel, options))
@@ -68,9 +68,9 @@ function addRestRoutes(router, routes, mongooseModel, options) {
 }
 
 function addActionRoutes(router, resourceURL, actions) {
-  Object.keys(actions).map((url) => {
+  return Object.keys(actions).map((url) => {
     const action = actions[url];
-    router.post(`${resourceURL}${url}`, (req, res, next) => {
+    return router.post(`${resourceURL}${url}`, (req, res, next) => {
       authorizePipe(req, res, action.auth)
         .then(() => action(req, res, next))
         .catch((result) => errorPipe(req, res, result));
