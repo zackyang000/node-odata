@@ -9,14 +9,16 @@ export default (mongooseModel, $count, $filter) => new Promise((resolve, reject)
   }
 
   switch ($count) {
-    case 'true':
+    case 'true': {
       const query = mongooseModel.find();
       filterParser(query, $filter);
       query.count((err, count) => resolve(count));
       break;
+    }
     case 'false':
       return resolve();
     default:
       return reject('Unknown $count option, only "true" and "false" are supported.');
   }
+  return resolve();
 });
