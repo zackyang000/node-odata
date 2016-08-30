@@ -38,7 +38,7 @@ const stringHelper = {
 
 const validator = {
   formatValue: (value) => {
-    let val = undefined;
+    let val;
     if (value === 'true') {
       val = true;
     } else if (value === 'false') {
@@ -53,7 +53,7 @@ const validator = {
       return ({ err: `Syntax error at '${value}'.` });
     }
     return ({ val });
-  }
+  },
 };
 
 export default (query, $filter) => new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
     }
     const [key, odataOperator, value] = conditionArr;
 
-    let val = undefined;
+    let val;
     if (value !== undefined) {
       const result = validator.formatValue(value);
       if (result.err) {
@@ -129,6 +129,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
           return reject("Incorrect operator at '#{item}'.");
       }
     }
+    return undefined;
   });
-  resolve();
+  return resolve();
 });
