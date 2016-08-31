@@ -51,12 +51,13 @@ const year = (query, fnKey, odataOperator, value) => {
     case 'eq':
       query.where(key).gte(start).lt(end);
       break;
-    case 'ne':
+    case 'ne': {
       const condition = [{}, {}];
       condition[0][key] = { $lt: start };
       condition[1][key] = { $gte: end };
       query.or(condition);
       break;
+    }
     case 'gt':
       query.where(key).gte(end);
       break;
