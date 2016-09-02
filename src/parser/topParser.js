@@ -12,5 +12,5 @@ export default (query, top, maxTop) => new Promise((resolve) => {
     return resolve();
   }
   query.limit(_top);
-  resolve();
+  return resolve();
 });

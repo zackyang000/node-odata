@@ -18,6 +18,7 @@ export default (query, $select) => new Promise((resolve) => {
         selectFields[item] = 1;
       }
     }
+    return undefined;
   });
 
   if (Object.keys(selectFields).length === 1 && selectFields._id === 0) {
@@ -25,5 +26,5 @@ export default (query, $select) => new Promise((resolve) => {
   }
 
   query.select(selectFields);
-  resolve();
+  return resolve();
 });

@@ -16,7 +16,7 @@ function _createEntity(resolve, reject, MongooseModel, req, entity) {
   }
   const newEntity = new MongooseModel(req.body);
   newEntity._id = req.params.id;
-  newEntity.save((err) => {
+  return newEntity.save((err) => {
     if (err) {
       return reject(err);
     }

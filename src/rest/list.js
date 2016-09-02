@@ -8,10 +8,10 @@ import selectParser from '../parser/selectParser';
 function _countQuery(model, { count, filter }) {
   return new Promise((resolve, reject) => {
     countParser(model, count, filter).then((dataCount) =>
-    dataCount !== undefined
+    (dataCount !== undefined
       ? resolve({ '@odata.count': dataCount })
       : resolve({})
-    ).catch(reject);
+    )).catch(reject);
   });
 }
 
@@ -27,7 +27,7 @@ function _dataQuery(model, { filter, orderby, skip, top, select }, options) {
         if (err) {
           return reject(err);
         }
-        resolve({ value: data });
+        return resolve({ value: data });
       }))
       .catch(reject);
   });

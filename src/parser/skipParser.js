@@ -12,5 +12,5 @@ export default (query, skip, maxSkip) => new Promise((resolve) => {
     return resolve();
   }
   query.skip(_skip);
-  resolve();
+  return resolve();
 });

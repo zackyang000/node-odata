@@ -4,7 +4,7 @@ export default (req, MongooseModel) => new Promise((resolve, reject) => {
   }
 
   const entity = new MongooseModel(req.body);
-  entity.save((err) => {
+  return entity.save((err) => {
     if (err) {
       return reject(err);
     }
