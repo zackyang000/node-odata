@@ -22,10 +22,15 @@ function queryResource(id) {
 }
 
 describe('model.complex', () => {
+  let httpServer;
   before((done) => {
     const server = odata(conn);
     server.resource('complex-model', { p1: [{ p2: String }] });
-    server.listen(port, done);
+    httpServer = server.listen(port, done);
+  });
+
+  after(() => {
+    httpServer.close();
   });
 
   it('should work when PUT a complex entity', async function test() {
