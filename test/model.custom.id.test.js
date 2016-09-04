@@ -26,7 +26,7 @@ describe('model.custom.id', function() {
     httpServer.close();
   });
 
-  return it('should work when use a custom id', async function() {
+  it('should work when use a custom id', async function() {
     await addResource();
     // TODO NEED BE FIX: resource can't be fetch
     // const res = await queryResource();
