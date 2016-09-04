@@ -22,9 +22,13 @@ describe('model.custom.id', function() {
     httpServer = server.listen(port, done);
   });
 
+  after(() => {
+    httpServer.close();
+  });
+
   return it('should work when use a custom id', async function() {
     await addResource();
-    // TODO resource can't be fetch
+    // TODO NEED BE FIX: resource can't be fetch
     // const res = await queryResource();
     // res.body.id.should.be.equal(100);
   });
