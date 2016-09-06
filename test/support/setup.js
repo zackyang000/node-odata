@@ -36,14 +36,14 @@ export function initData() {
       });
     }
 
-    function insert() {
+    function insert(item) {
       return new Promise((resolve) => {
         const entity = new model(item);
-        entity.save(resolve);
+        entity.save((err, result) => resolve(result));
       });
     }
 
-    const promises = books.map((item) => insert);
+    const promises = books.map(insert);
     clear().then(() => Promise.all(promises).then(resolve));
   });
 }
