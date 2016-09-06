@@ -5,10 +5,10 @@ import { odata, conn, host, port } from './support/setup';
 describe('model.special.name', function() {
   let httpServer;
 
-  before((done) => {
+  before(() => {
     const server = odata(conn);
     server.resource('funcion-keyword', { year: Number });
-    httpServer = server.listen(port, done);
+    httpServer = server.listen(port);
   });
 
   after(() => {

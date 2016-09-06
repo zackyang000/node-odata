@@ -16,10 +16,10 @@ function queryResource() {
 describe('model.custom.id', function() {
   let httpServer;
 
-  before((done) => {
+  before(() => {
     const server = odata(conn);
     server.resource('custom-id', { id: Number });
-    httpServer = server.listen(port, done);
+    httpServer = server.listen(port);
   });
 
   after(() => {

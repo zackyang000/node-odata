@@ -30,7 +30,7 @@ function queryResourcesWithOnlySelectPassword() {
 describe('model.hidden.field', function() {
   let httpServer, id;
 
-  before(function (done) {
+  before(function(done) {
     const server = odata(conn);
     server.resource('hidden-field', {
       name: String,

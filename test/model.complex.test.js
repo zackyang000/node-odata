@@ -24,10 +24,10 @@ function queryResource(id) {
 describe('model.complex', () => {
   let httpServer;
 
-  before((done) => {
+  before(() => {
     const server = odata(conn);
     server.resource('complex-model', { p1: [{ p2: String }] });
-    httpServer = server.listen(port, done);
+    httpServer = server.listen(port);
   });
 
   after(() => {
