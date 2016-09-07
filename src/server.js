@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import createExpress from './express';
 import Resource from './ODataResource';
 
+mongoose.Promise = global.Promise;
+
 function checkAuth(auth, req) {
   return !auth || auth(req);
 }
