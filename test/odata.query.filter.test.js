@@ -42,8 +42,13 @@ describe('odata.query.filter.functions', function() {
       res.body.value.length.should.be.equal(1);
       res.body.value[0].title.should.be.equal(data[1].title);
     });
+    // issue: https://github.com/TossShinHwa/node-odata/issues/65
+    it('should filter items when use chinese keyword', async function(){
+      const res = await request(host).get(encodeURI(`/book?$filter=title eq '代码大全'`));
+      res.body.value.length.should.be.equal(1);
+      res.body.value[0].title.should.be.equal('代码大全');
+    });
   });
-
   describe("[Not equal]", () => {
     it('should filter items', async function(){
       const res = await request(host).get(`/book?$filter=title ne '${data[1].title}'`); 
