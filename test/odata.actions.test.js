@@ -2,7 +2,6 @@ import 'should';
 import request from 'supertest';
 import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
-let data;
 
 function requestToHalfPrice(id) {
   return request(host).post(`/book(${id})/50off`);
@@ -13,7 +12,7 @@ function halfPrice(price) {
 }
 
 describe('odata.actions', function() {
-  let httpServer;
+  let data, httpServer;
 
   before(async function() {
     data = await initData();
