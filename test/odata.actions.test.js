@@ -11,7 +11,7 @@ function halfPrice(price) {
   return +(price / 2).toFixed(2);
 }
 
-describe('odata.actions', function() {
+describe('odata.actions', () => {
   let data, httpServer;
 
   before(async function() {
@@ -19,8 +19,8 @@ describe('odata.actions', function() {
     const server = odata(conn);
     server
     .resource('book', bookSchema)
-    .action('/50off', function(req, res, next) {
-      server.resources.book.findById(req.params.id, function(err, book) {
+    .action('/50off', (req, res, next) => {
+      server.resources.book.findById(req.params.id, (err, book) => {
         book.price = halfPrice(book.price);
         book.save((err) => res.jsonp(book));
       });

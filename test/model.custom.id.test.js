@@ -13,7 +13,7 @@ function queryResource() {
   .get('/custom-id(100)');
 }
 
-describe('model.custom.id', function() {
+describe('model.custom.id', () => {
   let httpServer;
 
   before(() => {

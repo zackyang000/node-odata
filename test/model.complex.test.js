@@ -34,7 +34,7 @@ describe('model.complex', () => {
     httpServer.close();
   });
 
-  it('should work when PUT a complex entity', async function test() {
+  it('should work when PUT a complex entity', async function() {
     const entity = await addResource();
     await updateResouce(entity.body.id);
     const res = await queryResource(entity.body.id);
