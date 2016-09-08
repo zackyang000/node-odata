@@ -42,13 +42,13 @@ describe('odata.query.filter.functions', function() {
       res.body.value.length.should.be.equal(1);
       res.body.value[0].title.should.be.equal(data[1].title);
     });
-    // issue: https://github.com/TossShinHwa/node-odata/issues/65
     it('should filter items when use chinese keyword', async function(){
       const res = await request(host).get(encodeURI(`/book?$filter=title eq '代码大全'`));
       res.body.value.length.should.be.equal(1);
       res.body.value[0].title.should.be.equal('代码大全');
     });
   });
+
   describe("[Not equal]", () => {
     it('should filter items', async function(){
       const res = await request(host).get(`/book?$filter=title ne '${data[1].title}'`); 
@@ -56,6 +56,7 @@ describe('odata.query.filter.functions', function() {
       res.body.value.should.matchEach((item) => item.title !== data[1].title);
     });
   });
+
   describe("[Greater than]", () => {
     it('should filter items', async function(){
       const res = await request(host).get(`/book?$filter=price gt 36.95`); 
@@ -63,6 +64,7 @@ describe('odata.query.filter.functions', function() {
       res.body.value.should.matchEach((item) => item.price > 36.95);
     });
   });
+
   describe('[Greater than or equal]', () => {
     it('should filter items', async function(){
       const res = await request(host).get(`/book?$filter=price ge 36.95`); 
@@ -70,19 +72,22 @@ describe('odata.query.filter.functions', function() {
       res.body.value.should.matchEach((item) => item.price >= 36.95);
     });
   });
+
   describe('[Less than]', () => {
-    return it('should filter items', async function() {
+    it('should filter items', async function() {
       const res = await request(host).get(`/book?$filter=price lt 36.95`); 
       res.body.value.should.matchEach((item) => item.price < 36.95);
     });
   });
+
   describe('[Less than or equal]', () => {
-    return it('should filter items', async function() {
+    it('should filter items', async function() {
       const res = await request(host).get(`/book?$filter=price le 36.95`); 
       res.body.value.should.matchEach((item) => item.price <= 36.95);
     });
   });
-  return describe('[Logical and]', () => {
+
+  describe('[Logical and]', () => {
     it("should filter items", async function() {
       const res = await request(host).get(`/book?$filter=title ne '${data[1].title}' and price ge 36.95`); 
       res.body.value.length.should.greaterThan(0);
