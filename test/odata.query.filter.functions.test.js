@@ -2,7 +2,6 @@ import 'should';
 import request from 'supertest';
 import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
-
 describe('odata.query.filter.functions', function() {
   let data, httpServer;
 
