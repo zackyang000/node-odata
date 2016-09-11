@@ -7,7 +7,6 @@ describe('odata.api.Resouce', () => {
 
   before(() => {
     const server = odata(conn);
-    const router = odata.Function();
     const book = odata.Resource('book', bookSchema);
     server.use(book);
     httpServer = server.listen(port);
