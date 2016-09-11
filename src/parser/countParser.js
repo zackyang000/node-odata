@@ -1,8 +1,8 @@
 import filterParser from './filterParser';
 
-// ?$skip=10
+// ?$count=10
 // ->
-// query.skip(10)
+// query.count(10)
 export default (mongooseModel, $count, $filter) => new Promise((resolve, reject) => {
   if ($count === undefined) {
     return resolve();
@@ -12,13 +12,17 @@ export default (mongooseModel, $count, $filter) => new Promise((resolve, reject)
     case 'true': {
       const query = mongooseModel.find();
       filterParser(query, $filter);
-      query.count((err, count) => resolve(count));
+      query.count((err, count) => {
+        resolve(count);
+      });
       break;
     }
     case 'false':
-      return resolve();
+      resolve();
+      break;
     default:
-      return reject('Unknown $count option, only "true" and "false" are supported.');
+      reject('Unknown $count option, only "true" and "false" are supported.');
+      break;
   }
-  return resolve();
+  return undefined;
 });
