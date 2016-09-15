@@ -173,6 +173,7 @@ node-odata also built a series of functions to support complex queries:
 
 || **functions**    || **Example** ||
 || **String Functions** || ||
+|| contains   || contains('Alfreds',CompanyName) ||
 || indexof    || indexof(description,'.NET') gt 0 ||
 || **Date Functions** || ||
 || year       || year(publish_date) eq 2000 ||

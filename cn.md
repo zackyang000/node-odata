@@ -178,7 +178,10 @@ node-odata 还内置了一些函数, 用于支持复杂查询. 如下表所示:
 
 || **函数**    || **列子** ||
 || **字符串函数** || ||
+|| contains   || contains('Alfreds',CompanyName) ||
 || indexof    || indexof(description,'.NET') gt 0 ||
+
+
 || **日期函数** || ||
 || year       || year(publish_date) eq 2000 ||
 
