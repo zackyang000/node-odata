@@ -16,8 +16,9 @@ describe('model.special.name', () => {
   });
 
   it('should work when use odata function keyword', async function() {
-    await request(host)
+    const res = await request(host)
     .post('/funcion-keyword')
     .send({ year: 2015 });
+    res.body.should.be.have.property('id');
   });
 });
