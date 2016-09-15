@@ -3,10 +3,10 @@ import request from 'supertest';
 import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
 describe('odata.query.filter.functions', function() {
-  let data, httpServer;
+  let httpServer;
 
   before(async function() {
-    data = await initData();
+    await initData();
     const server = odata(conn);
     server.resource('book', bookSchema)
     httpServer = server.listen(port);
