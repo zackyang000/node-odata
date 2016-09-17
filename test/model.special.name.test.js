@@ -19,6 +19,6 @@ describe('model.special.name', () => {
     const res = await request(host)
     .post('/funcion-keyword')
     .send({ year: 2015 });
-    res.body.should.be.have.property('id');
+    res.status.should.be.equal(201);
   });
 });
