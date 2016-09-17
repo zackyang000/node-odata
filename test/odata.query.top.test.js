@@ -1,6 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { odata, conn, host, port, books, bookSchema, initData } from './support/setup';
 
 describe('odata.query.top', () => {
   let httpServer;
