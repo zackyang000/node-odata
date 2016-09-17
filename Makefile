@@ -25,3 +25,9 @@ test-cov:
 		--reporter $(REPORTER) \
 		test/*.test.js \
 
+test-hook:
+	@node_modules/.bin/mocha\
+		--compilers js:babel-core/register \
+		--require babel-polyfill \
+		--reporter $(REPORTER) \
+		test/hook/*.test.js
