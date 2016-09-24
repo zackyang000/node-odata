@@ -29,5 +29,4 @@ test-hook:
 	@node_modules/.bin/mocha\
 		--compilers js:babel-core/register \
 		--require babel-polyfill \
-		--reporter $(REPORTER) \
-		test/hook/*.test.js
+		test/hook/*.js
