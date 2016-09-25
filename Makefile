@@ -15,18 +15,12 @@ test:
 		--compilers js:babel-core/register \
 		--require babel-polyfill \
 		--reporter $(REPORTER) \
-		test/*.test.js
+		test/*.js
 
 test-cov:
 	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
-		./node_modules/mocha/bin/_mocha test/*.test.js -- \
+		./node_modules/mocha/bin/_mocha test/*.js -- \
 		--compilers js:babel-core/register \
 		--require babel-polyfill \
 		--reporter $(REPORTER) \
-		test/*.test.js \
-
-test-hook:
-	@node_modules/.bin/mocha\
-		--compilers js:babel-core/register \
-		--require babel-polyfill \
-		test/hook/*.js
+		test/*.js \

@@ -2,9 +2,9 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from '../support/setup';
+import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
-describe('hook.get.before', function() {
+describe('hook.get.after', function() {
   let data, httpServer, server;
 
   beforeEach(async function() {
@@ -18,9 +18,8 @@ describe('hook.get.before', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().before((entity, req) => {
-      req.params.should.be.have.property('id');
-      req.params.id.should.be.equal(data[0].id);
+    server.resource('book', bookSchema).get().after((entity) => {
+      entity.should.be.have.property('title');
       callback();
     });
     httpServer = server.listen(port);
@@ -29,7 +28,7 @@ describe('hook.get.before', function() {
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().before(callback).before(callback);
+    server.resource('book', bookSchema).get().after(callback).after(callback);
     httpServer = server.listen(port);
     await request(host).get(`/book(${data[0].id})`);
     callback.should.be.calledTwice();

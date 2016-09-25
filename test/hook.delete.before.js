@@ -2,9 +2,9 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from '../support/setup';
+import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
-describe('hook.post.after', function() {
+describe('hook.delete.before', function() {
   let data, httpServer, server;
 
   beforeEach(async function() {
@@ -18,24 +18,20 @@ describe('hook.post.after', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    const TITLE = 'HOOK_POST_AFTER';
-    server.resource('book', bookSchema).post().after((entity) => {
-      entity.should.be.have.property('title');
-      entity.title.should.be.equal(TITLE);
+    server.resource('book', bookSchema).delete().before((entity, req) => {
+      req.params.should.be.have.property('id');
+      req.params.id.should.be.equal(data[0].id);
       callback();
     });
     httpServer = server.listen(port);
-    await request(host).post(`/book`).send({ title: TITLE });
+    await request(host).delete(`/book(${data[0].id})`);
     callback.should.be.called();
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    const TITLE = 'HOOK_POST_AFTER';
-    server.resource('book', bookSchema).post().after(callback).after(callback);
+    server.resource('book', bookSchema).delete().before(callback).before(callback);
     httpServer = server.listen(port);
-    await request(host).post(`/book`).send({ title: TITLE });
+    await request(host).delete(`/book(${data[0].id})`);
     callback.should.be.calledTwice();
   });
 });
-
-

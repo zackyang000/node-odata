@@ -2,9 +2,9 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from '../support/setup';
+import { odata, conn, host, port, bookSchema, initData } from './support/setup';
 
-describe('hook.get.after', function() {
+describe('hook.post.after', function() {
   let data, httpServer, server;
 
   beforeEach(async function() {
@@ -18,19 +18,24 @@ describe('hook.get.after', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().after((entity) => {
+    const TITLE = 'HOOK_POST_AFTER';
+    server.resource('book', bookSchema).post().after((entity) => {
       entity.should.be.have.property('title');
+      entity.title.should.be.equal(TITLE);
       callback();
     });
     httpServer = server.listen(port);
-    await request(host).get(`/book(${data[0].id})`);
+    await request(host).post(`/book`).send({ title: TITLE });
     callback.should.be.called();
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().after(callback).after(callback);
+    const TITLE = 'HOOK_POST_AFTER';
+    server.resource('book', bookSchema).post().after(callback).after(callback);
     httpServer = server.listen(port);
-    await request(host).get(`/book(${data[0].id})`);
+    await request(host).post(`/book`).send({ title: TITLE });
     callback.should.be.calledTwice();
   });
 });
+
+
