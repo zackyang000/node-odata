@@ -6,7 +6,7 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![Build Status](https://travis-ci.org/TossShinHwa/node-odata.svg?branch=master)](https://travis-ci.org/TossShinHwa/node-odata)
-  [![Coverage Status](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)
+  [![Coverage Status](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/github/TossShinHwa/node-odata?branch=master)
   [![Dependency Status](https://david-dm.org/TossShinHwa/node-odata.svg?style=flat)](https://david-dm.org/TossShinHwa/node-odata)
   [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
 
