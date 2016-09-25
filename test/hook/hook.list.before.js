@@ -22,14 +22,14 @@ describe('hook.list.before', function() {
       callback();
     });
     httpServer = server.listen(port);
-    await request(host).get(`/book(${data[0].id})`);
+    await request(host).get(`/book`);
     callback.should.be.called();
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
     server.resource('book', bookSchema).list().before(callback).before(callback);
     httpServer = server.listen(port);
-    await request(host).get(`/book(${data[0].id})`);
+    await request(host).get(`/book`);
     callback.should.be.calledTwice();
   });
 });

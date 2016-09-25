@@ -19,9 +19,9 @@ describe('hook.post.after', function() {
   it('should work', async function() {
     const callback = sinon.spy();
     const TITLE = 'HOOK_POST_AFTER';
-    server.resource('book', bookSchema).post().after((result) => {
-      result.should.be.have.property('title');
-      req.body.title.should.be.equal(TITLE);
+    server.resource('book', bookSchema).post().after((entity) => {
+      entity.should.be.have.property('title');
+      entity.title.should.be.equal(TITLE);
       callback();
     });
     httpServer = server.listen(port);
