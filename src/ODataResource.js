@@ -12,7 +12,7 @@ function hook(resource, pos, fn) {
   /*eslint-disable */
   method.map((curr) => {
     if (resource._hooks[curr][pos]) {
-      const _fn = resource._hooks[method][pos];
+      const _fn = resource._hooks[curr][pos];
       resource._hooks[curr][pos] = (...args) => {
         _fn.apply(resource, args);
         fn.apply(resource, args);
