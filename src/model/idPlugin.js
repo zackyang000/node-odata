@@ -41,7 +41,13 @@ export default function (schema) {
   // genarate _id.
   schema.pre('save', function preSave(next) {
     if (this.isNew && !this._id) {
-      this._id = uuid.v4();
+      if (this.id) {
+        // Use a user-defined id to save
+        this._id = this.id;
+      } else {
+        // Use uuid to save
+        this._id = uuid.v4();
+      }
     }
     return next();
   });
