@@ -18,6 +18,6 @@ describe('model.custom.id', () => {
 
   it('should work when use a custom id', async function() {
     const res = await request(host).get('/custom-id(100)');
-    // res.body.id.should.be.equal(100);
+    res.body.id.should.be.equal(100);
   });
 });
