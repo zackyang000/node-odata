@@ -23,6 +23,6 @@ describe('model.custom.id', () => {
 
   it('should work when use a custom id to query a list', async function() {
     const res = await request(host).get('/custom-id?$filter=id eq \'100\'');
-    res.body.value.length.should.be.greatThan(0);
+    res.body.value.length.should.be.greaterThan(0);
   });
 });
