@@ -39,7 +39,11 @@ describe('model.complex.action', () => {
       };
       await request(host).post('/order').send(entity);
     }
-    const res = await request(host).post('/order(1)/all-item-greater?price=30');
-    res.body.map((order) => order.product.map((product) => product.price.should.be.greaterThan(30)));
+    const res = await request(host).get(`/complex-model-filter/all-item-price-great?price=30`);
+    res.body.should.matchEach((item) => {
+      return item.product[0].price > 30
+      && item.product[1].price > 30
+      && item.product[2].price > 30;
+    });
   });
 });
