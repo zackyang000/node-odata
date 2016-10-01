@@ -16,8 +16,13 @@ describe('model.custom.id', () => {
     httpServer.close();
   });
 
-  it('should work when use a custom id', async function() {
+  it('should work when use a custom id to query specific entity', async function() {
     const res = await request(host).get('/custom-id(100)');
     res.body.id.should.be.equal(100);
+  });
+
+  it('should work when use a custom id to query a list', async function() {
+    const res = await request(host).get('/custom-id?$filter=id eq \'100\'');
+    res.body.value.length.should.be.greatThan(0);
   });
 });
