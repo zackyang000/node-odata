@@ -125,10 +125,15 @@ class Server {
   }
 
   set(key, val) {
-    // Extra processing
     switch (key) {
       case 'db': {
-        this._db = mongoose.createConnection(val);
+        this._db = mongoose.createConnection(val, { server: { reconnectTries: Number.MAX_VALUE } }, (err) => {
+          if (err) {
+            console.error('Failed to connect to database on startup.');
+            process.exit();
+          }
+        });
+
         this._settings[key] = val;
         break;
       }
@@ -149,6 +154,13 @@ class Server {
       }
     }
     return this;
+  }
+
+  // provide a event listener to handle not able to connect DB.
+  on(name, event) {
+    if (['connected', 'disconnected'].indexOf(name) > -1) {
+      this._db.on(name, event);
+    }
   }
 }
 
