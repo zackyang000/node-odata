@@ -127,7 +127,8 @@ class Server {
   set(key, val) {
     switch (key) {
       case 'db': {
-        this._db = mongoose.createConnection(val, { server: { reconnectTries: Number.MAX_VALUE } }, (err) => {
+        const options = { server: { reconnectTries: Number.MAX_VALUE } };
+        this._db = mongoose.createConnection(val, options, (err) => {
           if (err) {
             console.error('Failed to connect to database on startup.');
             process.exit();
