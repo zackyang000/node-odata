@@ -133,7 +133,7 @@
   "scripts": {
     "prepublish": "make",
     "test": "make",
-    "build": "node node_modules\babel-cli\bin\babel.js src -d lib"
+    "build": "node node_modules/babel-cli/bin/babel.js src -d lib"
   },
   "version": "0.7.15",
   "babel": {
