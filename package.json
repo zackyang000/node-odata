@@ -1,49 +1,102 @@
 {
-  "name": "node-odata",
-  "version": "0.7.15",
-  "private": false,
-  "description": "A module for easily create a REST API based on oData protocol",
-  "main": "index.js",
+  "_args": [
+    [
+      {
+        "raw": "node-odata@git+https://github.com/cloudyafternoon/node-odata.git",
+        "scope": null,
+        "escapedName": "node-odata",
+        "name": "node-odata",
+        "rawSpec": "git+https://github.com/cloudyafternoon/node-odata.git",
+        "spec": "git+https://github.com/cloudyafternoon/node-odata.git",
+        "type": "hosted",
+        "hosted": {
+          "type": "github",
+          "ssh": "git@github.com:cloudyafternoon/node-odata.git",
+          "sshUrl": "git+ssh://git@github.com/cloudyafternoon/node-odata.git",
+          "httpsUrl": "git+https://github.com/cloudyafternoon/node-odata.git",
+          "gitUrl": "git://github.com/cloudyafternoon/node-odata.git",
+          "shortcut": "github:cloudyafternoon/node-odata",
+          "directUrl": "https://raw.githubusercontent.com/cloudyafternoon/node-odata/master/package.json"
+        }
+      },
+      "c:\\dev\\git\\samhengi-configuration"
+    ]
+  ],
+  "_from": "git+https://github.com/cloudyafternoon/node-odata.git",
+  "_id": "node-odata@0.7.15",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/node-odata",
+  "_phantomChildren": {
+    "bluebird": "2.10.2",
+    "core-util-is": "1.0.2",
+    "debug": "2.2.0",
+    "hooks-fixed": "1.2.0",
+    "inherits": "2.0.3",
+    "isarray": "0.0.1",
+    "kareem": "1.1.3",
+    "mpath": "0.2.1",
+    "mpromise": "0.5.5",
+    "ms": "0.7.1",
+    "regexp-clone": "0.0.1",
+    "require_optional": "1.0.0",
+    "sliced": "1.0.1",
+    "string_decoder": "0.10.31"
+  },
+  "_requested": {
+    "raw": "node-odata@git+https://github.com/cloudyafternoon/node-odata.git",
+    "scope": null,
+    "escapedName": "node-odata",
+    "name": "node-odata",
+    "rawSpec": "git+https://github.com/cloudyafternoon/node-odata.git",
+    "spec": "git+https://github.com/cloudyafternoon/node-odata.git",
+    "type": "hosted",
+    "hosted": {
+      "type": "github",
+      "ssh": "git@github.com:cloudyafternoon/node-odata.git",
+      "sshUrl": "git+ssh://git@github.com/cloudyafternoon/node-odata.git",
+      "httpsUrl": "git+https://github.com/cloudyafternoon/node-odata.git",
+      "gitUrl": "git://github.com/cloudyafternoon/node-odata.git",
+      "shortcut": "github:cloudyafternoon/node-odata",
+      "directUrl": "https://raw.githubusercontent.com/cloudyafternoon/node-odata/master/package.json"
+    }
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://github.com/cloudyafternoon/node-odata.git#80003c8f52f19d0ef360c08defa9e67763efa7cd",
+  "_shasum": "c6b7c7dc58c71f44adf9cf672e6cc37056df06db",
+  "_shrinkwrap": null,
+  "_spec": "node-odata@git+https://github.com/cloudyafternoon/node-odata.git",
+  "_where": "c:\\dev\\git\\samhengi-configuration",
   "author": {
     "name": "Zack",
     "email": "zackyang@outlook.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TossShinHwa/node-odata.git"
+  "bugs": {
+    "url": "https://github.com/TossShinHwa/node-odata/issues"
   },
-  "engines": {
-    "node": ">=0.12"
-  },
-  "scripts": {
-    "prepublish": "make",
-    "test": "make"
-  },
-  "keywords": [
-    "OData",
-    "REST",
-    "RESTful"
-  ],
-  "license": "MIT",
   "dependencies": {
-    "express": "4.14.0",
     "body-parser": "1.15.2",
-    "method-override": "2.3.6",
     "cors": "2.7.1",
+    "express": "4.14.0",
+    "method-override": "2.3.6",
     "mongoose": "4.5.9",
     "node-uuid": "1.4.7"
   },
+  "description": "A module for easily create a REST API based on oData protocol",
   "devDependencies": {
     "babel": "6.5.2",
-    "babel-cli": "6.11.4",
+    "babel-cli": "^6.11.4",
     "babel-core": "6.13.2",
     "babel-eslint": "6.1.2",
     "babel-helpers": "6.8.0",
     "babel-loader": "6.2.4",
-    "babel-plugin-transform-decorators-legacy": "1.3.4",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-polyfill": "6.13.0",
     "babel-preset-es2015": "6.13.2",
-    "babel-preset-stage-0": "6.5.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-0": "^6.5.0",
     "babel-register": "6.11.6",
     "babel-runtime": "6.11.6",
     "eslint": "3.3.1",
@@ -52,8 +105,40 @@
     "istanbul": "1.0.0-alpha.2",
     "mocha": "3.0.2",
     "should": "11.1.0",
-    "sinon": "1.17.5",
     "should-sinon": "0.0.5",
+    "sinon": "1.17.5",
     "supertest": "2.0.0"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "gitHead": "80003c8f52f19d0ef360c08defa9e67763efa7cd",
+  "homepage": "https://github.com/TossShinHwa/node-odata#readme",
+  "keywords": [
+    "OData",
+    "REST",
+    "RESTful"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "node-odata",
+  "optionalDependencies": {},
+  "private": false,
+  "readme": "node-odata\r\n==========\r\n\r\nCreate awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  Its purpose is to easier to creating APIs, make you more focus on business logic.\r\n\r\n  [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)\r\n  [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)\r\n  [![Build Status](https://travis-ci.org/TossShinHwa/node-odata.svg?branch=master)](https://travis-ci.org/TossShinHwa/node-odata)\r\n  [![Coverage Status](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/github/TossShinHwa/node-odata?branch=master)\r\n  [![Dependency Status](https://david-dm.org/TossShinHwa/node-odata.svg?style=flat)](https://david-dm.org/TossShinHwa/node-odata)\r\n  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)\r\n\r\n```JavaScript\r\nvar odata = require('node-odata');\r\n\r\nvar server = odata('mongodb://localhost/my-app');\r\n\r\nserver.resource('books', {\r\n  title: String,\r\n  price: Number\r\n});\r\n\r\nserver.listen(3000);\r\n```\r\n\r\nRegisters the following routes:\r\n\r\n```\r\nGET    /books\r\nGET    /books(:id)\r\nPOST   /books\r\nPUT    /books(:id)\r\nDELETE /books(:id)\r\n```\r\n\r\nUse the following OData query:\r\n\r\n```\r\nExample\r\nGET /books?$select=id, title\r\nGET /books?$top=3&$skip=2\r\nGET /books?$orderby=price desc\r\nGET /books?$filter=price gt 10\r\nGET ...\r\n```\r\n\r\n\r\n## Current State\r\n\r\nnode-odata is currently at an beta stage, it is stable but not 100% feature complete. \r\nnode-odata is written by ECMAScript 6 then compiled by [babel](https://babeljs.io/).\r\nIt currently have to dependent on MongoDB yet. \r\nThe current target is to add more features (eg. $metadata) and make to support other database. (eg. MySQL, PostgreSQL).\r\n\r\n## Installation\r\n\r\n```\r\nnpm install node-odata\r\n```\r\n\r\n\r\n## DOCUMENTATION\r\n\r\n- [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)\r\n- [中文](http://tossshinhwa.github.io/node-odata/cn/)\r\n\r\n\r\n## Demo\r\n\r\n[Live demo](http://books.zackyang.com/book) and try it:\r\n\r\n* GET [/book?$select=id, title](http://books.zackyang.com/book?$select=id, title)\r\n* GET [/book?$top=3&$skip=2](http://books.zackyang.com/book?$top=3&$skip=2)\r\n* GET [/book?$orderby=price desc](http://books.zackyang.com/book?$orderby=price desc)\r\n* GET [/book?$filter=price gt 10](http://books.zackyang.com/book?$filter=price gt 10)\r\n\r\n## Support Feature\r\n\r\n* [x] Full CRUD Support\r\n* [x] $count\r\n* [x] $filter\r\n  * [x] Comparison Operators\r\n  \t* [x] eq\r\n  \t* [x] ne\r\n  \t* [x] lt\r\n  \t* [x] le\r\n  \t* [x] gt\r\n  \t* [x] ge\r\n  * [ ] Logical Operators\r\n  \t* [x] and\r\n  \t* [x] or\r\n  \t* [ ] not\r\n  * [ ] Comparison Operators\r\n    * [ ] has\r\n  * [ ] String Functions\r\n  \t* [x] indexof\r\n  \t* [x] contains\r\n  \t* [ ] endswith\r\n  \t* [ ] startswith\r\n  \t* [ ] length\r\n  \t* [ ] substring\r\n  \t* [ ] tolower\r\n  \t* [ ] toupper\r\n  \t* [ ] trim\r\n  \t* [ ] concat\r\n  * [ ] Arithmetic Operators\r\n  \t* [ ] add\r\n  \t* [ ] sub\r\n  \t* [ ] mul\r\n  \t* [ ] div\r\n  \t* [ ] mod\r\n  * [ ] Date Functions\r\n  \t* [x] year\r\n  \t* [ ] month\r\n  \t* [ ] day\r\n  \t* [ ] hour\r\n  \t* [ ] minute\r\n  \t* [ ] second\r\n  \t* [ ] fractionalseconds\r\n  \t* [ ] date\r\n  \t* [ ] time\r\n  \t* [ ] totaloffsetminutes\r\n  \t* [ ] now\r\n  \t* [ ] mindatetime\r\n  \t* [ ] maxdatetime\r\n  * [ ] Math Functions\r\n  \t* [ ] round\r\n  \t* [ ] floor\r\n  \t* [ ] ceiling\r\n* [x] $select\r\n* [x] $top\r\n* [x] $skip\r\n* [x] $orderby\r\n* [ ] $expand\r\n* [x] $metadata generation (Nonstandard)\r\n\r\n\r\n## CONTRIBUTING\r\n\r\nWe always welcome contributions to help make node-odata better. Please feel free to contribute to this project.\r\n\r\n\r\n## LICENSE\r\n\r\nnode-odata is licensed under the MIT license. See [LICENSE](LICENSE) for more information.\r\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TossShinHwa/node-odata.git"
+  },
+  "scripts": {
+    "prepublish": "make",
+    "test": "make",
+    "build": "node node_modules\babel-cli\bin\babel.js src -d lib"
+  },
+  "version": "0.7.15",
+  "babel": {
+    "presets": [
+      "latest"
+    ]
   }
 }
