@@ -9,8 +9,8 @@ function checkAuth(auth, req) {
 }
 
 class Server {
-  constructor(db, prefix) {
-    this._app = createExpress();
+  constructor(db, prefix, options) {
+    this._app = createExpress(options);
     this._mongoose = mongoose;
     this._settings = {
       maxTop: 10000,

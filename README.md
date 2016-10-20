@@ -44,6 +44,12 @@ GET /books?$filter=price gt 10
 GET ...
 ```
 
+### Further options
+
+The odata constructor takes 3 arguments: ```odata(<mongoURL>, <dbPrefix>, <options>);```
+
+The options object currently only supports one parameter: ```expressRequestLimit```, this will be parsed to the express middelware as the "limit" option, which allows for configuring express to support larger requests. It can be either a number or a string like "50kb", 20mb", etc.
+
 
 ## Current State
 

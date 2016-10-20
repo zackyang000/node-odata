@@ -3,10 +3,13 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import cors from 'cors';
 
-export default function () {
+export default function (options) {
   const app = express();
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+  const opts = (options && options.expressRequestLimit) ?
+                { limit: options.expressRequestLimit } : {};
+  app.use(bodyParser.json(opts));
+  opts.extended = true;
+  app.use(bodyParser.urlencoded(opts));
   app.use(methodOverride());
   app.use(express.query());
   app.use(cors());
