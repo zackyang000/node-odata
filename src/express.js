@@ -5,7 +5,8 @@ import cors from 'cors';
 
 export default function (options) {
   const app = express();
-  var opts = (options && options.expressRequestLimit) ? { limit : options.expressRequestLimit } : {};
+  const opts = (options && options.expressRequestLimit) ? 
+		  { limit: options.expressRequestLimit } : {};
   app.use(bodyParser.json(opts));
   opts.extended = true;
   app.use(bodyParser.urlencoded(opts));
