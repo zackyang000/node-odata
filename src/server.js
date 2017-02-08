@@ -163,6 +163,10 @@ class Server {
       this._db.on(name, event);
     }
   }
+
+  engine(...args){
+    this._app.engine(...args);
+  }
 }
 
 
