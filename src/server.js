@@ -164,7 +164,7 @@ class Server {
     }
   }
 
-  engine(...args){
+  engine(...args) {
     this._app.engine(...args);
   }
 }
