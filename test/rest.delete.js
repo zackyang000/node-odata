@@ -18,7 +18,8 @@ describe('rest.delete', function() {
 
   it('should delete resource if it exist', async function() {
     const res = await request(host).del(`/book(${data[0].id})`);
-    res.status.should.be.equal(200);
+    console.log(res)
+    res.status.should.be.equal(204);
   });
   it('should be 404 if resource not exist', async function() {
     const res = await request(host).del(`/book(not-exist-id)`);

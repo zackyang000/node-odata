@@ -8,6 +8,6 @@ export default (req, MongooseModel) => new Promise((resolve, reject) => {
       return reject({ status: 404 }, { text: 'Not Found' });
     }
 
-    return resolve();
+    return resolve({ status: 204 });
   });
 });
