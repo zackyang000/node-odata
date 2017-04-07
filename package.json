@@ -31,7 +31,7 @@
     "express": "4.14.0",
     "method-override": "2.3.6",
     "mongoose": "4.5.9",
-    "uuid": "^3.0.0"
+    "uuid": "3.0.0"
   },
   "devDependencies": {
     "babel": "6.5.2",
@@ -49,11 +49,12 @@
     "eslint": "3.3.1",
     "eslint-config-airbnb": "10.0.1",
     "eslint-plugin-babel": "3.3.0",
+    "eslint-plugin-import": "2.2.0",
     "istanbul": "1.0.0-alpha.2",
     "mocha": "3.0.2",
     "should": "11.1.0",
-    "sinon": "1.17.5",
     "should-sinon": "0.0.5",
+    "sinon": "1.17.5",
     "supertest": "2.0.0"
   }
 }
