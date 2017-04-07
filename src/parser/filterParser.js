@@ -74,7 +74,11 @@ export default (query, $filter) => new Promise((resolve, reject) => {
     if (conditionArr.length !== 3 && conditionArr.length !== 1) {
       return reject(`Syntax error at '${item}'.`);
     }
-    const [key, odataOperator, value] = conditionArr;
+
+    let key = conditionArr[0];
+    const [, odataOperator, value] = conditionArr;
+
+    if (key === 'id') key = '_id';
 
     let val;
     if (value !== undefined) {

@@ -46,6 +46,11 @@ describe('odata.query.filter', function() {
       res.body.value.length.should.be.equal(1);
       res.body.value[0].title.should.be.equal('代码大全');
     });
+    it('should filter items when use id', async function(){
+      const res = await request(host).get(encodeURI(`/book?$filter=id eq '${data[1].id}'`));
+      res.body.value.length.should.be.equal(1);
+      res.body.value[0].id.should.be.equal(data[1].id);
+    });
   });
 
   describe("[Not equal]", () => {
