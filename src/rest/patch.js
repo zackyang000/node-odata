@@ -9,5 +9,5 @@ export default (req, MongooseModel) => new Promise((resolve, reject) =>
       }
       return resolve({ entity: req.body, originEntity: entity });
     });
-  })
+  }),
 );

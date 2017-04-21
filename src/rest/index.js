@@ -60,9 +60,9 @@ function addRestRoutes(router, routes, mongooseModel, options) {
       authorizePipe(req, res, hook.auth)
       .then(() => beforePipe(req, res, hook.before))
       .then(() => ctrl(req, mongooseModel, options))
-      .then((result) => respondPipe(req, res, result || {}))
-      .then((data) => afterPipe(req, res, hook.after, data))
-      .catch((err) => errorPipe(req, res, err));
+      .then(result => respondPipe(req, res, result || {}))
+      .then(data => afterPipe(req, res, hook.after, data))
+      .catch(err => errorPipe(req, res, err));
     });
   });
 }
@@ -73,7 +73,7 @@ function addActionRoutes(router, resourceURL, actions) {
     return router.post(`${resourceURL}${url}`, (req, res, next) => {
       authorizePipe(req, res, action.auth)
         .then(() => action(req, res, next))
-        .catch((result) => errorPipe(req, res, result));
+        .catch(result => errorPipe(req, res, result));
     });
   });
 }

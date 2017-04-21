@@ -6,7 +6,7 @@ export default (query, $select) => new Promise((resolve) => {
     return resolve();
   }
 
-  const list = $select.split(',').map((item) => item.trim());
+  const list = $select.split(',').map(item => item.trim());
 
   const selectFields = { _id: 0 };
   const tree = query.model.schema.tree;

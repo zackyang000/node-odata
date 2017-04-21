@@ -62,7 +62,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
   }
 
   const condition = split($filter, ['and', 'or'])
-    .filter((item) => (item !== 'and' && item !== 'or'));
+    .filter(item => (item !== 'and' && item !== 'or'));
 
   condition.map((item) => {
     // parse "indexof(title,'X1ML') gt 0"

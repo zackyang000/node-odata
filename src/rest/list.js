@@ -7,7 +7,7 @@ import selectParser from '../parser/selectParser';
 
 function _countQuery(model, { count, filter }) {
   return new Promise((resolve, reject) => {
-    countParser(model, count, filter).then((dataCount) =>
+    countParser(model, count, filter).then(dataCount =>
     (dataCount !== undefined
       ? resolve({ '@odata.count': dataCount })
       : resolve({})
@@ -51,5 +51,5 @@ export default (req, MongooseModel, options) => new Promise((resolve, reject) =>
   ]).then((results) => {
     const entity = results.reduce((current, next) => ({ ...current, ...next }));
     resolve({ entity });
-  }).catch((err) => reject({ status: 500, text: err }));
+  }).catch(err => reject({ status: 500, text: err }));
 });
