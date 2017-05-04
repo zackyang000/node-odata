@@ -6,6 +6,7 @@ import put from './put';
 import del from './delete';
 import patch from './patch';
 import get from './get';
+import Adapter from '../mongoDB-adapter';
 
 function authorizePipe(req, res, auth) {
   return new Promise((resolve, reject) => {
@@ -82,6 +83,8 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
   const resourceListURL = `/${url}`;
   const resourceURL = `${resourceListURL}\\(:id\\)`;
 
+  const adapter = new Adapter(mongooseModel);
+
   const routes = [
     {
       method: 'post',
@@ -104,7 +107,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'delete',
       url: resourceURL,
-      ctrl: del,
+      ctrl: (req) => adapter.delete(req.params.id),
       hook: hooks.delete,
     },
     {
