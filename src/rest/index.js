@@ -100,7 +100,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'patch',
       url: resourceURL,
-      controller: patch,
+      ctrl: (req) => adapter.patch(req.params.id, req.body),
       config: hooks.patch,
     },
     {

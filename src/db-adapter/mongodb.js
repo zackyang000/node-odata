@@ -28,7 +28,21 @@ export default class Adapter {
   update(data) {
   }
 
-  patch(data) {
+  patch(id, data) {
+    return new Promise((resolve, reject) => {
+      this.model.findById(id, (err, entity) => {
+        if (err) {
+          return reject(err);
+        }
+
+        this.model.update({ id }, { ...entity, ...data }, (err1) => {
+          if (err1) {
+            return reject(err1);
+          }
+          return resolve({ entity: req.body, originEntity: entity });
+        });
+      });
+    });
   }
 
   remove(id) {
