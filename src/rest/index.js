@@ -88,7 +88,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'post',
       url: resourceListURL,
-      ctrl: post,
+      ctrl: (req) => adapter.create(req.body),
       hook: hooks.post,
     },
     {

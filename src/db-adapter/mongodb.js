@@ -23,6 +23,19 @@ export default class Adapter {
   }
 
   create(data) {
+    return new Promise((resolve, reject) => {
+      if (!Object.keys(data).length) {
+        return reject({ status: 422 });
+      }
+
+      const entity = new this.model(data);
+      entity.save((err) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({ status: 201, entity });
+      });
+    });
   }
 
   update(data) {
