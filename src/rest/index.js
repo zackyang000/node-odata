@@ -6,7 +6,7 @@ import put from './put';
 import del from './delete';
 import patch from './patch';
 import get from './get';
-import Adapter from '../mongoDB-adapter';
+import Adapter from '../db-adapter/mongodb';
 
 function authorizePipe(req, res, auth) {
   return new Promise((resolve, reject) => {
@@ -107,7 +107,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'delete',
       url: resourceURL,
-      ctrl: (req) => adapter.delete(req.params.id),
+      ctrl: (req) => adapter.remove(req.params.id),
       hook: hooks.delete,
     },
     {

@@ -3,7 +3,22 @@ export default class Adapter {
     this.model = model;
   }
 
-  delete(id) {
+  list(query) {
+  }
+
+  get(id) {
+  }
+
+  create(data) {
+  }
+
+  update(data) {
+  }
+
+  patch(data) {
+  }
+
+  remove(id) {
     return new Promise((resolve, reject) => {
       this.model.remove({ _id: id }, (err, result) => {
         if (err) {
