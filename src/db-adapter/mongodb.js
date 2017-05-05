@@ -7,6 +7,19 @@ export default class Adapter {
   }
 
   get(id) {
+    return new Promise((resolve, reject) => {
+      this.model.findById(id, (err, entity) => {
+        if (err) {
+          return reject(err);
+        }
+
+        if (!entity) {
+          return reject({ status: 404 }, { text: 'Not Found' });
+        }
+
+        return resolve({ entity });
+      });
+    });
   }
 
   create(data) {

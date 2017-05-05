@@ -5,7 +5,6 @@ import post from './post';
 import put from './put';
 import del from './delete';
 import patch from './patch';
-import get from './get';
 import Adapter from '../db-adapter/mongodb';
 
 function authorizePipe(req, res, auth) {
@@ -113,7 +112,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'get',
       url: resourceURL,
-      ctrl: get,
+      ctrl: (req) => adapter.get(req.params.id),
       hook: hooks.get,
     },
     {
