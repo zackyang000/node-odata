@@ -38,7 +38,35 @@ export default class Adapter {
     });
   }
 
-  update(data) {
+  update(id, data) {
+    return new Promise((resolve, reject) => {
+      this.model.findOne({ _id: id }, (err, entity) => {
+        if (err) {
+          return reject(err);
+        }
+
+        // update resource
+        if (entity) {
+          return this.model.findByIdAndUpdate(entity.id, data, (err) => {
+            if (err) {
+              return reject(err);
+            }
+            const newEntity = data;
+            newEntity.id = entity.id;
+            return resolve({ entity: newEntity, originEntity: entity });
+          });
+        }
+
+        // create resource
+        const uuidReg = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidReg.test(id)) {
+          return reject({ status: 400 }, { text: 'Id is invalid.' });
+        }
+        const newEntity = new this.model(data);
+        newEntity._id = id;
+        this.create(newEntity).then(resolve).catch(reject);
+      });
+    });
   }
 
   patch(id, data) {
@@ -52,7 +80,7 @@ export default class Adapter {
           if (err1) {
             return reject(err1);
           }
-          return resolve({ entity: req.body, originEntity: entity });
+          return resolve({ entity: data, originEntity: entity });
         });
       });
     });

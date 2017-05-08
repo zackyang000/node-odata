@@ -1,10 +1,6 @@
 import http from 'http';
 import { Router } from 'express';
 import list from './list';
-import post from './post';
-import put from './put';
-import del from './delete';
-import patch from './patch';
 import Adapter from '../db-adapter/mongodb';
 
 function authorizePipe(req, res, auth) {
@@ -94,7 +90,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'put',
       url: resourceURL,
-      ctrl: put,
+      ctrl: (req) => adapter.update(req.params.id, req.body),
       hook: hooks.put,
     },
     {
