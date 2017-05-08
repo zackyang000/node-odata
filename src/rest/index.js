@@ -1,6 +1,5 @@
 import http from 'http';
 import { Router } from 'express';
-import list from './list';
 import Adapter from '../db-adapter/mongodb';
 
 function authorizePipe(req, res, auth) {
@@ -55,7 +54,7 @@ function addRestRoutes(router, routes, mongooseModel, options) {
     return router[method](url, (req, res) => {
       authorizePipe(req, res, hook.auth)
       .then(() => beforePipe(req, res, hook.before))
-      .then(() => ctrl(req, mongooseModel, options))
+      .then(() => ctrl(req, mongooseModel))
       .then(result => respondPipe(req, res, result || {}))
       .then(data => afterPipe(req, res, hook.after, data))
       .catch(err => errorPipe(req, res, err));
@@ -114,7 +113,7 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
     {
       method: 'get',
       url: resourceListURL,
-      ctrl: list,
+      ctrl: (req) => adapter.list(req.query, options),
       hook: hooks.list,
     },
   ];
