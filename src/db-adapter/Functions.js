@@ -1,6 +1,6 @@
 import Query from './Query';
 
-export default class Functions extend Query {
+export default class Functions extends Query {
   contains() {
   }
 }
