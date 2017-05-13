@@ -3,3 +3,4 @@ coverage/
 npm-debug.log
 nohup.out
 lib/
+out/
