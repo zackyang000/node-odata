@@ -3,21 +3,27 @@
 /**
  * @typedef {Object} oDataQueryObject
  * @property {Number=} top
- *           1
+ *           a non-negative integer n that limits the number of items returned from a collection
  * @property {Number=} skip
- *           1
+ *           a non-negative integer n that excludes the first n items of the queried collection from the result
  * @property {Array.<string>=} select
- *           1
+ *           requests that the service return only the properties explicitly requested by the client
  * @property {Object=} orderby
+ *           specifies the order in which items are returned from the service
  * @property {string} orderby.field
- * @property {bool} orderby.asc
- *           1
- * @property {Number=} count
- *           1
+ *           field name for order
+ * @property {boolean} orderby.asc
+ *           asc for ascending or desc for descending
+ * @property {boolean=} count
+ *           with a value of *true* specifies that the total count of items within a collection matching the request be returned along with the result
  * @property {Array.<Object>=} filter
- * @property {key} filter.key
- * @property {key} filter.operator
- * @property {key} filter.value
+ *           restricts the set of items returned
+ * @property {string} filter.key
+ *           the field name for filter
+ * @property {string} filter.operator
+ *           built-in filter operations
+ * @property {string} filter.value
+ *           the value for filter
  */
 
 /**
@@ -26,25 +32,16 @@
  * @param {Object} query
  *        query object which be processed by query parser.
  * @param {string=} query.$top
- *        1
  * @param {string=} query.$skip
- *        1
  * @param {string=} query.$select
- *        1
  * @param {string=} query.$orderby
- *        1
  * @param {string=} query.$count
- *        1
  * @param {string=} query.$filter
- *        1
  * @param {Object=} options
  *        default oData query setting.
  * @param {string=} options.maxTop
- *        1
  * @param {string=} options.maxSkip
- *        1
  * @param {string=} options.defaultOrderBy
- *        1
  * @return {oDataQueryObject}
  *         oData query object.
 */
