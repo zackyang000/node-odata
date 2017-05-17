@@ -1,3 +1,5 @@
+import { min } from './utils';
+
 /** @module parser */
 
 /**
@@ -46,12 +48,53 @@
  *         oData query object.
 */
 export default function parse(query, options) {
-  const { $top, $skip, $select, $orderby, $count, $filter } = query;
-  const result = {};
-  result.top = parseTop(query.$top);
 }
 
-function parseCount(count) {
+const parser = [
+  ({ $top }, { maxTop }) => {
+    let top = parseToInteger($top);
+
+    // If there is no $top query, then no limit.
+    if (top === undefined && maxTop === undefined) {
+      return undefined;
+    }
+
+    // The maximum number of query is limited by the global limit
+    const top = min(top, maxTop);
+
+    return { top };
+  },
+
+  ({ $skip }, { maxSkip }) => {
+    let skip = parseToInteger($skip);
+
+    // If there is no $skip query, then no limit.
+    if (skip === undefined && maxTop === undefined) {
+      return;
+    }
+
+    // The maximum number of skip is limited by the global limit
+    const skip = min(top, maxSkip);
+
+    return { skip };
+  },
+
+  ({ $select }) => {
+    if (!$select) {
+      return;
+    }
+    return $select.split(',').map(item => item.trim()).filter((item) => item);
+  },
+
+  ({ $orderby }, { defaultOrderBy }) => {
+  },
+  ({ $count }) => {
+  },
+  ({ $filter }) => {
+  },
+]
+
+function parseToInteger(count) {
   const number = +count;
   if (number > 0) {
     return Math.floor(number);
