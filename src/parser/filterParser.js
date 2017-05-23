@@ -71,6 +71,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
       // parse "contains(title,'X1ML')"
       conditionArr.push(item);
     }
+    // length === 1 for `contains('Alfreds',CompanyName)`
     if (conditionArr.length !== 3 && conditionArr.length !== 1) {
       return reject(`Syntax error at '${item}'.`);
     }
