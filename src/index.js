@@ -1,11 +1,16 @@
-const express = require('express');
+const Koa = require('koa');
 
-const odataServer = function odataServer(db, prefix, options) {
-  return {};
+class oData extends Koa {
+  static get Resource() {
+    return class Resource {
+    };
+  };
+
+  constructor() {
+    super();
+  }
 };
 
-server.Resource = {};
-
-module.exports = odataServer;
+module.exports = oData;
 
 
