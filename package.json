@@ -13,7 +13,7 @@
     "url": "https://github.com/TossShinHwa/node-odata.git"
   },
   "engines": {
-    "node": ">=0.12"
+    "node": ">=6.0"
   },
   "scripts": {
     "prepublish": "make",

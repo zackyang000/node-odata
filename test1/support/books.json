@@ -1,0 +1,106 @@
+[
+  {
+    "author": "Gambardella, Matthew",
+    "description": "An in-depth look at creating applications \n with XML.",
+    "genre": "Computer",
+    "price": 44.95,
+    "publish_date": "2000-10-01",
+    "title": "XML Developer's Guide"
+  },
+  {
+    "author": "Ralls, Kim",
+    "description": "A former architect battles corporate zombies, \n an evil sorceress, and her own childhood to become queen \n of the world.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2000-12-16",
+    "title": "Midnight Rain"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "After the collapse of a nanotechnology \n society in England, the young survivors lay the \n foundation for a new society.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2000-11-17",
+    "title": "Maeve Ascendant"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "In post-apocalypse England, the mysterious \n agent known only as Oberon helps to create a new life \n for the inhabitants of London. Sequel to Maeve \n Ascendant.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2001-03-10",
+    "title": "Oberon's Legacy"
+  },
+  {
+    "author": "Corets, Eva",
+    "description": "The two daughters of Maeve, half-sisters, \n battle one another for control of England. Sequel to \n Oberon's Legacy.",
+    "genre": "Fantasy",
+    "price": 5.95,
+    "publish_date": "2001-09-10",
+    "title": "The Sundered Grail"
+  },
+  {
+    "author": "Randall, Cynthia",
+    "description": "When Carla meets Paul at an ornithology \n conference, tempers fly as feathers get ruffled.",
+    "genre": "Romance",
+    "price": 4.95,
+    "publish_date": "2000-09-02",
+    "title": "Lover Birds"
+  },
+  {
+    "author": "Thurman, Paula",
+    "description": "A deep sea diver finds true love twenty \n thousand leagues beneath the sea.",
+    "genre": "Romance",
+    "price": 4.95,
+    "publish_date": "2000-11-02",
+    "title": "Splish Splash"
+  },
+  {
+    "author": "Knorr, Stefan",
+    "description": "An anthology of horror stories about roaches,\n centipedes, scorpions and other insects.",
+    "genre": "Horror",
+    "price": 4.95,
+    "publish_date": "2000-12-06",
+    "title": "Creepy Crawlies"
+  },
+  {
+    "author": "Kress, Peter",
+    "description": "After an inadvertant trip through a Heisenberg\n Uncertainty Device, James Salway discovers the problems \n of being quantum.",
+    "genre": "Science Fiction",
+    "price": 6.95,
+    "publish_date": "2000-11-02",
+    "title": "Paradox Lost"
+  },
+  {
+    "author": "O'Brien, Tim",
+    "description": "Microsoft's .NET initiative is explored in \n detail in this deep programmer's reference.",
+    "genre": "Computer",
+    "price": 36.95,
+    "publish_date": "2000-12-09",
+    "title": "Microsoft .NET: The Programming Bible"
+  },
+  {
+    "author": "O'Brien, Tim",
+    "description": "The Microsoft MSXML3 parser is covered in \n detail, with attention to XML DOM interfaces, XSLT processing, \n SAX and more.",
+    "genre": "Computer",
+    "price": 36.95,
+    "publish_date": "2000-12-01",
+    "title": "MSXML3: A Comprehensive Guide"
+  },
+  {
+    "author": "Galos, Mike",
+    "description": "Microsoft Visual Studio 7 is explored in depth,\n looking at how Visual Basic, Visual C++, C#, and ASP+ are \n integrated into a comprehensive development \n environment.",
+    "genre": "Computer",
+    "price": 49.95,
+    "publish_date": "2001-04-16",
+    "title": "Visual Studio 7: A Comprehensive Guide"
+  },
+  {
+    "author": "史蒂夫·迈克康奈尔",
+    "description": "第2版的《代码大全》是著名IT畅销书作者史蒂夫·迈克康奈尔11年前的经典著作的全新演绎：第2版不是第一版的简单修订增补，而是完全进行了重写；增加了很多与时俱进的内容。这也是一本完整的软件构建手册，涵盖了软件构建过程中的所有细节。它从软件质量和编程思想等方面论述了软件构建的各个问题，并详细论述了紧跟潮流的新技术、高屋建瓴的观点、通用的概念，还含有丰富而典型的程序示例。这本书中所论述的技术不仅填补了初级与高级编程技术之间的空白，而且也为程序员们提供了一个有关编程技巧的信息来源。这本书对经验丰富的程序员、技术带头人、自学的程序员及几乎不懂太多编程技巧的学生们都是大有裨益的。可以说，无论是什么背景的读者，阅读这本书都有助于在更短的时间内、更容易地写出更好的程序。",
+    "genre": "计算机",
+    "price": 128,
+    "publish_date": "2006-03-01",
+    "title": "代码大全"
+  }
+]

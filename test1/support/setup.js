@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-//const id = require('../../src/model/idPlugin');
+import mongoose from 'mongoose';
+import id from '../../lib/model/idPlugin';
 
-const odata = require('../../');
-exports.host = 'http://localhost:3000';
-exports.port = '3000';
-exports.conn = 'mongodb://localhost/odata-test';
+export odata from '../../';
+export const host = 'http://localhost:3000';
+export const port = '3000';
+export const conn = 'mongodb://localhost/odata-test';
 
-exports.bookSchema = {
+export const bookSchema = {
   author: String,
   description: String,
   genre: String,
@@ -15,9 +15,9 @@ exports.bookSchema = {
   title: String
 };
 
-exports.books = require('./books.json');
+export const books = require('./books.json');
 
-exports.initData = function initData() {
+export function initData() {
   return new Promise((resolve, reject) => {
     const conf = {
       _id: false,
@@ -25,9 +25,9 @@ exports.initData = function initData() {
       collection: 'book',
     };
 
-    const db = mongoose.createConnection(exports.conn);
+    const db = mongoose.createConnection(conn);
     const schema = new mongoose.Schema(bookSchema, conf);
-    //schema.plugin(id);
+    schema.plugin(id);
     const model = db.model('book', schema);
 
     function clear() {
