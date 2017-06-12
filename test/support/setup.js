@@ -26,7 +26,7 @@ exports.initData = function initData() {
     };
 
     const db = mongoose.createConnection(exports.conn);
-    const schema = new mongoose.Schema(bookSchema, conf);
+    const schema = new mongoose.Schema(exports.bookSchema, conf);
     //schema.plugin(id);
     const model = db.model('book', schema);
 
@@ -43,7 +43,7 @@ exports.initData = function initData() {
       });
     }
 
-    const promises = books.map(insert);
+    const promises = exports.books.map(insert);
     clear().then(() => Promise.all(promises).then(resolve));
   });
 }

@@ -14,8 +14,8 @@ describe('rest.get', () => {
 
   before(async function() {
     data = await initData();
-    app = odata(conn);
-    app.use([Book]);
+    app = new odata(conn);
+    app.use([Book, Book]);
   });
 
   it('should return all of the resources', async function() {
