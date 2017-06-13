@@ -1,34 +1,37 @@
+const debug = require('debug')('node-odata:core');
 const Koa = require('koa');
-
-const CLASS_RESOURCE_SYMBOL = Symbol('_CLASS_RESOURCE_');
-
-class Resource {
-  static get _CLASS_RESOURCE_() {
-    return CLASS_RESOURCE_SYMBOL;
-  }
-}
+const Resource = require('./Resource');
+const createOdataResourceMiddleware = require('./middleware');
 
 class oData extends Koa {
   static get Resource() {
     return Resource;
   };
 
-  constructor() {
+  constructor(opts) {
     super();
+    debug(`invoke oData constructor with opts: %o`, opts);
+    this.opts = opts;
   }
 
   use(...args) {
     const arg = args[0];
+
+    // handle resources array
     if (arg instanceof Array) {
-      arg.filter((item) => item._CLASS_RESOURCE_ === Resource._CLASS_RESOURCE_).map(this.use);
+      arg.filter((item) => item._RESOURCE_ === Resource._RESOURCE_).map((item) => this.use(item));
       return;
     }
-    console.log(args[0]._CLASS_RESOURCE_ === Resource._CLASS_RESOURCE_)
 
-    // return super.use(...args);
+    // convert to middleware if declare a Resource Class
+    if (arg._RESOURCE_ === Resource._RESOURCE_) {
+      const middleware = createOdataResourceMiddleware(arg, this.opts);
+      return super.use(middleware);
+    }
+
+    return super.use(...args);
   }
 };
 
 module.exports = oData;
-
 

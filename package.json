@@ -28,6 +28,7 @@
   "dependencies": {
     "body-parser": "1.17.1",
     "cors": "2.8.3",
+    "debug": "^2.6.8",
     "express": "4.15.2",
     "koa": "^2.2.0",
     "method-override": "2.3.8",
