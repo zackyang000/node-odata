@@ -13,11 +13,19 @@ class Resource {
     return _CLASS_RESOURCE_SYMBOL_;
   }
 
-  async list() {
+  setModel(model) {
+    this.model = model;
+  }
+
+  async list(quertstring, opts) {
     const query = new Query(this.model);
-    const data = await query.list();
-    console.log(data)
-    return data;
+    try {
+      const data = await query.list(quertstring, opts);
+      console.log('data', data.entity)
+      return data.entity;
+    } catch(e) {
+      debug(e)
+    }
   }
 
   async get(id) {

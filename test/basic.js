@@ -19,8 +19,8 @@ describe('rest.get', () => {
     request = supertest(server);
     console.log('=====Object======');
     app.use(Book);
-    console.log('=====Array======');
-    app.use([Book, Book]);
+    // console.log('=====Array======');
+    // app.use([Book, Book]);
   });
 
   it('should return all of the resources', async function() {

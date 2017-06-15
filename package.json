@@ -31,6 +31,7 @@
     "debug": "^2.6.8",
     "express": "4.15.2",
     "koa": "^2.2.0",
+    "koa-router": "^7.2.0",
     "method-override": "2.3.8",
     "mongoose": "4.9.5",
     "uuid": "3.0.1"

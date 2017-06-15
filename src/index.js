@@ -26,7 +26,9 @@ class oData extends Koa {
     // convert to middleware if declare a Resource Class
     if (arg._RESOURCE_ === Resource._RESOURCE_) {
       const middleware = createOdataResourceMiddleware(arg, this.opts);
-      return super.use(middleware);
+      super.use(middleware.routes());
+      super.use(middleware.allowedMethods());
+      return;
     }
 
     return super.use(...args);
