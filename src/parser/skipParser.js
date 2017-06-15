@@ -1,9 +1,9 @@
-import { min } from './../utils';
+const { min } = require('./../utils');
 
 // ?$skip=10
 // ->
 // query.skip(10)
-export default (query, skip, maxSkip) => new Promise((resolve) => {
+module.exports = (query, skip, maxSkip) => new Promise((resolve) => {
   if (isNaN(+skip)) {
     return resolve();
   }

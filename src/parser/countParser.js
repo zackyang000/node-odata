@@ -1,9 +1,9 @@
-import filterParser from './filterParser';
+const filterParser = require('./filterParser');
 
 // ?$count=10
 // ->
 // query.count(10)
-export default (mongooseModel, $count, $filter) => new Promise((resolve, reject) => {
+module.exports = (mongooseModel, $count, $filter) => new Promise((resolve, reject) => {
   if ($count === undefined) {
     return resolve();
   }

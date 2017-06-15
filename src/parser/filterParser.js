@@ -16,8 +16,8 @@
 //   http://host/service/Products?$filter=Price lt 10.00
 //   http://host/service/Categories?$filter=Products/$count lt 10
 
-import functions from './functionsParser';
-import { split } from '../utils';
+const functions = require('./functionsParser');
+const { split } = require('../utils');
 
 const OPERATORS_KEYS = ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'has'];
 
@@ -56,7 +56,7 @@ const validator = {
   },
 };
 
-export default (query, $filter) => new Promise((resolve, reject) => {
+module.exports = (query, $filter) => new Promise((resolve, reject) => {
   if (!$filter) {
     return resolve();
   }

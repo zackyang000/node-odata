@@ -1,9 +1,9 @@
-import { min } from './../utils';
+const { min } = require('./../utils');
 
 // ?$top=10
 // ->
 // query.top(10)
-export default (query, top, maxTop) => new Promise((resolve) => {
+module.exports = (query, top, maxTop) => new Promise((resolve) => {
   if (isNaN(+top)) {
     return resolve();
   }

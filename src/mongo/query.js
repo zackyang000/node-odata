@@ -1,11 +1,11 @@
-import countParser from '../parser/countParser';
-import filterParser from '../parser/filterParser';
-import orderbyParser from '../parser/orderbyParser';
-import skipParser from '../parser/skipParser';
-import topParser from '../parser/topParser';
-import selectParser from '../parser/selectParser';
+const countParser = require('../parser/countParser');
+const filterParser = require('../parser/filterParser');
+const orderbyParser = require('../parser/orderbyParser');
+const skipParser = require('../parser/skipParser');
+const topParser = require('../parser/topParser');
+const selectParser = require('../parser/selectParser');
 
-export default class Query {
+module.exports = class Query {
   constructor(model) {
     this.model = model;
   }
@@ -53,7 +53,7 @@ export default class Query {
         _countQuery(this.model, params),
         _dataQuery(this.model, params, options),
       ]).then((results) => {
-        const entity = results.reduce((current, next) => ({ ...current, ...next }));
+        const entity = results.reduce((current, next) => Object.assign(current, next));
         resolve({ entity });
       }).catch(err => reject({ status: 500, text: err }));
     });
@@ -129,7 +129,7 @@ export default class Query {
           return reject(err);
         }
 
-        this.model.update({ id }, { ...entity, ...data }, (err1) => {
+        this.model.update({ id }, Object.assign(entity, data), (err1) => {
           if (err1) {
             return reject(err1);
           }

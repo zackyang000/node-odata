@@ -1,7 +1,7 @@
 // ?$skip=10
 // ->
 // query.skip(10)
-export default (query, $orderby) => new Promise((resolve, reject) => {
+module.exports = (query, $orderby) => new Promise((resolve, reject) => {
   if (!$orderby) {
     return resolve();
   }

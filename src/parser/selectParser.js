@@ -1,7 +1,7 @@
 // ?$select=Rating,ReleaseDate
 // ->
 // query.select('Rating ReleaseDate')
-export default (query, $select) => new Promise((resolve) => {
+module.exports = (query, $select) => new Promise((resolve) => {
   if (!$select) {
     return resolve();
   }

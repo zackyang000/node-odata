@@ -75,4 +75,4 @@ const year = (query, fnKey, odataOperator, value) => {
   }
 };
 
-export default { indexof, year, contains };
+module.exports = { indexof, year, contains };
