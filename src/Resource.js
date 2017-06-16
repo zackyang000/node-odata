@@ -21,7 +21,6 @@ class Resource {
     const query = new Query(this.model);
     try {
       const data = await query.list(quertstring, opts);
-      console.log('data', data.entity)
       return data.entity;
     } catch(e) {
       debug(e)

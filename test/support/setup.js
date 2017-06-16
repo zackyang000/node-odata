@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-//const id = require('../../src/model/idPlugin');
+const id = require('../../src/mongo/utils/idPlugin');
 
 const odata = require('../../');
 exports.host = 'http://localhost:3000';
@@ -27,7 +27,7 @@ exports.initData = function initData() {
 
     const db = mongoose.createConnection(exports.conn);
     const schema = new mongoose.Schema(exports.bookSchema, conf);
-    //schema.plugin(id);
+    schema.plugin(id);
     const model = db.model('book', schema);
 
     function clear() {
