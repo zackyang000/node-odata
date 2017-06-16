@@ -1,5 +1,5 @@
-const { conn, bookSchema, initData } = require('./support/setup');
-const odata = require('../');
+const { conn, bookSchema, initData } = require('./test/support/setup');
+const odata = require('./');
 
 class Book extends odata.Resource {
   constructor() {

@@ -1,4 +1,4 @@
-const debug = require('debug')('node-odata:middleware');
+const debug = require('debug')('node-odata:router');
 const createRouter = require('koa-router');
 const createConnection = require('./mongo/createConnection');
 const createModel = require('./mongo/createModel');
@@ -13,9 +13,10 @@ module.exports = function createOdataResourceMiddleware(Resource, opts) {
 
   debug(`create koa-router for resource: %s`, resource.name);
   const router = createRouter();
-  debug(`GET /%s`, resource.name);
+  debug(`create GET /%s`, resource.name);
   router.get('/' + resource.name, async function (ctx, next) {
-    ctx.body = await resource.list({}, {});
+    debug(`request GET %s %o`, ctx.request.url, ctx.request.query);
+    ctx.body = await resource.list(ctx.request.query, {});
   });
   return router;
 }
