@@ -17,14 +17,9 @@ class Resource {
     this.model = model;
   }
 
-  async list(quertstring, opts) {
+  async list(queryObject, opts) {
     const query = new Query(this.model);
-    try {
-      const data = await query.list(quertstring, opts);
-      return data.entity;
-    } catch(e) {
-      debug(e)
-    }
+    return await query.list(queryObject, opts);
   }
 
   async get(id) {

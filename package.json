@@ -37,6 +37,7 @@
     "uuid": "3.0.1"
   },
   "devDependencies": {
+    "http-errors": "^1.6.1",
     "babel": "6.23.0",
     "babel-cli": "6.24.1",
     "babel-core": "6.24.1",

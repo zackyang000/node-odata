@@ -1,7 +1,7 @@
 const debug = require('debug')('node-odata:core');
 const Koa = require('koa');
 const Resource = require('./Resource');
-const createOdataResourceMiddleware = require('./middleware');
+const createOdataRouter = require('./middleware');
 
 class oData extends Koa {
   static get Resource() {
@@ -11,7 +11,7 @@ class oData extends Koa {
   constructor(opts) {
     super();
     debug(`invoke oData constructor with opts: %o`, opts);
-    this.opts = opts;
+    this.opts = opts || {};
   }
 
   use(...args) {
@@ -25,7 +25,7 @@ class oData extends Koa {
 
     // convert to middleware if declare a Resource Class
     if (arg._RESOURCE_ === Resource._RESOURCE_) {
-      const middleware = createOdataResourceMiddleware(arg, this.opts);
+      const middleware = createOdataRouter(arg, this.opts);
       super.use(middleware.routes());
       super.use(middleware.allowedMethods());
       return;

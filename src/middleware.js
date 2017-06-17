@@ -3,7 +3,7 @@ const createRouter = require('koa-router');
 const createConnection = require('./mongo/createConnection');
 const createModel = require('./mongo/createModel');
 
-module.exports = function createOdataResourceMiddleware(Resource, opts) {
+module.exports = function createOdataRouter(Resource, opts) {
   const { conn } = opts;
   const resource = new Resource;
 
@@ -13,10 +13,24 @@ module.exports = function createOdataResourceMiddleware(Resource, opts) {
 
   debug(`create koa-router for resource: %s`, resource.name);
   const router = createRouter();
+
   debug(`create GET /%s`, resource.name);
   router.get('/' + resource.name, async function (ctx, next) {
-    debug(`request GET %s %o`, ctx.request.url, ctx.request.query);
-    ctx.body = await resource.list(ctx.request.query, {});
+    debug(`request GET %s with querystring %o`, ctx.request.url, ctx.request.query);
+    try {
+      if (resource.willQueryList) {
+        const err = await resource.willQueryList();
+        if (err) {
+          throw err;
+        }
+      }
+      const data = await resource.list(ctx.request.query, {});
+      ctx.body = data.entity;
+    } catch (e) {
+      ctx.body = { error: e.message || e.toString() };
+      ctx.status = e.status || 500;
+    }
   });
+
   return router;
 }
