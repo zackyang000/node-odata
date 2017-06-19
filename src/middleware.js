@@ -19,12 +19,18 @@ module.exports = function createOdataRouter(Resource, opts) {
     debug(`request GET %s with querystring %o`, ctx.request.url, ctx.request.query);
     try {
       if (resource.willQueryList) {
-        const err = await resource.willQueryList();
+        const err = await resource.willQueryList(ctx.request.query);
         if (err) {
           throw err;
         }
       }
       const data = await resource.list(ctx.request.query, {});
+      if (resource.didQueryList) {
+        const err = await resource.didQueryList(data.entity);
+        if (err) {
+          throw err;
+        }
+      }
       ctx.body = data.entity;
     } catch (e) {
       ctx.body = { error: e.message || e.toString() };
