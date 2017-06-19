@@ -17,9 +17,15 @@ class Resource {
     this.model = model;
   }
 
-  async list(queryObject, opts) {
+  async willQueryList() {
+  }
+
+  async queryList(queryObject, opts) {
     const query = new Query(this.model);
     return await query.list(queryObject, opts);
+  }
+
+  async didQueryList() {
   }
 
   async get(id) {
