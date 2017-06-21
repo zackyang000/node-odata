@@ -28,19 +28,19 @@ class Resource {
   async didQueryList() {
   }
 
-  async get(id) {
+  async query(id) {
   }
 
   async create(entity) {
   }
 
-  async update(entity) {
-  }
-
   async remove(id) {
   }
 
-  async patch(entity) {
+  async update(entity) {
+  }
+
+  async updatePartial(entity) {
   }
 }
 

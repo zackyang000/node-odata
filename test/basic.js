@@ -14,7 +14,7 @@ class Book extends odata.Resource {
   }
 
   async didQueryList(data) {
-    console.log('didQueryList', data)
+    console.log('didQueryList', /*data*/)
   }
 }
 
