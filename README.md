@@ -5,10 +5,10 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
-  [![Build Status](https://travis-ci.org/TossShinHwa/node-odata.svg?branch=master)](https://travis-ci.org/TossShinHwa/node-odata)
-  [![Coverage Status](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/github/TossShinHwa/node-odata?branch=master)
-  [![Dependency Status](https://david-dm.org/TossShinHwa/node-odata.svg?style=flat)](https://david-dm.org/TossShinHwa/node-odata)
-  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
+  [![Build Status](https://travis-ci.org/zackyang000/node-odata.svg?branch=master)](https://travis-ci.org/zackyang000/node-odata)
+  [![Coverage Status](https://coveralls.io/repos/github/zackyang000/node-odata/badge.svg?branch=master)](https://coveralls.io/github/zackyang000/node-odata?branch=master)
+  [![Dependency Status](https://david-dm.org/zackyang000/node-odata.svg?style=flat)](https://david-dm.org/zackyang000/node-odata)
+  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/zackyang000/node-odata/master/LICENSE)
 
 ```JavaScript
 var odata = require('node-odata');
@@ -67,8 +67,8 @@ npm install node-odata
 
 ## DOCUMENTATION
 
-- [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)
-- [中文](http://tossshinhwa.github.io/node-odata/cn/)
+- [ENGLISH](http://zackyang000.github.io/node-odata/en/)
+- [中文](http://zackyang000.github.io/node-odata/cn/)
 
 
 ## Demo
