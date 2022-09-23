@@ -1,12 +1,14 @@
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port } from './support/setup';
+import fakeDb from './support/fake-db';
+import { odata, host, port } from './support/setup';
 
 describe('model.custom.id', () => {
   let httpServer;
 
   before(async function() {
-    const server = odata(conn);
+    const db = new fakeDb();
+    const server = odata(db);
     server.resource('custom-id', { id: Number });
     httpServer = server.listen(port);
     await request(host).post('/custom-id').send({ id: 100 });

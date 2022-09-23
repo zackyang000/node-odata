@@ -1,8 +1,7 @@
-import mongoose from 'mongoose';
 import createExpress from './express';
 import Resource from './ODataResource';
-
-mongoose.Promise = global.Promise;
+import Func from './ODataFunction';
+import Db from './db/db';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -11,7 +10,6 @@ function checkAuth(auth, req) {
 class Server {
   constructor(db, prefix, options) {
     this._app = createExpress(options);
-    this._mongoose = mongoose;
     this._settings = {
       maxTop: 10000,
       maxSkip: 10000,
@@ -23,23 +21,34 @@ class Server {
     // Should mix _resources object and resources object: _resources + resource = resources.
     // Encapsulation to a object, separate mognoose, try to use *repository pattern*.
     // 这里也许应该让 resources 支持 odata 查询的, 以方便直接在代码中使用 OData 查询方式来进行数据筛选, 达到隔离 mongo 的效果.
-    this._resources = [];
     this.resources = {};
+  }
+
+  function(url, middleware) {
+    const func = new Func();
+    const router = func.router();
+
+    router.get(url, middleware);
+    this.use(router);
+  }
+
+  resource(name, model) {
+    if (model === undefined) {
+      return this.resources[name];
+    }
+
+    const db = this.get('db');
+    this.resources[name] = new Resource(name, model);
+
+    this.resources[name].setModel(db.register(name, model));
+
+    return this.resources[name];
   }
 
   defaultConfiguration(db, prefix = '') {
     this.set('app', this._app);
     this.set('db', db);
     this.set('prefix', prefix);
-  }
-
-  resource(name, model) {
-    if (model === undefined) {
-      return this._resources.name;
-    }
-    const resource = new Resource(name, model);
-    this._resources.push(resource);
-    return resource;
   }
 
   post(url, callback, auth) {
@@ -91,18 +100,31 @@ class Server {
   }
 
   listen(...args) {
-    this._resources.map((resource) => {
-      const router = resource._router(this._db, this._settings);
-      this._app.use(this.get('prefix'), router);
-      this.resources[resource._name] = this._db.model(resource._name);
-      return true;
+    Object.keys(this.resources).forEach((resourceKey) => {
+      const resource = this.resources[resourceKey];
+      const resourceRouter = resource._router(this.getSettings());
+
+      this.use(this.get('prefix'), resourceRouter);
+
+      if (resource.actions) {
+        Object.keys(resource.actions).forEach((actionKey) => {
+          const action = resource.actions[actionKey];
+
+          this.use(action.router);
+        });
+      }
     });
+
     return this._app.listen(...args);
+  }
+
+  getSettings() {
+    return this._settings;
   }
 
   use(...args) {
     if (args[0] instanceof Resource) {
-      this._resources.push(args[0]);
+      this.resources[args[0].getName()] = args[0];
       return;
     }
     this._app.use(...args);
@@ -127,15 +149,20 @@ class Server {
   set(key, val) {
     switch (key) {
       case 'db': {
-        const options = { server: { reconnectTries: Number.MAX_VALUE } };
-        this._db = mongoose.createConnection(val, options, (err) => {
-          if (err) {
-            console.error('Failed to connect to database on startup.');
-            process.exit();
-          }
-        });
+        let db = val;
 
-        this._settings[key] = val;
+        if (typeof val === 'string') {
+          db = new Db();
+          db.createConnection(val, null, (err) => {
+            if (err) {
+              console.error(err.message);
+              console.error('Failed to connect to database on startup.');
+              process.exit();
+            }
+          });
+        }
+
+        this._settings[key] = db;
         break;
       }
       case 'prefix': {
@@ -160,7 +187,9 @@ class Server {
   // provide a event listener to handle not able to connect DB.
   on(name, event) {
     if (['connected', 'disconnected'].indexOf(name) > -1) {
-      this._db.on(name, event);
+      const db = this.get('db');
+
+      db.on(name, event);
     }
   }
 

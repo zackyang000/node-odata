@@ -2,8 +2,10 @@ import express from 'express';
 
 export default class {
   constructor() {
-    /*eslint-disable */
-    return express.Router();
-    /*eslint-enable */
+    this._router = express.Router();
+  }
+
+  router() {
+    return this._router;
   }
 }

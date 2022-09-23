@@ -1,4 +1,3 @@
-import model from './model';
 import rest from './rest';
 import { min } from './utils';
 
@@ -37,7 +36,7 @@ export default class {
       delete: {},
       patch: {},
     };
-    this._actions = {};
+    this.actions = {};
     this._options = {
       maxTop: 10000,
       maxSkip: 10000,
@@ -45,9 +44,31 @@ export default class {
     };
   }
 
-  action(url, fn, auth) {
-    this._actions[url] = fn;
-    this._actions[url].auth = auth;
+  getName() {
+    return this._name;
+  }
+
+  setModel(model) {
+    this.model = model;
+  }
+
+  action(url, fn, options) {
+    let auth;
+    let binding;
+
+    if (options) {
+      auth = options.auth;
+      binding = options.binding;
+    }
+
+    this.actions[url] = fn;
+    this.actions[url].auth = auth;
+    this.actions[url].binding = binding;
+
+    const resourceUrl = !binding || binding === 'entity'
+      ? `/${this._url}\\(:id\\)` : `/${this._url}`;
+    this.actions[url].router = rest.getOperationRouter(resourceUrl, url, fn, auth);
+
     return this;
   }
 
@@ -130,7 +151,7 @@ export default class {
     return this;
   }
 
-  _router(db, setting = {}) {
+  _router(setting = {}) {
     // remove '/' if url is startwith it.
     if (this._url.indexOf('/') === 0) {
       this._url = this._url.substr(1);
@@ -139,10 +160,8 @@ export default class {
     // not allow contain '/' in url.
     if (this._url.indexOf('/') >= 0) {
       throw new Error(`Url of resource[${this._name}] can't contain "/",`
-                      + 'it can only be allowed to exist in the beginning.');
+        + 'it can only be allowed to exist in the beginning.');
     }
-
-    const mongooseModel = model.register(db, this._url, this._model);
 
     const params = {
       url: this._url,
@@ -152,9 +171,9 @@ export default class {
         orderby: this._orderby || setting.orderby,
       },
       hooks: this._hooks,
-      actions: this._actions,
     };
 
-    return rest.getRouter(mongooseModel, params);
+    return rest.getRouter(this.model, params);
   }
+
 }

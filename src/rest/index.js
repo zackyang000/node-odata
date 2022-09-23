@@ -59,7 +59,7 @@ function addRestRoutes(router, routes, mongooseModel, options) {
     return router[method](url, (req, res) => {
       authorizePipe(req, res, hook.auth)
       .then(() => beforePipe(req, res, hook.before))
-      .then(() => ctrl(req, mongooseModel, options))
+        .then(() => ctrl(req, mongooseModel, options))
       .then(result => respondPipe(req, res, result || {}))
       .then(data => afterPipe(req, res, hook.after, data))
       .catch(err => errorPipe(req, res, err));
@@ -67,18 +67,7 @@ function addRestRoutes(router, routes, mongooseModel, options) {
   });
 }
 
-function addActionRoutes(router, resourceURL, actions) {
-  return Object.keys(actions).map((url) => {
-    const action = actions[url];
-    return router.post(`${resourceURL}${url}`, (req, res, next) => {
-      authorizePipe(req, res, action.auth)
-        .then(() => action(req, res, next))
-        .catch(result => errorPipe(req, res, result));
-    });
-  });
-}
-
-const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
+const getRouter = (mongooseModel, { url, hooks, options }) => {
   const resourceListURL = `/${url}`;
   const resourceURL = `${resourceListURL}\\(:id\\)`;
 
@@ -125,8 +114,21 @@ const getRouter = (mongooseModel, { url, hooks, actions, options }) => {
   const router = Router();
   /*eslint-enable */
   addRestRoutes(router, routes, mongooseModel, options);
-  addActionRoutes(router, resourceURL, actions);
   return router;
 };
 
-export default { getRouter };
+const getOperationRouter = (resourceUrl, actionUrl, fn, auth) => {
+  /*eslint-disable */
+  const router = Router();
+  /*eslint-enable */
+
+  router.post(`${resourceUrl}${actionUrl}`, (req, res, next) => {
+    authorizePipe(req, res, auth)
+      .then(() => fn(req, res, next))
+      .catch(result => errorPipe(req, res, result));
+  });
+
+  return router;
+};
+
+export default { getRouter, getOperationRouter };

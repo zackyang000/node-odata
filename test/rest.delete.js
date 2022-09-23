@@ -1,15 +1,18 @@
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { odata, host, port, bookSchema } from './support/setup';
+import books from './support/books.json';
+import FakeDb from './support/fake-db';
 
 describe('rest.delete', function() {
   let data, httpServer;
 
   before(async function() {
-    data = await initData();
-    const server = odata(conn);
+    const db = new FakeDb();
+    const server = odata(db);
     server.resource('book', bookSchema)
     httpServer = server.listen(port);
+    data = db.addData('book', books);
   });
 
   after(() => {
@@ -29,8 +32,9 @@ describe('rest.delete', function() {
     res.status.should.be.equal(404);
   });
   it('should 404 if try to delete a resource twice', async function() {
-    await request(host).del(`/book(${data[0].id})`);
-    const res = await request(host).del(`/book(${data[0].id})`);
+    const id = data[0].id;
+    await request(host).del(`/book(${id})`);
+    const res = await request(host).del(`/book(${id})`);
     res.status.should.be.equal(404);
   });
 });

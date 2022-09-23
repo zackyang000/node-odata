@@ -3,7 +3,7 @@ export default (req, MongooseModel) => new Promise((resolve, reject) => {
     return reject({ status: 422 });
   }
 
-  const entity = new MongooseModel(req.body);
+  const entity = MongooseModel.create(req.body);
   return entity.save((err) => {
     if (err) {
       return reject(err);

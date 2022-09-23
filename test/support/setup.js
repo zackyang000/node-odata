@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import id from '../../lib/model/idPlugin';
 
-export odata from '../../';
+export odata from '../../src';
 export const host = 'http://localhost:3000';
 export const port = '3000';
 export const conn = 'mongodb://localhost/odata-test';
@@ -46,4 +46,10 @@ export function initData() {
     const promises = books.map(insert);
     clear().then(() => Promise.all(promises).then(resolve));
   });
+}
+
+export function assertSuccess(res) {
+  if (res.error) {
+    res.error.message.should.have.value('');
+  }
 }

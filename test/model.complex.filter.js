@@ -1,15 +1,23 @@
 // For issue: https://github.com/TossShinHwa/node-odata/issues/69
 
 import 'should';
+import 'should-sinon';
 import request from 'supertest';
-import { odata, conn, host, port } from './support/setup';
+import { odata, assertSuccess, host, port } from './support/setup';
+import Db from './support/fake-db';
+import sinon from 'sinon';
 
 describe('model.complex.filter', () => {
-  let httpServer;
+  let httpServer, db, mock;
 
   before(() => {
-    const server = odata(conn);
-    server.resource('complex-model-filter', { product: [{ price: Number }] });
+    db = new Db();
+    const server = odata(db);
+    const resource = server.resource('complex-model-filter', { product: [{ price: Number }] });
+
+    mock = sinon.mock(resource.model);
+    mock.expects('where').once().withArgs('product.price').returns(resource.model);
+    mock.expects('gt').once().withArgs(30).returns(resource.model);
     httpServer = server.listen(port);
   });
 
@@ -18,11 +26,9 @@ describe('model.complex.filter', () => {
   });
 
   it('should work when PUT a complex entity', async function() {
-    for (let i = 0; i < 100; i++) {
-      const price = Math.floor(Math.random() * 100);
-      await request(host).post('/complex-model-filter').send({ product: [{ price }] });
-    }
     const res = await request(host).get(`/complex-model-filter?$filter=product.price gt 30`);
-    res.body.value.should.matchEach((item) => item.product[0].price > 30);
+
+    assertSuccess(res);
+    mock.verify();
   });
 });
