@@ -24,7 +24,8 @@ function hook(resource, pos, fn) {
 }
 
 export default class {
-  constructor(name, userModel) {
+  constructor(server, name, userModel) {
+    this._server = server;
     this._name = name;
     this._url = name;
     this._model = userModel;
@@ -176,4 +177,7 @@ export default class {
     return rest.getRouter(this.model, params);
   }
 
+  find() {
+    return this.model.find();
+  }
 }
