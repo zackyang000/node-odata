@@ -1,6 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { odata, host, port } from './support/setup';
+import { odata, host, port, assertSuccess } from './support/setup';
 import FakeDb from './support/fake-db';
 
 describe('odata.functions', () => {
@@ -10,9 +10,9 @@ describe('odata.functions', () => {
 
       before(() => {
         const server = odata(new FakeDb());
-        const router = odata.Function().router();
-        router[method]('/test', (req, res, next) => res.jsonp({ test: 'ok' }));
-        server.use(router);
+        server.function('test',
+          (req, res, next) => res.jsonp({ test: 'ok' }),
+          { method });
         httpServer = server.listen(port);
       });
 
@@ -22,6 +22,7 @@ describe('odata.functions', () => {
 
       it('should work', async function() {
         const res = await request(host)[method]("/test");
+        assertSuccess(res);
         res.body.test.should.be.equal('ok');
       });
     });

@@ -1,6 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { odata, host, port, bookSchema } from './support/setup';
+import { odata, host, port, bookSchema, assertSuccess } from './support/setup';
 import books from './support/books.json';
 import FakeDb from './support/fake-db';
 
@@ -21,6 +21,7 @@ describe('rest.delete', function() {
 
   it('should delete resource if it exist', async function() {
     const res = await request(host).del(`/book(${data[0].id})`);
+    assertSuccess(res);
     res.status.should.be.equal(204);
   });
   it('should be 404 if resource not exist', async function() {

@@ -26,12 +26,10 @@ class Server {
     this._metadata = new Metadata(this);
   }
 
-  function(url, middleware) {
-    const func = new Func();
-    const router = func.router();
+  function(url, middleware, params) {
+    const func = new Func(url.replace(/[ /]+/, ''), middleware, params);
 
-    router.get(url, middleware);
-    this.use(router);
+    this.resources[func.getName()] = func;
   }
 
   resource(name, model) {

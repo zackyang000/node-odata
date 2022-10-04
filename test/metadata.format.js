@@ -6,8 +6,9 @@ import request from 'supertest';
 import { host, conn, port, bookSchema, odata, assertSuccess } from './support/setup';
 import FakeDb from './support/fake-db';
 
-describe('metadata', () => {
-  let data, httpServer, server, db;
+describe('metadata.format', () => {
+  let httpServer, server, db;
+
   const jsonDocument = {
     $Version: '4.0',
     ObjectId: {
@@ -50,10 +51,34 @@ describe('metadata', () => {
       }
     },
   };
+  const xmlDocument = 
+  ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+      <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
+          </TypeDefinition>
+          <EntityType Name="book">
+            <Key>
+              <PropertyRef Name="id"/>
+            </Key>
+            <Property Name="id" Type="self.ObjectId" Nullable="false"/>
+            <Property Name="author" Type="Edm.String"/>
+            <Property Name="description" Type="Edm.String"/>
+            <Property Name="genre" Type="Edm.String"/>
+            <Property Name="price" Type="Edm.Double"/>
+            <Property Name="publish_date" Type="Edm.DateTimeOffset"/>
+            <Property Name="title" Type="Edm.String"/>
+          </EntityType>
+          <EntityContainer Name="Container">
+            <EntitySet Name="book" EntityType="self.book"/>
+          </EntityContainer>
+        </Schema>
+      </edmx:DataServices>
+    </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
 
   beforeEach(async function() {
-    //db = new FakeDb();
-    server = odata(conn);
+    db = new FakeDb();
+    server = odata(db);
     server.resource('book', bookSchema);
 
   });
@@ -67,6 +92,7 @@ describe('metadata', () => {
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
     checkContentType(res, 'application/xml');
+    res.text.should.equal(xmlDocument);
   });
 
   it('should return json according accept header', async function() {

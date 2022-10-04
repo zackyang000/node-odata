@@ -1,34 +1,35 @@
 export default class {
   constructor(mongooseModel) {
-    this._mongooseModel = mongooseModel;
+    this.model = mongooseModel;
   }
 
   create(data) {
-    return new this._mongooseModel(data);
+    const MongooseModel = this.model;
+    return new MongooseModel(data);
   }
 
   find() {
-    return this._mongooseModel.find();
+    return this.model.find();
   }
 
   findById(id, callback) {
-    this._mongooseModel.findById(id, callback);
+    this.model.findById(id, callback);
   }
 
   findByIdAndUpdate(id, data, callback) {
-    this._mongooseModel.findByIdAndUpdate(id, data, callback);
+    this.model.findByIdAndUpdate(id, data, callback);
   }
 
   findOne(filter, callback) {
-    this._mongooseModel.findOne(filter, callback);
+    this.model.findOne(filter, callback);
   }
 
   remove(filter, callback) {
-    this._mongooseModel.remove(filter, callback);
+    this.model.remove(filter, callback);
   }
 
   update(filter, data, callback) {
-    this._mongooseModel.update(filter, data, callback);
+    this.model.update(filter, data, callback);
   }
 
 }

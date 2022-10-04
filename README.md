@@ -31,6 +31,7 @@ GET    /books(:id)
 POST   /books
 PUT    /books(:id)
 DELETE /books(:id)
+GET    /books/$metadata
 ```
 
 Use the following OData query:
@@ -41,6 +42,7 @@ GET /books?$select=id, title
 GET /books?$top=3&$skip=2
 GET /books?$orderby=price desc
 GET /books?$filter=price gt 10
+GET /books/$metadata
 GET ...
 ```
 
@@ -79,6 +81,7 @@ npm install node-odata
 * GET [/book?$top=3&$skip=2](http://books.zackyang.com/book?$top=3&$skip=2)
 * GET [/book?$orderby=price desc](http://books.zackyang.com/book?$orderby=price desc)
 * GET [/book?$filter=price gt 10](http://books.zackyang.com/book?$filter=price gt 10)
+* GET [/book/$metadata](http://books.zackyang.com/book/$metadata)
 
 ## Support Feature
 
@@ -138,7 +141,7 @@ npm install node-odata
 * [x] $skip
 * [x] $orderby
 * [ ] $expand
-* [x] $metadata generation (Nonstandard)
+* [x] $metadata generation
 
 
 ## CONTRIBUTING

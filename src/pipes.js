@@ -1,10 +1,7 @@
 import http from 'http';
+import XmlWriter from './metadata/xmlWriter';
 
-function writeXml(res, data, status, resolve) {
-  res.type('application/xml');
-  res.status(status).send(JSON.stringify(data));
-  resolve(data);
-}
+const xmlWriter = new XmlWriter();
 
 function writeJson(res, data, status, resolve) {
   res.type('application/json');
@@ -49,7 +46,7 @@ function getWriter(req, result) {
         error406.status = 406;
         throw error406;
       }
-      return writeXml;
+      return xmlWriter.writeXml.bind(xmlWriter);
 
     default:
       // no media type requested set defaults depend of context
@@ -57,7 +54,7 @@ function getWriter(req, result) {
         return writeJson; // default for entities and actions
       }
 
-      return writeXml; // default for metadata
+      return xmlWriter.writeXml.bind(xmlWriter); // default for metadata
   }
 }
 
@@ -79,6 +76,12 @@ const beforePipe = (req, res, before) => new Promise((resolve) => {
 
 const respondPipe = (req, res, result) => new Promise((resolve, reject) => {
   try {
+    if (result.status === 204) { // no content
+      res.status(204).end();
+      resolve();
+      return;
+    }
+
     const status = result.status || 200;
     const writer = getWriter(req, result);
     let data;

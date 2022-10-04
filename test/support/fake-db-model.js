@@ -1,4 +1,4 @@
-export default class {
+export default class Model {
   constructor(name, model) {
     this._name = name;
     this._data = [];
@@ -9,9 +9,52 @@ export default class {
         tree: {
           id: { select: true },
           ...model
-        }
+        },
+        paths: Model.toPath(model)
       }
     };
+  }
+
+  static toPath(model, prefix) {
+    let result = {};
+
+      Object.keys(model).forEach((item) => {
+        const propName = prefix ? `${prefix}.${item}` : item;
+
+        if (Array.isArray(model[item])) {
+          result[propName] = {
+            path: propName,
+            instance: 'Array'
+          };
+          if (model[item][0].name) {
+            // Array of primitive Types
+            result[propName].options = {
+              type: [{
+                name: model[item][0].name
+              }]
+            };
+          } else {
+            // Array of objects
+            result[propName].schema = {
+              paths: Model.toPath(model[item][0])
+            };
+          }
+        } else if ( typeof model[item] === 'object' ) {
+          const subSchema = Model.toPath(model[item], propName);
+
+          result = {
+            ...result,
+            ...subSchema
+          };
+        } else {
+          result[propName] = {
+            path: propName,
+            instance: model[item].name
+          };
+        }
+      });
+
+    return result;
   }
 
   addData(data) {

@@ -1,11 +1,22 @@
 import express from 'express';
 
 export default class {
-  constructor() {
-    this._router = express.Router();
+  constructor(name, middleware, params) {
+    this._name = name;
+    this._middleware = middleware;
+    this.params = params || {};
   }
 
-  router() {
-    return this._router;
+  getName() {
+    return this._name;
+  }
+
+  _router() {
+    const router = express.Router();
+    const method = this.params.method || 'get';
+
+    router[method](`/${this._name}`, this._middleware);
+
+    return router;
   }
 }

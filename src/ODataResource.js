@@ -65,8 +65,9 @@ export default class {
     this.actions[url] = fn;
     this.actions[url].auth = auth;
     this.actions[url].binding = binding;
+    this.actions[url].resource = this._url;
 
-    const resourceUrl = !binding || binding === 'entity'
+    const resourceUrl = !binding || binding === 'entity' // 'entity' || 'collection'
       ? `/${this._url}\\(:id\\)` : `/${this._url}`;
     this.actions[url].router = rest.getOperationRouter(resourceUrl, url, fn, auth);
 
