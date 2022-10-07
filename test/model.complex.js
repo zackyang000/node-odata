@@ -2,7 +2,8 @@
 
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port } from './support/setup';
+import { odata, host, port } from './support/setup';
+import FakeDb from './support/fake-db';
 
 function addResource() {
   return request(host)
@@ -25,7 +26,8 @@ describe('model.complex', () => {
   let httpServer;
 
   before(() => {
-    const server = odata(conn);
+    const db = new FakeDb();
+    const server = odata(db);
     server.resource('complex-model', { p1: [{ p2: String }] });
     httpServer = server.listen(port);
   });

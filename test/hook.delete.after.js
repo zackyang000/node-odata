@@ -2,14 +2,19 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { odata, host, port, bookSchema, assertSuccess } from './support/setup';
+import FakeDb from './support/fake-db';
+import books from './support/books.json';
 
 describe('hook.delete.after', function() {
-  let data, httpServer, server;
+  let data, httpServer, server, db;
 
   beforeEach(async function() {
-    data = await initData();
-    server = odata(conn);
+    db = new FakeDb();
+    server = odata(db);
+    server.resource('book', bookSchema);
+
+    data = db.addData('book', books);
   });
 
   afterEach(() => {
@@ -18,18 +23,20 @@ describe('hook.delete.after', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).delete().after((entity) => {
+    server.resources.book.delete().after((entity) => {
       callback();
     });
     httpServer = server.listen(port);
-    await request(host).delete(`/book(${data[0].id})`);
+    const res = await request(host).delete(`/book(${data[0].id})`);
+    assertSuccess(res);
     callback.should.be.called();
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).delete().after(callback).after(callback);
+    server.resources.book.delete().after(callback).after(callback);
     httpServer = server.listen(port);
-    await request(host).delete(`/book(${data[0].id})`);
+    const res = await request(host).delete(`/book(${data[0].id})`);
+    assertSuccess(res);
     callback.should.be.calledTwice();
   });
 });

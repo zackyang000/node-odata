@@ -14,7 +14,7 @@ function _createEntity(resolve, reject, MongooseModel, req, entity) {
   if (!uuidReg.test(req.params.id)) {
     return reject({ status: 400 }, { text: 'Id is invalid.' });
   }
-  const newEntity = new MongooseModel(req.body);
+  const newEntity = MongooseModel.create(req.body);
   newEntity._id = req.params.id;
   return newEntity.save((err) => {
     if (err) {

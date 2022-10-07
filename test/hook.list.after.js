@@ -2,14 +2,19 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { host, port, bookSchema, odata } from './support/setup';
+import FakeDb from './support/fake-db';
+import books from './support/books.json';
 
 describe('hook.list.after', function() {
-  let data, httpServer, server;
+  let data, httpServer, server, db;
 
   beforeEach(async function() {
-    data = await initData();
-    server = odata(conn);
+    db = new FakeDb();
+    server = odata(db);
+    server.resource('book', bookSchema);
+
+    data = db.addData('book', books);
   });
 
   afterEach(() => {
@@ -18,7 +23,8 @@ describe('hook.list.after', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).list().after((result) => {
+    
+    server.resources.book.list().after((result) => {
       result.should.be.have.property('value');
       callback();
     });
@@ -28,7 +34,8 @@ describe('hook.list.after', function() {
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).list().after(callback).after(callback);
+    
+    server.resources.book.list().after(callback).after(callback);
     httpServer = server.listen(port);
     await request(host).get(`/book`);
     callback.should.be.calledTwice();

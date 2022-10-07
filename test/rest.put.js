@@ -1,16 +1,19 @@
 import uuid from 'uuid';
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { odata, host, port, bookSchema } from './support/setup';
+import books from './support/books.json';
+import FakeDb from './support/fake-db';
 
 describe('rest.put', () => {
   let data, httpServer;
 
   before(async function() {
-    data = await initData();
-    const server = odata(conn);
+    const db = new FakeDb();
+    const server = odata(db);
     server.resource('book', bookSchema)
     httpServer = server.listen(port);
+    data = db.addData('book', books);
   });
 
   after(() => {
