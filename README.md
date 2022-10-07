@@ -146,7 +146,7 @@ npm install node-odata
 
 ## CONTRIBUTING
 
-We always welcome contributions to help make node-odata better. Please feel free to contribute to this project.
+We always welcome contributions to help make node-odata better. Please feel free to contribute to this project. The package-lock.json file was last created with node version 16.14.2.
 
 
 ## LICENSE
