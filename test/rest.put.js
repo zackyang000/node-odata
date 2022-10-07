@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import 'should';
 import request from 'supertest';
 import { odata, host, port, bookSchema } from './support/setup';

@@ -3,10 +3,10 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import cors from 'cors';
 
-export default function (options) {
+export default function orientExpress(options) {
   const app = express();
-  const opts = (options && options.expressRequestLimit) ?
-                { limit: options.expressRequestLimit } : {};
+  const opts = (options && options.expressRequestLimit)
+    ? { limit: options.expressRequestLimit } : {};
   const corsOrigin = (options && options.corsOrigin) || '*';
   app.use(bodyParser.json(opts));
   opts.extended = true;

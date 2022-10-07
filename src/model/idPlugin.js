@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 /*eslint-disable */
 export default function (schema) {
@@ -52,4 +52,4 @@ export default function (schema) {
     return next();
   });
 }
-/*eslint-enable */
+/* eslint-enable */

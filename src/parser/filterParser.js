@@ -43,14 +43,14 @@ const validator = {
       val = true;
     } else if (value === 'false') {
       val = false;
-    } else if (+value === +value) {
+    } else if (!Number.isNaN(+value)) {
       val = +value;
     } else if (stringHelper.isBeginWith(value, "'") && stringHelper.isEndWith(value, "'")) {
       val = value.slice(1, -1);
     } else if (value === 'null') {
       val = value;
     } else {
-      return ({ err: `Syntax error at '${value}'.` });
+      return ({ err: new Error(`Syntax error at '${value}'.`) });
     }
     return ({ val });
   },
@@ -58,13 +58,14 @@ const validator = {
 
 export default (query, $filter) => new Promise((resolve, reject) => {
   if (!$filter) {
-    return resolve();
+    resolve();
+    return;
   }
 
   const condition = split($filter, ['and', 'or'])
-    .filter(item => (item !== 'and' && item !== 'or'));
+    .filter((item) => (item !== 'and' && item !== 'or'));
 
-  condition.map((item) => {
+  condition.forEach((item) => {
     // parse "indexof(title,'X1ML') gt 0"
     const conditionArr = split(item, OPERATORS_KEYS);
     if (conditionArr.length === 0) {
@@ -72,7 +73,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
       conditionArr.push(item);
     }
     if (conditionArr.length !== 3 && conditionArr.length !== 1) {
-      return reject(`Syntax error at '${item}'.`);
+      return reject(new Error(`Syntax error at '${item}'.`));
     }
 
     let key = conditionArr[0];
@@ -95,7 +96,7 @@ export default (query, $filter) => new Promise((resolve, reject) => {
       functions[functionKey](query, key, odataOperator, val);
     } else {
       if (conditionArr.length === 1) {
-        return reject(`Syntax error at '${item}'.`);
+        return reject(new Error(`Syntax error at '${item}'.`));
       }
       if (value === 'null') {
         switch (odataOperator) {
@@ -130,10 +131,10 @@ export default (query, $filter) => new Promise((resolve, reject) => {
           query.where(key).lte(val);
           break;
         default:
-          return reject("Incorrect operator at '#{item}'.");
+          return reject(new Error("Incorrect operator at '#{item}'."));
       }
     }
-    return undefined;
+    return query;
   });
-  return resolve();
+  resolve();
 });

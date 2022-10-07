@@ -64,7 +64,7 @@ export default class XmlWriter {
     let functions = '';
 
     Object.keys(node)
-      .filter(item => item !== '$Kind')
+      .filter((item) => item !== '$Kind')
       .forEach((item) => {
         if (node[item].$Type) {
           entitySets += this.visitor('EntitySet', node[item], item);
@@ -98,7 +98,7 @@ export default class XmlWriter {
     let properties = '';
 
     Object.keys(node)
-      .filter(item => item !== '$Kind' && item !== '$Key')
+      .filter((item) => item !== '$Kind' && item !== '$Key')
       .forEach((item) => {
         properties += this.visitor('Property', node[item], item);
       });
@@ -128,7 +128,7 @@ export default class XmlWriter {
     let properties = '';
 
     Object.keys(node)
-      .filter(item => item !== '$Kind')
+      .filter((item) => item !== '$Kind')
       .forEach((item) => {
         properties += this.visitor('Property', node[item], item);
       });
@@ -183,5 +183,4 @@ export default class XmlWriter {
     res.status(status).send(xml);
     resolve(data);
   }
-
 }

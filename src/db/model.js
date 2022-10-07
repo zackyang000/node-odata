@@ -31,5 +31,4 @@ export default class {
   update(filter, data, callback) {
     this.model.update(filter, data, callback);
   }
-
 }
