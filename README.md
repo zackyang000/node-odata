@@ -5,10 +5,10 @@ Create awesome REST APIs abide by [OData Protocol v4](http://www.odata.org/).  I
 
   [![NPM Version](https://img.shields.io/npm/v/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
   [![npm](https://img.shields.io/npm/dm/node-odata.svg?style=flat)](https://www.npmjs.org/package/node-odata)
-  [![Build Status](https://travis-ci.org/TossShinHwa/node-odata.svg?branch=master)](https://travis-ci.org/TossShinHwa/node-odata)
-  [![Coverage Status](https://coveralls.io/repos/github/TossShinHwa/node-odata/badge.svg?branch=master)](https://coveralls.io/github/TossShinHwa/node-odata?branch=master)
-  [![Dependency Status](https://david-dm.org/TossShinHwa/node-odata.svg?style=flat)](https://david-dm.org/TossShinHwa/node-odata)
-  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/TossShinHwa/node-odata/master/LICENSE)
+  [![Build Status](https://travis-ci.org/zackyang000/node-odata.svg?branch=master)](https://travis-ci.org/zackyang000/node-odata)
+  [![Coverage Status](https://coveralls.io/repos/github/zackyang000/node-odata/badge.svg?branch=master)](https://coveralls.io/github/zackyang000/node-odata?branch=master)
+  [![Dependency Status](https://david-dm.org/zackyang000/node-odata.svg?style=flat)](https://david-dm.org/zackyang000/node-odata)
+  [![License](http://img.shields.io/npm/l/node-odata.svg?style=flat)](https://raw.githubusercontent.com/zackyang000/node-odata/master/LICENSE)
 
 ```JavaScript
 var odata = require('node-odata');
@@ -31,6 +31,7 @@ GET    /books(:id)
 POST   /books
 PUT    /books(:id)
 DELETE /books(:id)
+GET    /books/$metadata
 ```
 
 Use the following OData query:
@@ -41,6 +42,7 @@ GET /books?$select=id, title
 GET /books?$top=3&$skip=2
 GET /books?$orderby=price desc
 GET /books?$filter=price gt 10
+GET /books/$metadata
 GET ...
 ```
 
@@ -67,8 +69,8 @@ npm install node-odata
 
 ## DOCUMENTATION
 
-- [ENGLISH](http://tossshinhwa.github.io/node-odata/en/)
-- [中文](http://tossshinhwa.github.io/node-odata/cn/)
+- [ENGLISH](http://zackyang000.github.io/node-odata/en/)
+- [中文](http://zackyang000.github.io/node-odata/cn/)
 
 
 ## Demo
@@ -79,6 +81,7 @@ npm install node-odata
 * GET [/book?$top=3&$skip=2](http://books.zackyang.com/book?$top=3&$skip=2)
 * GET [/book?$orderby=price desc](http://books.zackyang.com/book?$orderby=price desc)
 * GET [/book?$filter=price gt 10](http://books.zackyang.com/book?$filter=price gt 10)
+* GET [/book/$metadata](http://books.zackyang.com/book/$metadata)
 
 ## Support Feature
 
@@ -138,12 +141,12 @@ npm install node-odata
 * [x] $skip
 * [x] $orderby
 * [ ] $expand
-* [x] $metadata generation (Nonstandard)
+* [x] $metadata generation
 
 
 ## CONTRIBUTING
 
-We always welcome contributions to help make node-odata better. Please feel free to contribute to this project.
+We always welcome contributions to help make node-odata better. Please feel free to contribute to this project. The package-lock.json file was last created with node version 16.14.2.
 
 
 ## LICENSE

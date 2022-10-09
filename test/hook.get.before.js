@@ -2,14 +2,19 @@ import 'should';
 import 'should-sinon';
 import request from 'supertest';
 import sinon from 'sinon';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { host, port, bookSchema, odata } from './support/setup';
+import FakeDb from './support/fake-db';
+import books from './support/books.json';
 
 describe('hook.get.before', function() {
-  let data, httpServer, server;
+  let data, httpServer, server, db;
 
   beforeEach(async function() {
-    data = await initData();
-    server = odata(conn);
+    db = new FakeDb();
+    server = odata(db);
+    server.resource('book', bookSchema);
+
+    data = db.addData('book', books);
   });
 
   afterEach(() => {
@@ -18,7 +23,8 @@ describe('hook.get.before', function() {
 
   it('should work', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().before((entity, req) => {
+    
+    server.resources.book.get().before((entity, req) => {
       req.params.should.be.have.property('id');
       req.params.id.should.be.equal(data[0].id);
       callback();
@@ -29,7 +35,8 @@ describe('hook.get.before', function() {
   });
   it('should work with multiple hooks', async function() {
     const callback = sinon.spy();
-    server.resource('book', bookSchema).get().before(callback).before(callback);
+    
+    server.resources.book.get().before(callback).before(callback);
     httpServer = server.listen(port);
     await request(host).get(`/book(${data[0].id})`);
     callback.should.be.calledTwice();

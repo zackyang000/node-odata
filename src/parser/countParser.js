@@ -5,7 +5,8 @@ import filterParser from './filterParser';
 // query.count(10)
 export default (mongooseModel, $count, $filter) => new Promise((resolve, reject) => {
   if ($count === undefined) {
-    return resolve();
+    resolve();
+    return;
   }
 
   switch ($count) {
@@ -21,8 +22,7 @@ export default (mongooseModel, $count, $filter) => new Promise((resolve, reject)
       resolve();
       break;
     default:
-      reject('Unknown $count option, only "true" and "false" are supported.');
+      reject(new Error('Unknown $count option, only "true" and "false" are supported.'));
       break;
   }
-  return undefined;
 });

@@ -1,13 +1,18 @@
 export default (req, MongooseModel) => new Promise((resolve, reject) => {
   if (!Object.keys(req.body).length) {
-    return reject({ status: 422 });
-  }
+    const error = new Error();
 
-  const entity = new MongooseModel(req.body);
-  return entity.save((err) => {
-    if (err) {
-      return reject(err);
-    }
-    return resolve({ status: 201, entity });
-  });
+    error.status = 422;
+    reject(error);
+  } else {
+    const entity = MongooseModel.create(req.body);
+
+    entity.save((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ status: 201, entity });
+      }
+    });
+  }
 });

@@ -1,13 +1,14 @@
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port, bookSchema, initData } from './support/setup';
+import { odata, host, port, bookSchema } from './support/setup';
+import FakeDb from './support/fake-db';
 
 describe('rest.post', () => {
   let httpServer;
 
   before(async function() {
-    await initData();
-    const server = odata(conn);
+    const db = new FakeDb();
+    const server = odata(db);
     server.resource('book', bookSchema)
     httpServer = server.listen(port);
   });

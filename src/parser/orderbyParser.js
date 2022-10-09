@@ -3,7 +3,8 @@
 // query.skip(10)
 export default (query, $orderby) => new Promise((resolve, reject) => {
   if (!$orderby) {
-    return resolve();
+    resolve();
+    return;
   }
 
   const order = {};
@@ -12,8 +13,8 @@ export default (query, $orderby) => new Promise((resolve, reject) => {
   orderbyArr.map((item) => {
     const data = item.trim().split(' ');
     if (data.length > 2) {
-      return reject(`odata: Syntax error at '${$orderby}', `
-                    + 'it\'s should be like \'ReleaseDate asc, Rating desc\'');
+      return reject(new Error(`odata: Syntax error at '${$orderby}', `
+                    + 'it\'s should be like \'ReleaseDate asc, Rating desc\''));
     }
     const key = data[0].trim();
     const value = data[1] || 'asc';
@@ -21,5 +22,5 @@ export default (query, $orderby) => new Promise((resolve, reject) => {
     return undefined;
   });
   query.sort(order);
-  return resolve();
+  resolve();
 });

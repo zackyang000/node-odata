@@ -1,80 +1,52 @@
 import 'should';
+import sinon from 'sinon';
 import request from 'supertest';
-import { odata, conn, host, port } from './support/setup';
+import FakeDb from './support/fake-db';
+import { odata, host, port } from './support/setup';
 
-function addResource() {
-  return request(host)
-  .post('/hidden-field')
-  .send({
-    name: 'zack',
-    password: '123'
-  })
-}
+describe('model.hidden.field', function () {
+  let httpServer, id, resource, mock;
 
-function queryResource(id) {
-  return request(host).get(`/hidden-field(${id})`);
-}
-
-function queryResources() {
-  return request(host).get(`/hidden-field`);
-}
-
-function queryResourcesWithSelectPassword() {
-  return request(host).get('/hidden-field?$select=name, password');
-}
-
-function queryResourcesWithOnlySelectPassword() {
-  return request(host).get('/hidden-field?$select=password');
-}
-
-describe('model.hidden.field', function() {
-  let httpServer, id;
-
-  before(function(done) {
-    const server = odata(conn);
-    server.resource('hidden-field', {
+  before(async function () {
+    const db = new FakeDb();
+    const server = odata(db);
+    resource = server.resource('hidden-field', {
       name: String,
       password: {
         type: String,
         select: false
       }
     });
-    httpServer = server.listen(port, async function() {
-      // init a resource for test.
-      const res = await addResource();
-      id = res.body.id;
-      done();
-    });
-
+    httpServer = server.listen(port);
+    const data = db.addData('hidden-field', [{
+      name: 'zack',
+      password: '123'
+    }]);
+    id = data[0].id;
   });
 
   after(() => {
     httpServer.close();
   });
 
-  it("should work when get entity", async function() {
-    const res = await queryResource(id);
-    res.body.should.be.have.property('name');
-    res.body.name.should.be.equal('zack');
-    res.body.should.be.not.have.property('password');
+  afterEach(() => {
+    mock.restore();
   });
 
-  it('should work when get entities list', async function() {
-    const res = await queryResources();
-    res.body.value[0].should.be.have.property('id');
-    res.body.value[0].should.be.have.property('name');
-    res.body.value[0].should.be.not.have.property('password');
+  it('should work when get entities list even it is selected', async function () {
+    mock = sinon.mock(resource.model);
+    mock.expects('select').once().withArgs({
+      _id: 0,
+      name: 1
+    }).returns(resource.model);
+    await request(host).get('/hidden-field?$select=name, password');
+    mock.verify();
   });
 
-  it('should work when get entities list even it is selected', async function() {
-    const res = await queryResourcesWithSelectPassword();
-    res.body.value[0].should.be.have.property('name');
-    res.body.value[0].should.be.not.have.property('id');
-    res.body.value[0].should.be.not.have.property('password');
-  });
-
-  it('should work when get entities list even only it is selected', async function() {
-    const res = await queryResourcesWithOnlySelectPassword();
-    res.body.value[0].should.be.not.have.property('password');
+  it('should work when get entities list even only it is selected', async function () {
+    mock = sinon.mock(resource.model);
+    mock.expects('select').never().returns(resource.model);
+    await request(host).get('/hidden-field?$select=password');
+    mock.verify();
   });
 });

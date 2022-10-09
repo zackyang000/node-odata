@@ -1,14 +1,15 @@
 import 'should';
 import request from 'supertest';
-import { odata, conn, host, port, bookSchema } from './support/setup';
+import { odata, host, port, bookSchema } from './support/setup';
+import FakeDb from './support/fake-db';
 
 describe('odata.api.Resouce', () => {
   let httpServer;
 
   before(() => {
-    const server = odata(conn);
-    const book = odata.Resource('book', bookSchema);
-    server.use(book);
+    const db = new FakeDb();
+    const server = odata(db);
+    server.resource('book', bookSchema);
     httpServer = server.listen(port);
   });
 

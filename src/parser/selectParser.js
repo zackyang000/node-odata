@@ -3,13 +3,14 @@
 // query.select('Rating ReleaseDate')
 export default (query, $select) => new Promise((resolve) => {
   if (!$select) {
-    return resolve();
+    resolve();
+    return;
   }
 
   const list = $select.split(',').map((item) => item.trim());
 
   const selectFields = { _id: 0 };
-  const tree = query.model.schema.tree;
+  const { tree } = query.model.schema;
   Object.keys(tree).map((item) => {
     if (list.indexOf(item) >= 0) {
       if (item === 'id') {
@@ -22,9 +23,10 @@ export default (query, $select) => new Promise((resolve) => {
   });
 
   if (Object.keys(selectFields).length === 1 && selectFields._id === 0) {
-    return resolve();
+    resolve();
+    return;
   }
 
   query.select(selectFields);
-  return resolve();
+  resolve();
 });

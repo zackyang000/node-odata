@@ -1,31 +1,44 @@
 import 'should';
+import sinon from 'sinon';
 import request from 'supertest';
-import { odata, conn, host, port, books, bookSchema, initData } from './support/setup';
+import FakeDb from './support/fake-db';
+import { odata, host, port, books, bookSchema } from './support/setup';
 
 describe('odata.query.top', () => {
-  let httpServer;
+  let httpServer, mock, resource;
 
   before(async function() {
-    await initData();
-    const server = odata(conn);
-    server.resource('book', bookSchema)
+    const db = new FakeDb()
+    const server = odata(db);
+    resource = server.resource('book', bookSchema)
     httpServer = server.listen(port);
+    db.addData('book', books);
   });
 
   after(() => {
     httpServer.close();
   });
 
+  afterEach(() => {
+    mock.restore();
+  });
+
   it('should top items', async function() {
+    mock = sinon.mock(resource.model);
+    mock.expects('limit').once().withArgs(1).returns(resource.model);
     const res = await request(host).get('/book?$top=1');
-    res.body.value.length.should.be.equal(1);
+    mock.verify();
   });
   it('should iginre when top not a number', async function() {
+    mock = sinon.mock(resource.model);
+    mock.expects('limit').never();
     const res = await request(host).get('/book?$top=not-a-number');
-    res.body.value.length.should.be.equal(books.length);
+    mock.verify();
   });
   it('should ignore when top not a positive number', async function() {
+    mock = sinon.mock(resource.model);
+    mock.expects('limit').never();
     const res = await request(host).get('/book?$top=-1');
-    res.body.value.length.should.be.equal(books.length);
+    mock.verify();
   });
 });
