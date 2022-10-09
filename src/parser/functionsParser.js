@@ -40,7 +40,7 @@ const indexof = (query, fnKey, odataOperator, value) => {
   query.$where(`this.${key}.indexOf(${target}) ${operator} ${value}`);
 };
 
- // year(publish_date) eq 2000
+// year(publish_date) eq 2000
 const year = (query, fnKey, odataOperator, value) => {
   const key = fnKey.substring(fnKey.indexOf('(') + 1, fnKey.indexOf(')'));
 

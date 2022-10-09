@@ -128,7 +128,8 @@ class Server {
 
   use(...args) {
     if (args[0] instanceof Resource) {
-      this.resources[args[0].getName()] = args[0];
+      const [resource] = args;
+      this.resources[resource.getName()] = resource;
       return;
     }
     this._app.use(...args);
@@ -201,6 +202,5 @@ class Server {
     this._app.engine(...args);
   }
 }
-
 
 export default Server;

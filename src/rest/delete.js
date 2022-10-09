@@ -5,7 +5,10 @@ export default (req, MongooseModel) => new Promise((resolve, reject) => {
     }
 
     if (JSON.parse(result).n === 0) {
-      return reject({ status: 404 }, { text: 'Not Found' });
+      const error = new Error('Not Found');
+
+      error.status = 404;
+      return reject(error);
     }
 
     return resolve({ status: 204 });

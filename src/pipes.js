@@ -12,7 +12,7 @@ function writeJson(res, data, status, resolve) {
 function getMediaType(accept) {
   if (accept.match(/(application\/)?json/)) {
     return 'application/json';
-  } else if (accept.match(/(application\/)?xml/)) {
+  } if (accept.match(/(application\/)?xml/)) {
     return 'application/xml';
   }
 
@@ -61,10 +61,14 @@ function getWriter(req, result) {
 const authorizePipe = (req, res, auth) => new Promise((resolve, reject) => {
   if (auth !== undefined) {
     if (!auth(req, res)) {
-      return reject({ status: 401 });
+      const result = new Error();
+
+      result.status = 401;
+      reject(result);
+      return;
     }
   }
-  return resolve();
+  resolve();
 });
 
 const beforePipe = (req, res, before) => new Promise((resolve) => {

@@ -32,14 +32,14 @@ export default class Metadata {
   _router() {
     /*eslint-disable */
     const router = Router();
-    /*eslint-enable */
+    /* eslint-enable */
     router.get('/\\$metadata', (req, res) => {
       pipes.authorizePipe(req, res, this._hooks.auth)
         .then(() => pipes.beforePipe(req, res, this._hooks.before))
         .then(() => this.ctrl(req))
-        .then(result => pipes.respondPipe(req, res, result || {}))
-        .then(data => pipes.afterPipe(req, res, this._hooks.after, data))
-        .catch(err => pipes.errorPipe(req, res, err));
+        .then((result) => pipes.respondPipe(req, res, result || {}))
+        .then((data) => pipes.afterPipe(req, res, this._hooks.after, data))
+        .catch((err) => pipes.errorPipe(req, res, err));
     });
 
     return router;
@@ -89,7 +89,7 @@ export default class Metadata {
 
   visitEntityType(node, root) {
     const properties = Object.keys(node)
-      .filter(path => path !== '_id')
+      .filter((path) => path !== '_id')
       .reduce((previousProperty, curentProperty) => {
         const result = {
           ...previousProperty,
@@ -112,7 +112,7 @@ export default class Metadata {
 
   visitComplexType(node, root) {
     const properties = Object.keys(node)
-      .filter(item => item !== '_id')
+      .filter((item) => item !== '_id')
       .reduce((previousProperty, curentProperty) => {
         const result = {
           ...previousProperty,
@@ -167,41 +167,41 @@ export default class Metadata {
   }
 
   ctrl() {
-    const entityTypes = Object.keys(this._server.resources).reduce(
-      (previousResource, currentResource) => {
-        const resource = this._server.resources[currentResource];
-        const result = { ...previousResource };
-        const attachToRoot = (name, value) => { result[name] = value; };
+    const entityTypeNames = Object.keys(this._server.resources);
+    const entityTypes = entityTypeNames.reduce((previousResource, currentResource) => {
+      const resource = this._server.resources[currentResource];
+      const result = { ...previousResource };
+      const attachToRoot = (name, value) => { result[name] = value; };
 
-        if (resource instanceof Resource) {
-          const paths = resource.model.model.schema.paths;
+      if (resource instanceof Resource) {
+        const { paths } = resource.model.model.schema;
 
-          result[currentResource] = this.visitor('EntityType', paths, attachToRoot);
-          const actions = Object.keys(resource.actions);
-          if (actions && actions.length) {
-            actions.forEach((action) => {
-              result[action] = this.visitor('Action', resource.actions[action], attachToRoot);
-            });
-          }
-        } else {
-          result[currentResource] = this.visitor('Function', resource, attachToRoot);
+        result[currentResource] = this.visitor('EntityType', paths, attachToRoot);
+        const actions = Object.keys(resource.actions);
+        if (actions && actions.length) {
+          actions.forEach((action) => {
+            result[action] = this.visitor('Action', resource.actions[action], attachToRoot);
+          });
         }
+      } else {
+        result[currentResource] = this.visitor('Function', resource, attachToRoot);
+      }
 
-        return result;
-      }, {});
+      return result;
+    }, {});
 
-    const entitySets = Object.keys(this._server.resources).reduce(
-      (previousResource, currentResource) => {
-        const result = { ...previousResource };
-        result[currentResource] = this._server.resources[currentResource] instanceof Resource ? {
-          $Collection: true,
-          $Type: `self.${currentResource}`,
-        } : {
-          $Function: `self.${currentResource}`,
-        };
+    const entitySetNames = Object.keys(this._server.resources);
+    const entitySets = entitySetNames.reduce((previousResource, currentResource) => {
+      const result = { ...previousResource };
+      result[currentResource] = this._server.resources[currentResource] instanceof Resource ? {
+        $Collection: true,
+        $Type: `self.${currentResource}`,
+      } : {
+        $Function: `self.${currentResource}`,
+      };
 
-        return result;
-      }, {});
+      return result;
+    }, {});
 
     const document = {
       $Version: '4.0',
@@ -218,10 +218,11 @@ export default class Metadata {
       },
     };
 
-    return new Promise(resolve => resolve({
-      status: 200,
-      metadata: document,
-    }));
+    return new Promise((resolve) => {
+      resolve({
+        status: 200,
+        metadata: document,
+      });
+    });
   }
-
 }

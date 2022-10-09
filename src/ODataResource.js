@@ -20,7 +20,7 @@ function hook(resource, pos, fn) {
       resource._hooks[curr][pos] = fn;
     }
   });
-  /*eslint-enable */
+  /* eslint-enable */
 }
 
 export default class {
