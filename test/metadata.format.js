@@ -103,12 +103,28 @@ describe('metadata.format', () => {
     res.body.should.deepEqual(jsonDocument);
   });
 
-  it('should return xml if $format overrides accept header', async function() {
+  it('should return json if $format overrides accept header', async function() {
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata?$format=json').set('accept', 'application/xml');
     res.statusCode.should.equal(200);
     checkContentType(res, 'application/json');
     res.body.should.deepEqual(jsonDocument);
+  });
+
+  it('should return xml if xml has highest quality value', async function() {
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata').set('accept', 'application/json;q=0.9, application/xml');
+    res.statusCode.should.equal(200);
+    checkContentType(res, 'application/xml');
+    res.text.should.equal(xmlDocument);
+  });
+
+  it('should return xml if xml and json matched with asterix', async function() {
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata').set('accept', '*/*');
+    res.statusCode.should.equal(200);
+    checkContentType(res, 'application/xml');
+    res.text.should.equal(xmlDocument);
   });
 });
 

@@ -99,24 +99,33 @@ class Server {
     });
   }
 
-  listen(...args) {
-    const router = this._metadata._router();
+  _getRouter() {
+    const result = [];
 
-    this._app.use(this.get('prefix'), router);
+    result.push(this._metadata._router());
 
     Object.keys(this.resources).forEach((resourceKey) => {
       const resource = this.resources[resourceKey];
-      const resourceRouter = resource._router(this.getSettings());
 
-      this.use(this.get('prefix'), resourceRouter);
+      result.push(resource._router(this.getSettings()));
 
       if (resource.actions) {
         Object.keys(resource.actions).forEach((actionKey) => {
           const action = resource.actions[actionKey];
 
-          this.use(action.router);
+          result.push(action.router);
         });
       }
+    });
+
+    return result;
+  }
+
+  listen(...args) {
+    const router = this._getRouter();
+
+    router.forEach((item) => {
+      this._app.use(this.get('prefix'), item);
     });
 
     return this._app.listen(...args);

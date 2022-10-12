@@ -10,10 +10,27 @@ function writeJson(res, data, status, resolve) {
 }
 
 function getMediaType(accept) {
-  if (accept.match(/(application\/)?json/)) {
-    return 'application/json';
-  } if (accept.match(/(application\/)?xml/)) {
+  // reduce multi mimetypes to most weigth mimetype
+  // e.g. Accept: text/html, application/xhtml+xml, application/xml;q=0.9, image/webp, */*;q=0.8
+  const mimeStructs = accept.split(/[ ,]+/g);
+  const mostWeightMimetype = mimeStructs.reduce((previous, current) => {
+    const [mimetype, qualityParam] = current.split(/[ ;]+/);
+    const [, qualityValue] = qualityParam ? qualityParam.split(/=/) : ['q', 1];
+    const result = {
+      ...previous,
+    };
+
+    if (!previous.mimetype || previous.qualityValue < qualityValue) {
+      result.mimetype = mimetype;
+      result.qualityValue = qualityValue;
+    }
+    return result;
+  }, {});
+
+  if (mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
     return 'application/xml';
+  } if (mostWeightMimetype.mimetype.match(/((application|\*)\/(json|\*)|^json$)/)) {
+    return 'application/json';
   }
 
   const error406 = new Error('Not acceptable');
