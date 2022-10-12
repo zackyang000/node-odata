@@ -9,12 +9,7 @@ export default class {
     this._models = {};
   }
 
-  createConnection(connection, optionsIn, onError) {
-    const options = {
-      ...optionsIn,
-      server: { reconnectTries: Number.MAX_VALUE },
-    };
-
+  createConnection(connection, options, onError) {
     this._connection = mongoose.createConnection(connection, options, onError);
 
     return this._connection;
