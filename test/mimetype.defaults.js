@@ -1,9 +1,9 @@
 import 'should';
 import request from 'supertest';
-import { host, conn, port, bookSchema, odata, assertSuccess } from './support/setup';
+import { host, port, bookSchema, odata, assertSuccess } from './support/setup';
 import FakeDb from './support/fake-db';
 
-describe('metadata.format', () => {
+describe('mimetype.defaults', () => {
   let httpServer, server, db;
 
   beforeEach(async function() {
