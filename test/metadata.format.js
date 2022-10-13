@@ -87,14 +87,6 @@ describe('metadata.format', () => {
     httpServer.close();
   });
 
-  it('should return xml if no format given', async function() {
-    httpServer = server.listen(port);
-    const res = await request(host).get('/$metadata');
-    assertSuccess(res);
-    checkContentType(res, 'application/xml');
-    res.text.should.equal(xmlDocument);
-  });
-
   it('should return json according accept header', async function() {
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata').set('accept', 'application/json');
