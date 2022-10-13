@@ -3,15 +3,15 @@ import request from 'supertest';
 import { host, port, bookSchema, odata, assertSuccess } from './support/setup';
 import FakeDb from './support/fake-db';
 
-describe('metadata.format', () => {
+describe('service.document', () => {
   let httpServer, server, db;
 
   const jsonDocument = {
-    '@context': 'http://localhost:8080/',
+    '@context': 'http://localhost:3000/$metadata',
     value: [{
       kind: 'EntitySet',
-      name: 'books',
-      url: 'books'
+      name: 'book',
+      url: 'book'
     }]
   }; 
   beforeEach(async function() {
@@ -28,6 +28,14 @@ describe('metadata.format', () => {
   it('should return json if no format given', async function() {
     httpServer = server.listen(port);
     const res = await request(host).get('/');
+    assertSuccess(res);
+    checkContentType(res, 'application/json');
+    res.body.should.deepEqual(jsonDocument);
+  });
+
+  it('should return json if asterix pattern match', async function() {
+    httpServer = server.listen(port);
+    const res = await request(host).get('/').set('accept', '*/*');
     assertSuccess(res);
     checkContentType(res, 'application/json');
     res.body.should.deepEqual(jsonDocument);

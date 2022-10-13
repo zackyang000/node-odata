@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import pipes from '../pipes';
 import Resource from '../ODataResource';
+import Function from '../ODataFunction';
 
 export default class Metadata {
   constructor(server) {
@@ -183,7 +184,7 @@ export default class Metadata {
             result[action] = this.visitor('Action', resource.actions[action], attachToRoot);
           });
         }
-      } else {
+      } else if (resource instanceof Function) {
         result[currentResource] = this.visitor('Function', resource, attachToRoot);
       }
 
@@ -193,12 +194,18 @@ export default class Metadata {
     const entitySetNames = Object.keys(this._server.resources);
     const entitySets = entitySetNames.reduce((previousResource, currentResource) => {
       const result = { ...previousResource };
-      result[currentResource] = this._server.resources[currentResource] instanceof Resource ? {
-        $Collection: true,
-        $Type: `self.${currentResource}`,
-      } : {
-        $Function: `self.${currentResource}`,
-      };
+      const resource = this._server.resources[currentResource];
+
+      if (resource instanceof Resource) {
+        result[currentResource] = {
+          $Collection: true,
+          $Type: `self.${currentResource}`,
+        };
+      } else if (resource instanceof Function) {
+        result[currentResource] = {
+          $Function: `self.${currentResource}`,
+        };
+      }
 
       return result;
     }, {});

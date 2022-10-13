@@ -2,6 +2,7 @@ import createExpress from './express';
 import Resource from './ODataResource';
 import Func from './ODataFunction';
 import Metadata from './metadata/ODataMetadata';
+import ServiceDocument from './metadata/ODataServiceDocument';
 import Db from './db/db';
 
 function checkAuth(auth, req) {
@@ -22,8 +23,10 @@ class Server {
     // Should mix _resources object and resources object: _resources + resource = resources.
     // Encapsulation to a object, separate mognoose, try to use *repository pattern*.
     // 这里也许应该让 resources 支持 odata 查询的, 以方便直接在代码中使用 OData 查询方式来进行数据筛选, 达到隔离 mongo 的效果.
-    this.resources = {};
-    this._metadata = new Metadata(this);
+    this.resources = {
+      $metadata: new Metadata(this),
+    };
+    this._serviceDocument = new ServiceDocument(this);
   }
 
   function(url, middleware, params) {
@@ -102,7 +105,7 @@ class Server {
   _getRouter() {
     const result = [];
 
-    result.push(this._metadata._router());
+    result.push(this._serviceDocument._router());
 
     Object.keys(this.resources).forEach((resourceKey) => {
       const resource = this.resources[resourceKey];
