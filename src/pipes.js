@@ -9,7 +9,7 @@ function writeJson(res, data, status, resolve) {
   resolve(data);
 }
 
-function getMediaType(accept) {
+function getMediaType(accept, data) {
   // reduce multi mimetypes to most weigth mimetype
   // e.g. Accept: text/html, application/xhtml+xml, application/xml;q=0.9, image/webp, */*;q=0.8
   const mimeStructs = accept.split(/[ ,]+/g);
@@ -27,7 +27,7 @@ function getMediaType(accept) {
     return result;
   }, {});
 
-  if (mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
+  if (!data.entity && mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
     return 'application/xml';
   } if (mostWeightMimetype.mimetype.match(/((application|\*)\/(json|\*)|^json$)/)) {
     return 'application/json';
@@ -44,10 +44,10 @@ function getWriter(req, result) {
 
   if (req.query.$format) {
     // get requested media type from $format query
-    mediaType = getMediaType(req.query.$format);
+    mediaType = getMediaType(req.query.$format, result);
   } else if (req.headers.accept) {
     // get requested media type from accept header
-    mediaType = getMediaType(req.headers.accept);
+    mediaType = getMediaType(req.headers.accept, result);
   }
 
   // xml representation of metadata
