@@ -18,41 +18,52 @@ export default class Model {
   static toPath(model, prefix) {
     let result = {};
 
-      Object.keys(model).forEach((item) => {
-        const propName = prefix ? `${prefix}.${item}` : item;
+    Object.keys(model).forEach((item) => {
+      const propName = prefix ? `${prefix}.${item}` : item;
 
-        if (Array.isArray(model[item])) {
+      if (Array.isArray(model[item])) {
+        result[propName] = {
+          path: propName,
+          instance: 'Array'
+        };
+        if (model[item][0].name) {
+          // Array of primitive Types
+          result[propName].options = {
+            type: [{
+              name: model[item][0].name
+            }]
+          };
+        } else {
+          // Array of objects
+          result[propName].schema = {
+            paths: Model.toPath(model[item][0])
+          };
+        }
+      } else if (typeof model[item] === 'object') {
+        if (model[item].type) {
+          // structured property e.g. author: { type: String }
           result[propName] = {
             path: propName,
-            instance: 'Array'
+            instance: model[item].type.name
           };
-          if (model[item][0].name) {
-            // Array of primitive Types
-            result[propName].options = {
-              type: [{
-                name: model[item][0].name
-              }]
-            };
-          } else {
-            // Array of objects
-            result[propName].schema = {
-              paths: Model.toPath(model[item][0])
-            };
+          if (model[item].maxLength) {
+            result[propName].maxlengthValidator = () => {};
           }
-        } else if ( typeof model[item] === 'object' ) {
+        } else {
           const subSchema = Model.toPath(model[item], propName);
 
           result = {
             ...result,
             ...subSchema
           };
-        } else {
-          result[propName] = {
-            path: propName,
-            instance: model[item].name
-          };
         }
-      });
+      } else {
+        result[propName] = {
+          path: propName,
+          instance: model[item].name
+        };
+      }
+    });
 
     return result;
   }

@@ -20,7 +20,7 @@ describe('metadata.format', () => {
       $Kind: "EntityType",
       $Key: ["id"],
       id: {
-        $Type: "self.ObjectId",
+        $Type: "node.odata.ObjectId",
         $Nullable: false,
       },
       author: {
@@ -42,26 +42,26 @@ describe('metadata.format', () => {
         $Type: 'Edm.String'
       }
     },
-    $EntityContainer: 'org.example.DemoService',
-    ['org.example.DemoService']: {
+    $EntityContainer: 'node.odata',
+    ['node.odata']: {
       $Kind: 'EntityContainer',
       book: {
         $Collection: true,
-        $Type: `self.book`,
+        $Type: `node.odata.book`,
       }
     },
   };
   const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
           </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="self.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
             <Property Name="author" Type="Edm.String"/>
             <Property Name="description" Type="Edm.String"/>
             <Property Name="genre" Type="Edm.String"/>
@@ -70,7 +70,7 @@ describe('metadata.format', () => {
             <Property Name="title" Type="Edm.String"/>
           </EntityType>
           <EntityContainer Name="Container">
-            <EntitySet Name="book" EntityType="self.book"/>
+            <EntitySet Name="book" EntityType="node.odata.book"/>
           </EntityContainer>
         </Schema>
       </edmx:DataServices>

@@ -90,6 +90,9 @@ export default class XmlWriter {
     if (node.$Collection) {
       attributes += ' Collection="true"';
     }
+    if (node.$DefaultValue) {
+      attributes += ` DefaultValue="${node.$DefaultValue}"`;
+    }
 
     return `<Property Name="${name}" Type="${node.$Type}"${attributes}/>`;
   }

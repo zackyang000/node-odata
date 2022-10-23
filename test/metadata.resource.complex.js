@@ -36,20 +36,20 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "self.ObjectId",
+          $Type: "node.odata.ObjectId",
           $Nullable: false,
         },
         p1: {
-          $Type: 'self.p1Child1',
+          $Type: 'node.odata.p1Child1',
           $Collection: true
         }
       },
-      $EntityContainer: 'org.example.DemoService',
-      ['org.example.DemoService']: {
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
         $Kind: 'EntityContainer',
         'complex-model': {
           $Collection: true,
-          $Type: `self.complex-model`,
+          $Type: `node.odata.complex-model`,
         }
       },
     };
@@ -68,7 +68,7 @@ describe('metadata.resource.complex', () => {
     const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
           </TypeDefinition>
           <ComplexType Name="p1Child1">
@@ -78,11 +78,11 @@ describe('metadata.resource.complex', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="self.ObjectId" Nullable="false"/>
-            <Property Name="p1" Type="self.p1Child1" Collection="true"/>
+            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p1" Type="node.odata.p1Child1" Collection="true"/>
           </EntityType>
           <EntityContainer Name="Container">
-            <EntitySet Name="complex-model" EntityType="self.complex-model"/>
+            <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
           </EntityContainer>
         </Schema>
       </edmx:DataServices>
@@ -110,7 +110,7 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "self.ObjectId",
+          $Type: "node.odata.ObjectId",
           $Nullable: false,
         },
         p3: {
@@ -118,12 +118,12 @@ describe('metadata.resource.complex', () => {
           $Collection: true
         }
       },
-      $EntityContainer: 'org.example.DemoService',
-      ['org.example.DemoService']: {
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
         $Kind: 'EntityContainer',
         'complex-model': {
           $Collection: true,
-          $Type: `self.complex-model`,
+          $Type: `node.odata.complex-model`,
         }
       },
     };
@@ -140,18 +140,18 @@ describe('metadata.resource.complex', () => {
     const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
           </TypeDefinition>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="self.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
             <Property Name="p3" Type="Edm.String" Collection="true"/>
           </EntityType>
           <EntityContainer Name="Container">
-            <EntitySet Name="complex-model" EntityType="self.complex-model"/>
+            <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
           </EntityContainer>
         </Schema>
       </edmx:DataServices>
@@ -177,19 +177,19 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "self.ObjectId",
+          $Type: "node.odata.ObjectId",
           $Nullable: false,
         },
         'p4.p5': {
           $Type: 'Edm.String'
         }
       },
-      $EntityContainer: 'org.example.DemoService',
-      ['org.example.DemoService']: {
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
         $Kind: 'EntityContainer',
         'complex-model': {
           $Collection: true,
-          $Type: `self.complex-model`,
+          $Type: `node.odata.complex-model`,
         }
       },
     };
@@ -208,18 +208,18 @@ describe('metadata.resource.complex', () => {
     const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
           </TypeDefinition>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="self.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
             <Property Name="p4.p5" Type="Edm.String"/>
           </EntityType>
           <EntityContainer Name="Container">
-            <EntitySet Name="complex-model" EntityType="self.complex-model"/>
+            <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
           </EntityContainer>
         </Schema>
       </edmx:DataServices>

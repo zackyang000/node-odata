@@ -33,11 +33,11 @@ describe('metadata.function', () => {
           $Type: 'Edm.String'
         }
       },
-      $EntityContainer: 'org.example.DemoService',
-      ['org.example.DemoService']: {
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
         $Kind: 'EntityContainer',
         'odata-function': {
-          $Function: 'self.odata-function'
+          $Function: 'node.odata.odata-function'
         }
       },
     };
@@ -57,14 +57,14 @@ describe('metadata.function', () => {
     const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="org.example.DemoService">
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
           </TypeDefinition>
           <Function Name="odata-function">
             <ReturnType Type="Edm.String"/>
           </Function>
           <EntityContainer Name="Container">
-            <FunctionImport Name="odata-function" Function="self.odata-function"/>
+            <FunctionImport Name="odata-function" Function="node.odata.odata-function"/>
           </EntityContainer>
         </Schema>
       </edmx:DataServices>

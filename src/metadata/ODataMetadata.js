@@ -46,12 +46,20 @@ export default class Metadata {
     return router;
   }
 
-  visitProperty(node, root) {
+  visitProperty(node, model, root) {
     const result = {};
+
+    if (model.default) {
+      result.$DefaultValue = model.default;
+    }
 
     switch (node.instance) {
       case 'ObjectId':
-        result.$Type = 'self.ObjectId';
+        result.$Type = 'node.odata.ObjectId';
+        break;
+
+      case 'Boolean':
+        result.$Type = 'Edm.Boolean';
         break;
 
       case 'Number':
@@ -64,18 +72,21 @@ export default class Metadata {
 
       case 'String':
         result.$Type = 'Edm.String';
+        if (model.maxLength) {
+          result.$MaxLength = model.maxLength;
+        }
         break;
 
-      case 'Array': // node.path = p1; node.schema.paths
+      case 'Array':
         result.$Collection = true;
         if (node.schema && node.schema.paths) {
           this._count += 1;
           const notClassifiedName = `${node.path}Child${this._count}`;
           // Array of complex type
-          result.$Type = `self.${notClassifiedName}`;
-          root(notClassifiedName, this.visitor('ComplexType', node.schema.paths, root));
+          result.$Type = `node.odata.${notClassifiedName}`;
+          root(notClassifiedName, this.visitor('ComplexType', node.schema.paths, model[0], root));
         } else {
-          const arrayItemType = this.visitor('Property', { instance: node.options.type[0].name }, root);
+          const arrayItemType = this.visitor('Property', { instance: node.options.type[0].name }, model[0], root);
 
           result.$Type = arrayItemType.$Type;
         }
@@ -88,13 +99,26 @@ export default class Metadata {
     return result;
   }
 
-  visitEntityType(node, root) {
+  resolveModelproperty(model, property) {
+    const props = property.split('.');
+
+    if (props.length > 1) {
+      const index = property.indexOf('.') + 1;
+
+      return this.resolveModelproperty(model[props[0]], property.substr(index));
+    }
+
+    return model[property];
+  }
+
+  visitEntityType(node, model, root) {
     const properties = Object.keys(node)
       .filter((path) => path !== '_id')
       .reduce((previousProperty, curentProperty) => {
+        const modelProperty = this.resolveModelproperty(model, curentProperty);
         const result = {
           ...previousProperty,
-          [curentProperty]: this.visitor('Property', node[curentProperty], root),
+          [curentProperty]: this.visitor('Property', node[curentProperty], modelProperty, root),
         };
 
         return result;
@@ -104,20 +128,20 @@ export default class Metadata {
       $Kind: 'EntityType',
       $Key: ['id'],
       id: {
-        $Type: 'self.ObjectId',
+        $Type: 'node.odata.ObjectId',
         $Nullable: false,
       },
       ...properties,
     };
   }
 
-  visitComplexType(node, root) {
+  visitComplexType(node, model, root) {
     const properties = Object.keys(node)
       .filter((item) => item !== '_id')
       .reduce((previousProperty, curentProperty) => {
         const result = {
           ...previousProperty,
-          [curentProperty]: this.visitor('Property', node[curentProperty], root),
+          [curentProperty]: this.visitor('Property', node[curentProperty], model[curentProperty], root),
         };
 
         return result;
@@ -135,7 +159,7 @@ export default class Metadata {
       $IsBound: true,
       $Parameter: [{
         $Name: node.resource,
-        $Type: `self.${node.resource}`,
+        $Type: `node.odata.${node.resource}`,
         $Collection: node.binding === 'collection' ? true : undefined,
       }],
     };
@@ -148,13 +172,13 @@ export default class Metadata {
     };
   }
 
-  visitor(type, node, root) {
+  visitor(type, node, model, root) {
     switch (type) {
       case 'Property':
-        return this.visitProperty(node, root);
+        return this.visitProperty(node, model, root);
 
       case 'ComplexType':
-        return this.visitComplexType(node, root);
+        return this.visitComplexType(node, model, root);
 
       case 'Action':
         return Metadata.visitAction(node);
@@ -163,7 +187,7 @@ export default class Metadata {
         return Metadata.visitFunction(node, root);
 
       default:
-        return this.visitEntityType(node, root);
+        return this.visitEntityType(node, model, root);
     }
   }
 
@@ -177,7 +201,7 @@ export default class Metadata {
       if (resource instanceof Resource) {
         const { paths } = resource.model.model.schema;
 
-        result[currentResource] = this.visitor('EntityType', paths, attachToRoot);
+        result[currentResource] = this.visitor('EntityType', paths, resource._model, attachToRoot);
         const actions = Object.keys(resource.actions);
         if (actions && actions.length) {
           actions.forEach((action) => {
@@ -199,11 +223,11 @@ export default class Metadata {
       if (resource instanceof Resource) {
         result[currentResource] = {
           $Collection: true,
-          $Type: `self.${currentResource}`,
+          $Type: `node.odata.${currentResource}`,
         };
       } else if (resource instanceof Function) {
         result[currentResource] = {
-          $Function: `self.${currentResource}`,
+          $Function: `node.odata.${currentResource}`,
         };
       }
 
@@ -218,8 +242,8 @@ export default class Metadata {
         $MaxLength: 24,
       },
       ...entityTypes,
-      $EntityContainer: 'org.example.DemoService',
-      ['org.example.DemoService']: { // eslint-disable-line no-useless-computed-key
+      $EntityContainer: 'node.odata',
+      ['node.odata']: { // eslint-disable-line no-useless-computed-key
         $Kind: 'EntityContainer',
         ...entitySets,
       },
