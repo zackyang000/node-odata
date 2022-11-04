@@ -1,13 +1,9 @@
 import http from 'http';
-import XmlWriter from './metadata/xmlWriter';
+import XmlWriter from './writer/xmlWriter';
+import JsonWirter from './writer/jsonWriter';
 
 const xmlWriter = new XmlWriter();
-
-function writeJson(res, data, status, resolve) {
-  res.type('application/json');
-  res.status(status).jsonp(data);
-  resolve(data);
-}
+const jsonWriter = new JsonWirter();
 
 function getMediaType(accept, data) {
   // reduce multi mimetypes to most weigth mimetype
@@ -27,7 +23,7 @@ function getMediaType(accept, data) {
     return result;
   }, {});
 
-  if (!data.entity && mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
+  if (data.metadata && mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
     return 'application/xml';
   } if (mostWeightMimetype.mimetype.match(/((application|\*)\/(json|\*)|^json$)/)) {
     return 'application/json';
@@ -53,10 +49,10 @@ function getWriter(req, result) {
   // xml representation of metadata
   switch (mediaType) {
     case 'application/json':
-      return writeJson;
+      return jsonWriter.writeJson.bind(jsonWriter);
 
     case 'application/xml':
-      if (result.entity) {
+      if (!result.metadata) {
         // xml wirter for entities and actions is not implemented
         const error406 = new Error('Not acceptable');
 
@@ -67,8 +63,8 @@ function getWriter(req, result) {
 
     default:
       // no media type requested set defaults depend of context
-      if (result.entity) {
-        return writeJson; // default for entities and actions
+      if (result.entity || result.serviceDocument) {
+        return jsonWriter.writeJson.bind(jsonWriter); // default for entities and actions
       }
 
       return xmlWriter.writeXml.bind(xmlWriter); // default for metadata
@@ -105,17 +101,8 @@ const respondPipe = (req, res, result) => new Promise((resolve, reject) => {
 
     const status = result.status || 200;
     const writer = getWriter(req, result);
-    let data;
 
-    if (result.entity) {
-      // json Representation of data
-      data = result.entity;
-    } else {
-      // xml representation of metadata
-      data = result.metadata;
-    }
-
-    writer(res, data, status, resolve);
+    writer(res, result, status, resolve);
   } catch (error) {
     reject(error);
   }

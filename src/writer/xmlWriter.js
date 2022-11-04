@@ -180,7 +180,7 @@ export default class XmlWriter {
   }
 
   writeXml(res, data, status, resolve) {
-    const xml = this.visitor('document', data, '', '').replace(/\s*</g, '<').replace(/>\s*/g, '>');
+    const xml = this.visitor('document', data.metadata, '', '').replace(/\s*</g, '<').replace(/>\s*/g, '>');
 
     res.type('application/xml');
     res.status(status).send(xml);

@@ -2,16 +2,6 @@ import * as uuid from 'uuid';
 
 /*eslint-disable */
 export default function (schema) {
-  // add _id to schema.
-  if (!schema.paths._id) {
-    schema.add({
-      _id: {
-        type: String,
-        unique: true,
-      }
-    });
-  }
-
   // display value of _id when request id.
   if (!schema.paths.id) {
     schema.virtual('id').get(function getId() {

@@ -13,7 +13,7 @@ describe('model.complex.filter', () => {
   before(() => {
     db = new Db();
     const server = odata(db);
-    const resource = server.resource('complex-model-filter', { product: [{ price: Number }] });
+    const resource = server.resource('complex-model-filter', { product: { price: Number } });
 
     mock = sinon.mock(resource.model);
     mock.expects('where').once().withArgs('product.price').returns(resource.model);
@@ -26,7 +26,7 @@ describe('model.complex.filter', () => {
   });
 
   it('should work when PUT a complex entity', async function() {
-    const res = await request(host).get(`/complex-model-filter?$filter=product.price gt 30`);
+    const res = await request(host).get(`/complex-model-filter?$filter=product-price gt 30`);
 
     assertSuccess(res);
     mock.verify();

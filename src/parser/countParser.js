@@ -12,7 +12,7 @@ export default (mongooseModel, $count, $filter) => new Promise((resolve, reject)
   switch ($count) {
     case 'true': {
       const query = mongooseModel.find();
-      filterParser(query, $filter);
+      filterParser(query, $filter, mongooseModel);
       query.count((err, count) => {
         resolve(count);
       });

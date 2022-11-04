@@ -165,7 +165,7 @@ describe('metadata.resource.complex', () => {
     res.text.should.equal(xmlDocument);
   });
 
-  it('should return json metadata for nested document', async function() {
+  it('should return json metadata for nested document in document', async function() {
     const jsonDocument = {
       $Version: '4.0',
       ObjectId: {
@@ -180,7 +180,7 @@ describe('metadata.resource.complex', () => {
           $Type: "node.odata.ObjectId",
           $Nullable: false,
         },
-        'p4.p5': {
+        'p4-p5': {
           $Type: 'Edm.String'
         }
       },
@@ -204,7 +204,7 @@ describe('metadata.resource.complex', () => {
     res.body.should.deepEqual(jsonDocument);
   });
 
-  it('should return xml metadata for nested document', async function() {
+  it('should return xml metadata for nested document in document', async function() {
     const xmlDocument = 
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
@@ -216,7 +216,7 @@ describe('metadata.resource.complex', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
-            <Property Name="p4.p5" Type="Edm.String"/>
+            <Property Name="p4-p5" Type="Edm.String"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -228,6 +228,96 @@ describe('metadata.resource.complex', () => {
       p4: {
         p5: String
       }
+    });
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata');
+    assertSuccess(res);
+    res.text.should.equal(xmlDocument);
+  });
+
+  it('should return json metadata for nested document in array', async function() {
+    const jsonDocument = {
+      $Version: '4.0',
+      ObjectId: {
+        $Kind: "TypeDefinition",
+        $UnderlyingType: "Edm.String",
+        $MaxLength: 24
+      },
+      p2Child1: {
+        $Kind: "ComplexType",
+        p3: {
+          $Type: 'Edm.String'
+        },
+        'p4-p5': {
+          $Type: 'Edm.String'
+        }
+      },
+      p1: {
+        $Kind: "EntityType",
+        $Key: ["id"],
+        id: {
+          $Type: "node.odata.ObjectId",
+          $Nullable: false,
+        },
+        p2: {
+          $Type: 'node.odata.p2Child1',
+          $Collection: true
+        }
+      },
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
+        $Kind: 'EntityContainer',
+        p1: {
+          $Collection: true,
+          $Type: `node.odata.p1`,
+        }
+      },
+    };
+    server.resource('p1', { 
+      p2: [{
+        p3: String,
+        p4: {
+          p5: String
+        }
+      }]
+    });
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata?$format=json');
+    res.statusCode.should.equal(200);
+    res.body.should.deepEqual(jsonDocument);
+  });
+
+  it('should return xml metadata for nested document in document', async function() {
+    const xmlDocument = 
+  ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+      <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
+          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
+          </TypeDefinition>
+          <ComplexType Name="p2Child1">
+            <Property Name="p3" Type="Edm.String"/>
+            <Property Name="p4-p5" Type="Edm.String"/>
+          </ComplexType>
+          <EntityType Name="p1">
+            <Key>
+              <PropertyRef Name="id"/>
+            </Key>
+            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p2" Type="node.odata.p2Child1" Collection="true"/>
+          </EntityType>
+          <EntityContainer Name="Container">
+            <EntitySet Name="p1" EntityType="node.odata.p1"/>
+          </EntityContainer>
+        </Schema>
+      </edmx:DataServices>
+    </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
+    server.resource('p1', { 
+      p2: [{
+        p3: String,
+        p4: {
+          p5: String
+        }
+      }]
     });
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata');

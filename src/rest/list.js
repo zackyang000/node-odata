@@ -19,7 +19,7 @@ function _dataQuery(model, {
 }, options) {
   return new Promise((resolve, reject) => {
     const query = model.find();
-    filterParser(query, filter)
+    filterParser(query, filter, model)
       .then(() => orderbyParser(query, orderby || options.orderby))
       .then(() => skipParser(query, skip, options.maxSkip))
       .then(() => topParser(query, top, options.maxTop))

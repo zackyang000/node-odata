@@ -116,9 +116,10 @@ export default class Metadata {
       .filter((path) => path !== '_id')
       .reduce((previousProperty, curentProperty) => {
         const modelProperty = this.resolveModelproperty(model, curentProperty);
+        const propertyName = curentProperty.replace(/\./g, '-');
         const result = {
           ...previousProperty,
-          [curentProperty]: this.visitor('Property', node[curentProperty], modelProperty, root),
+          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty, root),
         };
 
         return result;
@@ -139,9 +140,11 @@ export default class Metadata {
     const properties = Object.keys(node)
       .filter((item) => item !== '_id')
       .reduce((previousProperty, curentProperty) => {
+        const propertyName = curentProperty.replace(/\./g, '-');
+        const modelProperty = this.resolveModelproperty(model, curentProperty);
         const result = {
           ...previousProperty,
-          [curentProperty]: this.visitor('Property', node[curentProperty], model[curentProperty], root),
+          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty, root),
         };
 
         return result;

@@ -63,7 +63,7 @@ export default class Metadata {
     return new Promise((resolve) => {
       resolve({
         status: 200,
-        entity: document,
+        serviceDocument: document,
       });
     });
   }
