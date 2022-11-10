@@ -153,7 +153,7 @@ export default class {
     return this;
   }
 
-  _router(setting = {}) {
+  _validateUrl() {
     // remove '/' if url is startwith it.
     if (this._url.indexOf('/') === 0) {
       this._url = this._url.substr(1);
@@ -164,6 +164,26 @@ export default class {
       throw new Error(`Url of resource[${this._name}] can't contain "/",`
         + 'it can only be allowed to exist in the beginning.');
     }
+  }
+
+  match(method, url) {
+    const setting = this._server.getSettings();
+
+    this._validateUrl();
+
+    const routes = rest.getMiddlewares(this._url, this._hooks, this.model, {
+      maxTop: min([setting.maxTop, this._maxTop]),
+      maxSkip: min([setting.maxSkip, this._maxSkip]),
+      orderby: this._orderby || setting.orderby,
+    });
+    const route = routes.find((item) => item.method === method
+      && url.match(item.regex));
+
+    return route ? route.middleware : undefined;
+  }
+
+  _router(setting = {}) {
+    this._validateUrl();
 
     const params = {
       url: this._url,
@@ -176,9 +196,5 @@ export default class {
     };
 
     return rest.getRouter(this.model, params);
-  }
-
-  find() {
-    return this.model.find();
   }
 }

@@ -1,8 +1,9 @@
 import createExpress from './express';
 import Resource from './ODataResource';
 import Func from './ODataFunction';
-import Metadata from './metadata/ODataMetadata';
-import ServiceDocument from './metadata/ODataServiceDocument';
+import Metadata from './spezialResources/ODataMetadata';
+import ServiceDocument from './spezialResources/ODataServiceDocument';
+import Batch from './spezialResources/ODataBatch';
 import Db from './db/db';
 
 function checkAuth(auth, req) {
@@ -25,6 +26,7 @@ class Server {
     // 这里也许应该让 resources 支持 odata 查询的, 以方便直接在代码中使用 OData 查询方式来进行数据筛选, 达到隔离 mongo 的效果.
     this.resources = {
       $metadata: new Metadata(this),
+      $batch: new Batch(this),
     };
     this._serviceDocument = new ServiceDocument(this);
   }

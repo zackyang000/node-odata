@@ -7,7 +7,7 @@ export default class Metadata {
     this._server = server;
     this._hooks = {
     };
-    this._count = 0;
+    this._path = '/';
   }
 
   get() {
@@ -29,18 +29,33 @@ export default class Metadata {
     return this;
   }
 
+  match(methods, url) {
+    if (methods === 'get'
+      && url.indexOf(this._path) === 0) {
+      return this.middleware;
+    }
+    return undefined;
+  }
+
+  middleware = async (req, res) => {
+    try {
+      await pipes.authorizePipe(req, res, this._hooks.auth);
+      await pipes.beforePipe(req, res, this._hooks.before);
+
+      const result = await this.ctrl(req);
+      const data = await pipes.respondPipe(req, res, result || {});
+
+      pipes.afterPipe(req, res, this._hooks.after, data);
+    } catch (err) {
+      pipes.errorPipe(req, res, err);
+    }
+  };
+
   _router() {
     /*eslint-disable */
     const router = Router();
     /* eslint-enable */
-    router.get('/', (req, res) => {
-      pipes.authorizePipe(req, res, this._hooks.auth)
-        .then(() => pipes.beforePipe(req, res, this._hooks.before))
-        .then(() => this.ctrl(req))
-        .then((result) => pipes.respondPipe(req, res, result || {}))
-        .then((data) => pipes.afterPipe(req, res, this._hooks.after, data))
-        .catch((err) => pipes.errorPipe(req, res, err));
-    });
+    router.get(this._path, this.middleware);
 
     return router;
   }

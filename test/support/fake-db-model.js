@@ -96,6 +96,22 @@ export default class Model {
     return newItem;
   }
 
+  update(params, data, callback) {
+    const item = this._data.find(item => item.id === params.id);
+
+    if (item) {
+      Object.keys(data).forEach(propName => {
+        item[propName] = data[propName];
+      });
+      callback(undefined, item);
+    } else {
+      const error = new Error('Not found');
+
+      error.status = 404;
+      callback(error);
+    }
+  }
+
   exec(callback) {
     callback(null, this._data);
   }

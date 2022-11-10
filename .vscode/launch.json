@@ -11,6 +11,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "runtimeArgs": ["--preserve-symlinks"],
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "args": [
         "--require",
@@ -19,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.query.filter.functions.js"
+        "test/odata.batch.js"
       ]
     },
     {

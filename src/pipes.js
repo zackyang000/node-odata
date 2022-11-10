@@ -41,7 +41,7 @@ function getWriter(req, result) {
   if (req.query.$format) {
     // get requested media type from $format query
     mediaType = getMediaType(req.query.$format, result);
-  } else if (req.headers.accept) {
+  } else if (req.headers && req.headers.accept) {
     // get requested media type from accept header
     mediaType = getMediaType(req.headers.accept, result);
   }
@@ -63,7 +63,7 @@ function getWriter(req, result) {
 
     default:
       // no media type requested set defaults depend of context
-      if (result.entity || result.serviceDocument) {
+      if (result.entity || result.serviceDocument || result.responses) {
         return jsonWriter.writeJson.bind(jsonWriter); // default for entities and actions
       }
 

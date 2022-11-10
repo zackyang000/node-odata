@@ -1,0 +1,184 @@
+import 'should';
+import request from 'supertest';
+import { odata, host, port, bookSchema, assertSuccess } from './support/setup';
+import data from './support/books.json';
+import FakeDb from './support/fake-db';
+import sinon from 'sinon';
+
+describe('odata.batch', () => {
+  let httpServer, books, resource, sandbox;
+
+  beforeEach(async function () {
+    const db = new FakeDb();
+    const server = odata(db);
+    resource = server.resource('book', bookSchema);
+    books = JSON.parse(JSON.stringify(db.addData('book', data)));
+    httpServer = server.listen(port);
+    sandbox = sinon.createSandbox();
+  });
+
+  afterEach(() => {
+    httpServer.close();
+    sandbox.restore();
+  });
+
+  it('should work with get lists', async function () {
+    const result = [
+      {
+        "title": "XML Developer's Guide"
+      }, {
+        "title": "MSXML3: A Comprehensive Guide"
+      }, {
+        "title": "Visual Studio 7: A Comprehensive Guide"
+      }
+    ];
+
+    const mock = sandbox.mock(resource.model);
+    mock.expects('select').once().withArgs({
+      _id: 0,
+      title: 1
+    }).returns(resource.model);
+    mock.expects('$where').once().withArgs('this.title.indexOf(\'Guide\') != -1').returns(resource.model);
+    const stub = sandbox.stub(resource.model, "exec");
+    stub.callsArgWith(0, undefined, result);
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "get",
+        url: `/book?$filter=contains(title, 'Guide')&$select=title`
+      }]
+    });
+    assertSuccess(res);
+    mock.verify();
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: {
+          value: result
+        }
+      }]
+    });
+  });
+
+  it('should work with get entity', async function () {
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "get",
+        url: `/book('${books[0].id}')`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: books[0]
+      }]
+    });
+  });
+
+  it('should work with post entity', async function () {
+    const result = {
+      title: "War and peace"
+    };
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "post",
+        url: `/book`,
+        body: result
+      }]
+    });
+    assertSuccess(res);
+    result.id = (+books[books.length - 1].id + 1).toString();
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 201,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: result
+      }]
+    });
+  });
+
+  it('should work with put entity', async function () {
+    const result = {
+      id: "1",
+      title: "War and peace"
+    };
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "put",
+        url: `/book('1')`,
+        body: result
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: result
+      }]
+    });
+  });
+
+
+  it('should work with patch entity', async function () {
+    const result = {
+      id: "1",
+      title: "War and peace"
+    };
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "patch",
+        url: `/book('1')`,
+        body: result
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: result
+      }]
+    });
+  });
+
+
+  it('should work with delete entity', async function () {
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "delete",
+        url: `/book('1')`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 204
+      }]
+    });
+  });
+});

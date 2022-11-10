@@ -20,6 +20,8 @@ export default class {
         };
       }
       normalizedData = this.replaceDot(normalizedData);
+    } else if (data.responses) {
+      normalizedData = data;
     } else {
       normalizedData = data.metadata || data.serviceDocument;
     }
