@@ -23,7 +23,7 @@ export default class {
     } else if (data.responses) {
       normalizedData = data;
     } else {
-      normalizedData = data.metadata || data.serviceDocument;
+      normalizedData = data.$metadata || data.serviceDocument;
     }
 
     res.type('application/json');

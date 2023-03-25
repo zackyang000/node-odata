@@ -54,7 +54,9 @@ describe('odata.batch', () => {
       responses: [{
         id: "1",
         status: 200,
+        statusText: 'OK',
         headers: {
+          'OData-Version': '4.0',
           'content-type': 'application/json'
         },
         body: {
@@ -77,7 +79,9 @@ describe('odata.batch', () => {
       responses: [{
         id: "1",
         status: 200,
+        statusText: 'OK',
         headers: {
+          'OData-Version': '4.0',
           'content-type': 'application/json'
         },
         body: books[0]
@@ -103,7 +107,9 @@ describe('odata.batch', () => {
       responses: [{
         id: "1",
         status: 201,
+        statusText: 'Created',
         headers: {
+          'OData-Version': '4.0',
           'content-type': 'application/json'
         },
         body: result
@@ -129,7 +135,9 @@ describe('odata.batch', () => {
       responses: [{
         id: "1",
         status: 200,
+        statusText: "OK",
         headers: {
+          'OData-Version': '4.0',
           'content-type': 'application/json'
         },
         body: result
@@ -156,8 +164,10 @@ describe('odata.batch', () => {
       responses: [{
         id: "1",
         status: 200,
+        statusText: "OK",
         headers: {
-          'content-type': 'application/json'
+          "OData-Version": "4.0",
+          "content-type": "application/json"
         },
         body: result
       }]
@@ -177,8 +187,46 @@ describe('odata.batch', () => {
     res.body.should.deepEqual({
       responses: [{
         id: "1",
-        status: 204
+        status: 204,
+        statusText: "No Content"
       }]
     });
-  });
+  });/*
+
+  it('should work with multipart request body', async function () {
+    const result = {
+      title: "War and peace"
+    };
+    const res = await request(host)
+      .post(`/$batch`)
+      .send({})
+      .set('Content-Type', 'multipart/mixed; boundary=batch_1')
+      .set('Host', host)
+      .serialize(() => `
+--batch_1
+Content-Type: application/http
+
+POST /book
+Host: ${host}
+Content-Type: application/json
+Content-Lenght: ${JSON.stringify(result).length}
+
+${JSON.stringify(result)}
+--batch_1--
+      `);
+
+    assertSuccess(res);
+
+    res.body.should.equal(`
+--batch-1
+Content-Type: application/http
+
+HTTP/1.1 200 Ok
+Content-Type: application/json
+Content-Length: ${JSON.stringify(result).length}
+
+${JSON.stringify(result)}
+--batch-1—
+    `);
+  });*/
 });

@@ -9,9 +9,9 @@ import pipes from '../pipes';
 
 const getRoutes = (url, hooks) => {
   const resourceListURL = `/${url}`;
-  const resourceListRegex = new RegExp(`(^\/${url}[?#])|(^\/${url}$)`);
+  const resourceListRegex = new RegExp(`(^\/?${url}[?#])|(^\/?${url}$)`);
   const resourceURL = `${resourceListURL}\\(:id\\)`;
-  const resourceRegex = new RegExp(`^\/${url}\\([^)]+\\)`);
+  const resourceRegex = new RegExp(`^\/?${url}\\([^)]+\\)`);
 
   return [
     {
@@ -67,21 +67,24 @@ const getMiddlewares = (url, hooks, mongooseModel, options) => {
       ctrl, hook,
     } = route;
 
+    const middleware = async (req, res) => {
+      try {
+        await pipes.authorizePipe(req, res, hook.auth);
+        await pipes.beforePipe(req, res, hook.before);
+
+        const result = await ctrl(req, mongooseModel, options);
+        const data = await pipes.respondPipe(req, res, result || {});
+
+        pipes.afterPipe(req, res, hook.after, data);
+
+      } catch (err) {
+        pipes.errorPipe(req, res, err);
+      }
+    };
+
     return {
       ...route,
-      middleware: async (req, res) => {
-        try {
-          await pipes.authorizePipe(req, res, hook.auth);
-          await pipes.beforePipe(req, res, hook.before);
-
-          const result = await ctrl(req, mongooseModel, options);
-          const data = await pipes.respondPipe(req, res, result || {});
-
-          pipes.afterPipe(req, res, hook.after, data);
-        } catch (err) {
-          pipes.errorPipe(req, res, err);
-        }
-      },
+      middleware
     };
   });
 };

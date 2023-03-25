@@ -1,10 +1,12 @@
 import express from 'express';
 import Server from './server';
+import mulpipartMixed from './parser/multipartMixed'
 
-const server = function server(db, prefix, options) {
+export const odata = function server(db, prefix, options) {
   return new Server(db, prefix, options);
 };
 
-server._express = express;
+odata._express = express;
 
-export default server;
+export default odata;
+

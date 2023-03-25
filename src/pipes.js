@@ -1,50 +1,43 @@
 import http from 'http';
 import XmlWriter from './writer/xmlWriter';
 import JsonWirter from './writer/jsonWriter';
+import MultipartWriter from './writer/multipartWriter';
+import MimetypeParser from './parser/mimetypeParser'
 
 const xmlWriter = new XmlWriter();
 const jsonWriter = new JsonWirter();
+const multipartWriter = new MultipartWriter();
 
-function getMediaType(accept, data) {
-  // reduce multi mimetypes to most weigth mimetype
-  // e.g. Accept: text/html, application/xhtml+xml, application/xml;q=0.9, image/webp, */*;q=0.8
-  const mimeStructs = accept.split(/[ ,]+/g);
-  const mostWeightMimetype = mimeStructs.reduce((previous, current) => {
-    const [mimetype, qualityParam] = current.split(/[ ;]+/);
-    const [, qualityValue] = qualityParam ? qualityParam.split(/=/) : ['q', 1];
-    const result = {
-      ...previous,
-    };
+function getContentType(req) {
+  if (req.headers && req.headers['content-type']) {
+    const result = req.headers['content-type'];
 
-    if (!previous.mimetype || previous.qualityValue < qualityValue) {
-      result.mimetype = mimetype;
-      result.qualityValue = qualityValue;
-    }
-    return result;
-  }, {});
-
-  if (data.metadata && mostWeightMimetype.mimetype.match(/((application|\*)\/(xml|\*)|^xml$)/)) {
-    return 'application/xml';
-  } if (mostWeightMimetype.mimetype.match(/((application|\*)\/(json|\*)|^json$)/)) {
-    return 'application/json';
+    return result.indexOf(';') > 0 ? result.split(';')[0] : result;
   }
-
-  const error406 = new Error('Not acceptable');
-
-  error406.status = 406;
-  throw error406;
 }
 
 function getWriter(req, result) {
-  let mediaType;
-
-  if (req.query.$format) {
-    // get requested media type from $format query
-    mediaType = getMediaType(req.query.$format, result);
-  } else if (req.headers && req.headers.accept) {
-    // get requested media type from accept header
-    mediaType = getMediaType(req.headers.accept, result);
+  let supportedFormats;
+  let format = req.query.$format;
+  
+  if (result.$metadata) {
+    supportedFormats = ['application/xml', 'application/json'];
+  }  else if(result.responses) {
+    supportedFormats = ['multipart/mixed', 'application/json'];
+    format = '';
+  } else {
+    supportedFormats = ['application/json'];
   }
+
+  let accept;
+  let requrestContentType;
+  if (req.headers) {
+    accept = req.headers.accept ? req.headers.accept : undefined;
+    requrestContentType = result.responses && getContentType(req) ? getContentType(req) : undefined;
+  }
+
+  const mimetyeParser = new MimetypeParser();
+  const mediaType = mimetyeParser.getmMediaType(format, accept, supportedFormats, requrestContentType);
 
   // xml representation of metadata
   switch (mediaType) {
@@ -52,22 +45,16 @@ function getWriter(req, result) {
       return jsonWriter.writeJson.bind(jsonWriter);
 
     case 'application/xml':
-      if (!result.metadata) {
-        // xml wirter for entities and actions is not implemented
-        const error406 = new Error('Not acceptable');
-
-        error406.status = 406;
-        throw error406;
-      }
       return xmlWriter.writeXml.bind(xmlWriter);
 
-    default:
-      // no media type requested set defaults depend of context
-      if (result.entity || result.serviceDocument || result.responses) {
-        return jsonWriter.writeJson.bind(jsonWriter); // default for entities and actions
-      }
+    case 'multipart/mixed':
+      return multipartWriter.write.bind(multipartWriter);
 
-      return xmlWriter.writeXml.bind(xmlWriter); // default for metadata
+    default:
+      const error406 = new Error('Not acceptable');
+
+      error406.status = 406;
+      throw error406;
   }
 }
 
@@ -102,7 +89,8 @@ const respondPipe = (req, res, result) => new Promise((resolve, reject) => {
     const status = result.status || 200;
     const writer = getWriter(req, result);
 
-    writer(res, result, status, resolve);
+    res.setHeader('OData-Version',`4.0`);
+    writer(res, result, status, resolve, req.httpVersion);
   } catch (error) {
     reject(error);
   }

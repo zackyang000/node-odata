@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.batch.js"
+        "test/model.complex.action.js"
       ]
     },
     {

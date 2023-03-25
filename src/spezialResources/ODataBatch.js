@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import pipes from '../pipes';
+import MimetypeParser from '../parser/mimetypeParser';
+import { STATUS_CODES } from 'http';
 
 export default class Batch {
   constructor(server) {
@@ -71,7 +73,7 @@ export default class Batch {
       const keyValue = parameter.split('=');
       const result = {
         key: decodeURIComponent(keyValue[0]),
-      }
+      };
 
       if (keyValue.length > 1) {
         result.value = decodeURIComponent(keyValue[1]);
@@ -79,10 +81,10 @@ export default class Batch {
       return result;
     });
 
-    return parameters.filter(parameter => parameter.value)
+    return parameters.filter((parameter) => parameter.value)
       .reduce((previous, current) => {
         const result = {
-          ...previous
+          ...previous,
         };
 
         result[current.key] = current.value;
@@ -92,61 +94,65 @@ export default class Batch {
   }
 
   async ctrl(req) {
-    return new Promise((resolve, reject) => {
-      const responses = req.body.requests.map(async (request) => {
-        const handler = Object.keys(this._server.resources)
-          .map((name) => this._server.resources[name].match(request.method, request.url))
-          .find((ctrl) => ctrl);
-        const result = {
-          id: request.id
-        };
-        const currentRequest = {
-          headers: request.headers,
-          query: Batch.mapToQuery(request.url),
-          body: request.body
-        };
+    const responses = req.body.requests.map(async function (request) {
+      const handler = Object.keys(this._server.resources)
+        .map((name) => this._server.resources[name].match(request.method, request.url))
+        .find((ctrl) => ctrl);
+      let result = {
+      };
+      if (request.id) {
+        result.id = request.id;
+      }
+      const currentRequest = {
+        headers: request.headers,
+        query: Batch.mapToQuery(request.url),
+        body: request.body,
+      };
 
-        const paramsMatch = request.url.match(/^\/[^#?(]+\('(\w+)'\)/);
+      const paramsMatch = request.url.match(/^\/[^#?(]+\('(\w+)'\)/);
 
-        if (paramsMatch && paramsMatch.length > 1) {
-          currentRequest.params = {
-            id: paramsMatch[1]
+      if (paramsMatch && paramsMatch.length > 1) {
+        currentRequest.params = {
+          id: paramsMatch[1],
+        };
+      }
+
+      if (!handler) {
+        result.status = 404;
+        result.statusText = STATUS_CODES[404];
+        result.body = STATUS_CODES[404];
+      } else {
+        function appendHeader(name, value) {
+          if (!result.headers) {
+            result.headers = {};
           }
+          result.headers[name] = value;
         }
+        await handler(currentRequest, {
+          type: (mimetype) => {
+            appendHeader('content-type', mimetype);
+          },
+          setHeader: appendHeader,
+          status: (status) => {
+            result.status = status;
+            result.statusText = STATUS_CODES[status];
 
-        if (!handler) {
-          result.status = 404;
-          result.body = 'Not Found';
-
-        } else {
-          await handler(currentRequest, {
-            type: (mimetype) => {
-              result.headers = {
-                'content-type': mimetype,
-              };
-            },
-            status: (status) => {
-              result.status = status;
-              return {
-                jsonp: (body) => {
-                  result.body = body;
-                },
-                end: () => {}
-              };
-            },
-          });
-
-        }
-
-
-        return result;
-      });
-
-      Promise.all(responses).then((results) => {
-        resolve({
-          responses: results,
+            return {
+              jsonp: (body) => {
+                result.body = body;
+              },
+              end: () => { },
+            };
+          },
         });
-      }).catch(error => reject(error));
+      }
+      return result;
+    }.bind(this));
+
+    return Promise.all(responses).then((results) => {
+      return {
+        responses: results
+      };
     });
   }
 }
