@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/model.complex.action.js"
+        "test/odata.batch.js"
       ]
     },
     {
@@ -30,7 +30,7 @@
         "skipFiles": [
             "<node_internals>/**"
         ],
-        "program": "${workspaceFolder}/examples/complex-resource/index.js"
+        "program": "${workspaceFolder}/examples/simple/index.js"
     }
   ]
 }

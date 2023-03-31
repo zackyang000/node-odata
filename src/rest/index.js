@@ -6,6 +6,7 @@ import del from './delete';
 import patch from './patch';
 import get from './get';
 import pipes from '../pipes';
+import count from './count';
 
 const getRoutes = (url, hooks) => {
   const resourceListURL = `/${url}`;
@@ -51,11 +52,18 @@ const getRoutes = (url, hooks) => {
     },
     {
       method: 'get',
+      url: resourceListURL + '/([\$])count',
+      regex: new RegExp(`(^\/?${url}\/\\$count[?]?)|(^\/?${url}\/\\$count$)`),
+      ctrl: count,
+      hook: hooks.count,
+    },
+    {
+      method: 'get',
       url: resourceListURL,
       regex: resourceListRegex,
       ctrl: list,
       hook: hooks.list,
-    },
+    }
   ];
 };
 

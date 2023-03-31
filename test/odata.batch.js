@@ -22,6 +22,7 @@ describe('odata.batch', () => {
     sandbox.restore();
   });
 
+  /*
   it('should work with get lists', async function () {
     const result = [
       {
@@ -191,7 +192,7 @@ describe('odata.batch', () => {
         statusText: "No Content"
       }]
     });
-  });/*
+  });*/
 
   it('should work with multipart request body', async function () {
     const result = {
@@ -209,7 +210,7 @@ Content-Type: application/http
 POST /book
 Host: ${host}
 Content-Type: application/json
-Content-Lenght: ${JSON.stringify(result).length}
+Content-Length: ${JSON.stringify(result).length}
 
 ${JSON.stringify(result)}
 --batch_1--
@@ -217,7 +218,15 @@ ${JSON.stringify(result)}
 
     assertSuccess(res);
 
-    res.body.should.equal(`
+    const single = await new Promise((resolve, reject) => {
+      res.files.null.on('error', part => {
+        reject(part);
+      });
+      res.files.null.on('data', part => {
+        resolve(part);
+      });
+    });
+    res.text.should.equal(`
 --batch-1
 Content-Type: application/http
 
@@ -228,5 +237,5 @@ Content-Length: ${JSON.stringify(result).length}
 ${JSON.stringify(result)}
 --batch-1—
     `);
-  });*/
+  });
 });

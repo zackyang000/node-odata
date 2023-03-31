@@ -19,7 +19,7 @@ function multipart(req, res, next) {
         if (singleRequestText.indexOf("Group ID: ") >= 0) {
           return; //sap extension, not documentet in odata
         }
-        const matchMethodUrl = singleRequestText.match(/^(GET|POST|PUT|PATCH|DELETE)\s+([\w-]+)\s*/m);
+        const matchMethodUrl = singleRequestText.match(/^(GET|POST|PUT|PATCH|DELETE)\s+([\w\/$-]+)\s*/m);
 
         if (!matchMethodUrl) {
           throw new Error(`Method in ${singleRequestText} not supported`);

@@ -16,13 +16,15 @@ function getContentType(req) {
   }
 }
 
-function getWriter(req, result) {
+function getWriter(req, res, result) {
   let supportedFormats;
   let format = req.query.$format;
-  
-  if (result.$metadata) {
+
+  if (typeof result !== 'object') {
+    supportedFormats = ['text/plain'];
+  } else if (result.$metadata) {
     supportedFormats = ['application/xml', 'application/json'];
-  }  else if(result.responses) {
+  } else if (result.responses) {
     supportedFormats = ['multipart/mixed', 'application/json'];
     format = '';
   } else {
@@ -39,6 +41,8 @@ function getWriter(req, result) {
   const mimetyeParser = new MimetypeParser();
   const mediaType = mimetyeParser.getmMediaType(format, accept, supportedFormats, requrestContentType);
 
+  res.type(mediaType);
+
   // xml representation of metadata
   switch (mediaType) {
     case 'application/json':
@@ -49,6 +53,12 @@ function getWriter(req, result) {
 
     case 'multipart/mixed':
       return multipartWriter.write.bind(multipartWriter);
+
+    case 'text/plain':
+      return (res, data, status, resolve) => {
+        res.status(status).send(data);
+        resolve(data);
+      };
 
     default:
       const error406 = new Error('Not acceptable');
@@ -87,9 +97,9 @@ const respondPipe = (req, res, result) => new Promise((resolve, reject) => {
     }
 
     const status = result.status || 200;
-    const writer = getWriter(req, result);
+    const writer = getWriter(req, res, result);
 
-    res.setHeader('OData-Version',`4.0`);
+    res.setHeader('OData-Version', `4.0`);
     writer(res, result, status, resolve, req.httpVersion);
   } catch (error) {
     reject(error);

@@ -36,6 +36,7 @@ export default class {
       put: {},
       delete: {},
       patch: {},
+      count: {}
     };
     this.actions = {};
     this._options = {
@@ -176,8 +177,13 @@ export default class {
       maxSkip: min([setting.maxSkip, this._maxSkip]),
       orderby: this._orderby || setting.orderby,
     });
-    const route = routes.find((item) => item.method === method
-      && url.match(item.regex));
+    const route = routes.find((item) => {
+      if (item.method === method) {
+        const match = url.match(item.regex);
+
+        return match;
+      }
+    });
 
     return route ? route.middleware : undefined;
   }

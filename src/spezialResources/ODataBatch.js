@@ -142,6 +142,9 @@ export default class Batch {
                 result.body = body;
               },
               end: () => { },
+              send: (body) => {
+                result.body = body;
+              }
             };
           },
         });

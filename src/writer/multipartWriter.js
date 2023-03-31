@@ -4,19 +4,19 @@ export default class MultipartWriter {
     let body = '';
 
     result.responses.forEach(response => {
-      body += `--${boundary}\nContent-Type: application/http\n\nHTTP/${httpVersion} ${response.status} ${response.statusText}\n`;      
+      body += `--${boundary}\r\nContent-Type: application/http\r\n\r\nHTTP/${httpVersion} ${response.status} ${response.statusText}\r\n`;      
       if (response.headers) {
         const headers = Object.keys(response.headers);
 
         headers.forEach(header => {
-          body += `${header}: ${response.headers[header]}\n`
+          body += `${header}: ${response.headers[header]}\r\n`
         });
       }
-      body += '\n';
+      body += '\r\n';
 
       const textBody = typeof response.body === 'string' ? response.body : JSON.stringify(response.body);
 
-      body += `${textBody}\n`;
+      body += `${textBody}\r\n`;
     });
 
     body += `--${boundary}--`;

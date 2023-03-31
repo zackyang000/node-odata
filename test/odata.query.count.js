@@ -33,4 +33,5 @@ describe('odata.query.count', function() {
     const res = await request(host).get('/book?$count=1');
     res.error.status.should.be.equal(500);
   });
+
 });
