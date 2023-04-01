@@ -15,6 +15,11 @@ export default class {
     return this._connection;
   }
 
+  closeConnection() {
+    this._connection.close();
+    delete this._connection;
+  }
+
   on(name, event) {
     this._connection.on(name, event);
   }
