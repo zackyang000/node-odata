@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.batch.js"
+        "test/neededDbRunning/rest.post.js"
       ]
     },
     {

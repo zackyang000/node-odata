@@ -5,7 +5,7 @@ export default function (schema) {
   // display value of _id when request id.
   if (!schema.paths.id) {
     schema.virtual('id').get(function getId() {
-      return this._id;
+      return this._doc._id;
     });
     schema.set('toObject', { virtuals: true });
     schema.set('toJSON', { virtuals: true });
@@ -30,13 +30,13 @@ export default function (schema) {
 
   // genarate _id.
   schema.pre('save', function preSave(next) {
-    if (this.isNew && !this._id) {
+    if (this.isNew && !this._doc._id) {
       if (this.id) {
         // Use a user-defined id to save
-        this._id = this.id;
+        this._doc._id = this.id;
       } else {
         // Use uuid to save
-        this._id = uuid.v4();
+        this._doc._id = uuid.v4();
       }
     }
     return next();
