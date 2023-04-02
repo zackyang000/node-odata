@@ -191,8 +191,8 @@ describe('odata.batch', () => {
         statusText: "No Content"
       }]
     });
-  });/*
-
+  });
+/*
   it('should work with multipart request body', async function () {
     const result = {
       title: "War and peace"
@@ -217,14 +217,6 @@ ${JSON.stringify(result)}
 
     assertSuccess(res);
 
-    const single = await new Promise((resolve, reject) => {
-      res.files.null.on('error', part => {
-        reject(part);
-      });
-      res.files.null.on('data', part => {
-        resolve(part);
-      });
-    });
     res.text.should.equal(`
 --batch-1
 Content-Type: application/http
