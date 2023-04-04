@@ -33,6 +33,16 @@ export default class Model {
               name: model[item][0].name
             }]
           };
+        } else if(model[item][0].enum) {
+          // Array of Enum values
+          result[propName].options = {
+            type: [{
+              type: {
+                name: model[item][0].type.name
+              },
+              enum: model[item][0].enum
+            }]
+          };
         } else {
           // Array of objects
           result[propName].schema = {

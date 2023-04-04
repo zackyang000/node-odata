@@ -102,7 +102,9 @@ export default class Metadata {
           result.$Type = `node.odata.${notClassifiedName}`;
           root(notClassifiedName, this.visitor('ComplexType', node.schema.paths, model[0], root));
         } else {
-          const arrayItemType = this.visitor('Property', { instance: node.options.type[0].name }, model[0], root);
+          const arrayItemType = this.visitor('Property', { 
+            instance: node.options.type[0].name || node.options.type[0].type.name //Enums have an object with enum and type
+          }, model[0], root);
 
           result.$Type = arrayItemType.$Type;
         }
