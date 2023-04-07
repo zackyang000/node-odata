@@ -102,7 +102,7 @@ export default class Metadata {
           result.$Type = `node.odata.${notClassifiedName}`;
           root(notClassifiedName, this.visitor('ComplexType', node.schema.paths, model[0], root));
         } else {
-          const arrayItemType = this.visitor('Property', { 
+          const arrayItemType = this.visitor('Property', {
             instance: node.options.type[0].name || node.options.type[0].type.name //Enums have an object with enum and type
           }, model[0], root);
 
@@ -175,15 +175,37 @@ export default class Metadata {
   }
 
   static visitAction(node) {
-    return {
-      $Kind: 'Action',
-      $IsBound: true,
-      $Parameter: [{
-        $Name: node.resource,
-        $Type: `node.odata.${node.resource}`,
-        $Collection: node.binding === 'collection' ? true : undefined,
-      }],
+    const result = {
+      $Kind: 'Action'
     };
+
+    if (node.binding) {
+      result.$IsBound = true;
+      result.$Parameter = [{
+        $Name: node.resource._url,
+        $Type: `node.odata.${node.resource._url}`,
+        $Collection: node.binding === 'collection' ? true : undefined,
+      }];
+    }
+
+    if (node.$Parameter) {
+      if (!result.$Parameter) {
+        result.$Parameter = [];
+      }
+
+      node.$Parameter.forEach(para => {
+        const item = para;
+
+        if (para.$Type.search(/^edm/i) === -1 ) {
+          item.$Type = `node.odata.${para.$Type}`;
+        }
+
+        result.$Parameter.push(item);
+      });
+      result.$Parameter = result.$Parameter ? result.$Parameter.concat() : node.$Parameter;
+    }
+
+    return result;
   }
 
   static visitFunction(node) {
@@ -255,6 +277,27 @@ export default class Metadata {
       return result;
     }, {});
 
+    const actionNames = Object.keys(this._server.actions);
+    const actionImports = actionNames.reduce((previousAction, currentAction) => {
+      const result = {...previousAction};
+      const action = this._server.actions[currentAction];
+
+      result[`${currentAction}-import`] = {
+        $Action: `node.odata.${currentAction}`
+      };
+
+      return result;
+    }, {})
+    const unboundActions = actionNames.reduce((previousAction, currentAction) => {
+      const result = {...previousAction};
+      const action = this._server.actions[currentAction];
+      const attachToRoot = (name, value) => { result[name] = value; };
+
+      result[currentAction] = this.visitor('Action', action, attachToRoot);
+
+      return result;
+    }, {})
+
     const document = {
       $Version: '4.0',
       ObjectId: {
@@ -263,10 +306,12 @@ export default class Metadata {
         $MaxLength: 24,
       },
       ...entityTypes,
+      ...unboundActions,
       $EntityContainer: 'node.odata',
       ['node.odata']: { // eslint-disable-line no-useless-computed-key
         $Kind: 'EntityContainer',
         ...entitySets,
+        ...actionImports
       },
     };
 

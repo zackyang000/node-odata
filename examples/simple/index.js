@@ -12,7 +12,7 @@ var bookInfo = {
 };
 
 server.resource('book', bookInfo)
-  .action('/50off', function(req, res, next){
+  .action('50off', function(req, res, next){
     server.repository('book').findById(req.params.id, function(err, book){
       book.price = +(book.price / 2).toFixed(2);
       book.save(function(err){

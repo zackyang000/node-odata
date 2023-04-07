@@ -1,5 +1,6 @@
 import rest from './rest';
 import { min } from './utils';
+import Action from './Action';
 
 function hook(resource, pos, fn) {
   let method = resource._currentMethod;
@@ -54,23 +55,13 @@ export default class {
     this.model = model;
   }
 
-  action(url, fn, options) {
-    let auth;
-    let binding;
-
-    if (options) {
-      auth = options.auth;
-      binding = options.binding;
-    }
-
-    this.actions[url] = fn;
-    this.actions[url].auth = auth;
-    this.actions[url].binding = binding;
-    this.actions[url].resource = this._url;
-
-    const resourceUrl = !binding || binding === 'entity' // 'entity' || 'collection'
-      ? `/${this._url}\\(:id\\)` : `/${this._url}`;
-    this.actions[url].router = rest.getOperationRouter(resourceUrl, url, fn, auth);
+  action(name, fn, options) {
+    this.actions[name] = new Action(name, fn,
+      {
+        ...options,
+        resource: this,
+        server: this._server
+      });
 
     return this;
   }

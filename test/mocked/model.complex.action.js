@@ -13,7 +13,7 @@ describe('model.complex.action', () => {
     const server = odata(db);
     const resource = server.resource('order', { product: [{ price: Number }] });
 
-    resource.action('/all-item-greater', (req, res, next) => {
+    resource.action('all-item-greater', (req, res, next) => {
         const { price } = req.query;
         const $elemMatch = { price: { $gt: price } };
         server.resources.order.model.exec((err, data) => res.jsonp(data.slice(1)));

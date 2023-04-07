@@ -8,28 +8,31 @@ export default class XmlWriter {
         return this.visitEntityType(node, name);
 
       case 'Property':
-        return XmlWriter.visitProperty(node, name);
+        return this.visitProperty(node, name);
 
       case 'EntityContainer':
         return this.visitEntityContainter(node);
 
       case 'EntitySet':
-        return XmlWriter.visitEntitySet(node, name);
+        return this.visitEntitySet(node, name);
 
       case 'TypeDefinition':
-        return XmlWriter.visitTypeDefinition(node, name);
+        return this.visitTypeDefinition(node, name);
 
       case 'ComplexType':
         return this.visitComplexType(node, name);
 
       case 'Action':
-        return XmlWriter.visitAction(node, name);
+        return this.visitAction(node, name);
+
+      case 'ActionImport':
+        return this.visitActionImport(node, name);
 
       case 'Function':
-        return XmlWriter.visitFunction(node, name);
+        return this.visitFunction(node, name);
 
       case 'FunctionImport':
-        return XmlWriter.visitFunctionImport(node, name);
+        return this.visitFunctionImport(node, name);
 
       default:
         throw new Error(`Type ${type} is not supported`);
@@ -55,30 +58,33 @@ export default class XmlWriter {
   </edmx:Edmx>`);
   }
 
-  static visitEntitySet(node, name) {
+  visitEntitySet(node, name) {
     return `<EntitySet Name="${name}" EntityType="${node.$Type}"/>`;
   }
 
   visitEntityContainter(node) {
     let entitySets = '';
     let functions = '';
+    let actions = ''
 
     Object.keys(node)
       .filter((item) => item !== '$Kind')
       .forEach((item) => {
         if (node[item].$Type) {
           entitySets += this.visitor('EntitySet', node[item], item);
+        } else if (node[item].$Action) {
+          actions += this.visitor('ActionImport', node[item], item);
         } else {
           functions += this.visitor('FunctionImport', node[item], item);
         }
       });
     return (
       `<EntityContainer Name="Container">
-    ${entitySets}${functions}
+    ${entitySets}${functions}${actions}
   </EntityContainer>`);
   }
 
-  static visitProperty(node, name) {
+  visitProperty(node, name) {
     let attributes = '';
 
     if (node.$Nullable === false) {
@@ -115,7 +121,7 @@ export default class XmlWriter {
   </EntityType>`);
   }
 
-  static visitTypeDefinition(node, name) {
+  visitTypeDefinition(node, name) {
     let attributes = '';
 
     if (node.$MaxLength) {
@@ -142,9 +148,9 @@ export default class XmlWriter {
   </ComplexType>`);
   }
 
-  static visitAction(node, name) {
+  visitAction(node, name) {
     const isBound = node.$IsBound ? ' IsBound="true"' : '';
-    const parameter = node.$Parameter.map((item) => {
+    const parameter = node.$Parameter && node.$Parameter.map((item) => {
       let type = '';
 
       if (item.$Collection) {
@@ -158,12 +164,18 @@ export default class XmlWriter {
 
     return (`
   <Action Name="${name}"${isBound}>
-    ${parameter}
+    ${parameter || ''}
   </Action>
   `);
   }
 
-  static visitFunction(node, name) {
+  visitActionImport(node, name) {
+    return (`
+  <ActionImport Name="${name}" Action="${node.$Action}"/>
+  `);
+  }
+
+  visitFunction(node, name) {
     const collection = node.$ReturnType.$Collection ? ' Collection="true"' : '';
 
     return (`
@@ -173,7 +185,7 @@ export default class XmlWriter {
   `);
   }
 
-  static visitFunctionImport(node, name) {
+  visitFunctionImport(node, name) {
     return (`
   <FunctionImport Name="${name}" Function="${node.$Function}"/>
   `);

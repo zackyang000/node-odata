@@ -13,31 +13,47 @@ function halfPrice(price) {
 }
 
 describe('odata.actions', () => {
-  let httpServer, books;
+  let httpServer, server, db;
 
-  before(async function() {
-    const db = new FakeDb();
-    const server = odata(db);
-    server
-    .resource('book', bookSchema)
-    .action('/50off', (req, res, next) => {
-      server.resources.book.model.findById(req.params.id, (err, book) => {
-        book.price = halfPrice(book.price);
-        book.save((err) => res.jsonp(book));
+  beforeEach(async function () {
+    db = new FakeDb();
+    server = odata(db);
+  });
+
+  afterEach(() => {
+    if (httpServer) {
+      httpServer.close();
+    }
+  });
+
+  it('should work with bound action', async function () {
+    server.resource('book', bookSchema)
+      .action('50off', (req, res, next) => {
+        server.resources.book.model.findById(req.params.id, (err, book) => {
+          book.price = halfPrice(book.price);
+          book.save((err) => res.jsonp(book));
+        });
+      }, {
+        binding: 'entity'
       });
-    });
-    books = JSON.parse( JSON.stringify( db.addData('book', data)));
+    const books = JSON.parse(JSON.stringify(db.addData('book', data)));
     httpServer = server.listen(port);
-  });
-
-  after(() => {
-    httpServer.close();
-  });
-
-  it('should work', async function() {
     const item = books[0];
+
     const res = await requestToHalfPrice(item.id);
+
     const price = halfPrice(item.price);
     res.body.price.should.be.equal(price);
+  });
+
+  it('should work with unbound action', async function () {
+    server.action('salam-aleikum', (req, res, next) => {
+      res.jsonp({result: 'Wa aleikum assalam'})
+    })
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/salam-aleikum`);
+
+    res.body.result.should.be.equal('Wa aleikum assalam');
   });
 });

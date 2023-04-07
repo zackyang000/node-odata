@@ -5,6 +5,7 @@ import Metadata from './spezialResources/ODataMetadata';
 import ServiceDocument from './spezialResources/ODataServiceDocument';
 import Batch from './spezialResources/ODataBatch';
 import Db from './db/db';
+import Action from './Action';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -28,6 +29,8 @@ class Server {
       $metadata: new Metadata(this),
       $batch: new Batch(this),
     };
+    //unbound actions
+    this.actions = {};
     this._serviceDocument = new ServiceDocument(this);
   }
 
@@ -104,6 +107,16 @@ class Server {
     });
   }
 
+  action(name, fn, options) {
+    this.actions[name] = new Action(name, fn,
+      {
+        ...options,
+        server: this
+      });
+
+    return this;
+  }
+
   _getRouter() {
     const result = [];
 
@@ -118,9 +131,15 @@ class Server {
         Object.keys(resource.actions).forEach((actionKey) => {
           const action = resource.actions[actionKey];
 
-          result.push(action.router);
+          result.push(action.getRouter());
         });
       }
+    });
+
+    Object.keys(this.actions).forEach(actionKey => {
+      const action = this.actions[actionKey];
+
+      result.push(action.getRouter());
     });
 
     return result;
