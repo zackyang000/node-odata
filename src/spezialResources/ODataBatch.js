@@ -30,12 +30,16 @@ export default class Batch {
     return this;
   }
 
-  middleware = async (req, res) => {
+  middleware = async (req) => {
     try {
       await pipes.authorizePipe(req, res, this._hooks.auth);
       await pipes.beforePipe(req, res, this._hooks.before);
 
-      const result = await this.ctrl(req);
+      const result = await this.ctrl(req, error => {
+        if (error instanceof Error) {
+          throw error;
+        }
+      });
       const data = await pipes.respondPipe(req, res, result || {});
 
       pipes.afterPipe(req, res, this._hooks.after, data);
@@ -93,10 +97,12 @@ export default class Batch {
       }, {});
   }
 
-  async ctrl(req) {
+  async ctrl(req, next) {
     const responses = req.body.requests.map(async function (request) {
       const handler = Object.keys(this._server.resources)
         .map((name) => this._server.resources[name].match(request.method, request.url))
+        .concat(Object.keys(this._server.actions)
+          .map(name => this._server.actions[name].match(request.method, request.url)))
         .find((ctrl) => ctrl);
       let result = {
       };
@@ -124,30 +130,39 @@ export default class Batch {
       } else {
         function appendHeader(name, value) {
           if (!result.headers) {
-            result.headers = {};
+            result.headers = {
+              'OData-Version': '4.0'
+            };
           }
           result.headers[name] = value;
         }
-        await handler(currentRequest, {
+
+        function jsonp(body) {
+          result.body = body;
+          appendHeader('content-type', 'application/json');
+        };
+
+        const currentResponse = {
           type: (mimetype) => {
             appendHeader('content-type', mimetype);
           },
           setHeader: appendHeader,
+          jsonp,
           status: (status) => {
             result.status = status;
             result.statusText = STATUS_CODES[status];
 
             return {
-              jsonp: (body) => {
-                result.body = body;
-              },
+              jsonp,
               end: () => { },
               send: (body) => {
                 result.body = body;
               }
             };
           },
-        });
+        };
+
+        await handler(currentRequest, currentResponse, next);
       }
       return result;
     }.bind(this));

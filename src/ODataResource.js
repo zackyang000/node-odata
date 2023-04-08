@@ -176,7 +176,13 @@ export default class {
       }
     });
 
-    return route ? route.middleware : undefined;
+    if (route) {
+      return route.middleware;
+    }
+
+    return Object.keys(this.actions)
+      .map(name => this.actions[name].match(method, url))
+      .find(ctrl => ctrl);
   }
 
   _router(setting = {}) {

@@ -11,7 +11,13 @@ describe('odata.batch', () => {
   beforeEach(async function () {
     const db = new FakeDb();
     const server = odata(db);
-    resource = server.resource('book', bookSchema);
+    resource = server.resource('book', bookSchema)
+      .action('entity-action', (req, res, next) => {
+        res.status(200).jsonp({result: 'Hello! I am an action, that bound to entity.'})
+      }, { binding: 'entity'});
+    server.action('unbound-action', (req, res, next) => {
+      res.status(200).jsonp({result: 'Hello! I am an unbound action.'})
+    })
     books = JSON.parse(JSON.stringify(db.addData('book', data)));
     httpServer = server.listen(port);
     sandbox = sinon.createSandbox();
@@ -22,6 +28,7 @@ describe('odata.batch', () => {
     sandbox.restore();
   });
 
+  
   it('should work with get lists', async function () {
     const result = [
       {
@@ -189,6 +196,56 @@ describe('odata.batch', () => {
         id: "1",
         status: 204,
         statusText: "No Content"
+      }]
+    });
+  });
+
+  it('should work with unbound action', async function () {
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "post",
+        url: `/unbound-action`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "OData-Version": "4.0",
+          "content-type": "application/json"
+        },
+        body: {
+          result: 'Hello! I am an unbound action.'
+        }
+      }]
+    });
+  });
+
+  it('should work with action, that bound to entity', async function () {
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "post",
+        url: `/book(${books[0].id})/entity-action`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "OData-Version": "4.0",
+          "content-type": "application/json"
+        },
+        body: {
+          result: 'Hello! I am an action, that bound to entity.'
+        }
       }]
     });
   });
