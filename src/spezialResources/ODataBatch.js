@@ -30,7 +30,7 @@ export default class Batch {
     return this;
   }
 
-  middleware = async (req) => {
+  middleware = async (req, res) => {
     try {
       await pipes.authorizePipe(req, res, this._hooks.auth);
       await pipes.beforePipe(req, res, this._hooks.before);
