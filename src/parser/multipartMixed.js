@@ -38,8 +38,8 @@ function multipart(req, res, next) {
           result.headers[parts[0].trim()] = parts[1].trim();
         });
 
-        const blocks = singleRequestText.split('\n\n');
-        if (blocks.length > 2) {
+        const blocks = singleRequestText.split('\r\n\r\n');
+        if (blocks.length > 2 && blocks[2].trim()) {
           result.body = JSON.parse(blocks[2]);
         }
 
