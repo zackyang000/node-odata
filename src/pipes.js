@@ -68,18 +68,14 @@ function getWriter(req, res, result) {
   }
 }
 
-const authorizePipe = (req, res, auth) => new Promise((resolve, reject) => {
-  if (auth !== undefined) {
-    if (!auth(req, res)) {
+const authorizePipe = async (req, res, auth) => {
+  if (auth !== undefined && !await auth(req, res)) {
       const result = new Error();
 
       result.status = 401;
-      reject(result);
-      return;
-    }
+      throw result;
   }
-  resolve();
-});
+};
 
 const beforePipe = (req, res, before) => new Promise((resolve) => {
   if (before) {

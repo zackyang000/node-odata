@@ -52,7 +52,11 @@ describe('odata.actions', () => {
     })
     httpServer = server.listen(port);
 
-    const res = await request(host).post(`/salam-aleikum`);
+    const res = await request(host).post(`/node.odata.salam-aleikum`);
+
+    if (!res.ok) {
+      res.res.statusMessage.should.be.equal('');
+    }
 
     res.body.result.should.be.equal('Wa aleikum assalam');
   });

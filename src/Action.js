@@ -61,7 +61,7 @@ export default class Action {
           if (this.resource) {
             throw new Error(`Use of the unbound action '${this.name}' by a resource '${this.resource._url}' is not intended`)
           }
-          path = asRegex ? new RegExp(`(node\.odata)?\/?${this.name}$`) : `/${this.name}`;
+          path = asRegex ? new RegExp(`(node\.odata)?\/?${this.name}$`) : `/node.odata.${this.name}`;
         }
         break;
     }

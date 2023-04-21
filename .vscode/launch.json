@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mocked/odata.batch.js"
+        "test/mocked/odata.actions.js"
       ]
     },
     {

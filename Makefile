@@ -14,8 +14,8 @@ test:
 	@node_modules/.bin/mocha\
 		--require @babel/register \
 		--reporter $(REPORTER) \
-		test/mocked/**/*.js
-		test/neededDbRunning/**/*.js
+		--exclude test/failing/**/*.js \
+		test/**/*.js
 
 test-cov:
 	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
