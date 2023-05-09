@@ -29,9 +29,9 @@ describe('odata.actions', () => {
   it('should work with bound action', async function () {
     server.resource('book', bookSchema)
       .action('50off', (req, res, next) => {
-        server.resources.book.model.findById(req.params.id, (err, book) => {
+        req.$odata.mongo.book.findById(req.params.id, (err, book) => {
           book.price = halfPrice(book.price);
-          book.save((err) => res.jsonp(book));
+          book.save((err) => res.$odata.result = book);
         });
       }, {
         binding: 'entity'
@@ -48,7 +48,7 @@ describe('odata.actions', () => {
 
   it('should work with unbound action', async function () {
     server.action('salam-aleikum', (req, res, next) => {
-      res.jsonp({result: 'Wa aleikum assalam'})
+      res.$odata.result = {result: 'Wa aleikum assalam'};
     })
     httpServer = server.listen(port);
 
@@ -59,5 +59,17 @@ describe('odata.actions', () => {
     }
 
     res.body.result.should.be.equal('Wa aleikum assalam');
+  });
+
+  it('should return 404 for action url without namespace', async function () {
+    server.action('salam-aleikum', (req, res, next) => {
+      res.$odata.result = {result: 'Wa aleikum assalam'};
+    })
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/salam-aleikum`);
+
+    res.res.statusMessage.should.be.equal('Not Found');
+
   });
 });

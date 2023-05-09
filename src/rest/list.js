@@ -51,7 +51,10 @@ export default (req, MongooseModel, options) => new Promise((resolve, reject) =>
     _dataQuery(MongooseModel, params, options),
   ]).then((results) => {
     const entity = results.reduce((current, next) => ({ ...current, ...next }));
-    resolve({ entity });
+    resolve({
+      result: entity,
+      status: 200
+    });
   }).catch((err) => {
     const result = new Error(err.message);
 

@@ -19,7 +19,7 @@ describe('rest.put', () => {
   after(() => {
     httpServer.close();
   });
-
+  
   it('should modify resource', async function() {
     const book = data[0];
     book.title = 'modify book';

@@ -59,11 +59,10 @@ export default class {
     this.actions[name] = new Action(name, fn,
       {
         ...options,
-        resource: this,
-        server: this._server
+        resource: this
       });
 
-    return this;
+    return this.actions[name];
   }
 
   maxTop(count) {

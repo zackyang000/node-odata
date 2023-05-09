@@ -184,11 +184,11 @@ describe('metadata.action', () => {
 
   it('should not accept action names with special characters', function() {
     try {
-      const resource = server.resource('book', { 
+      const action = server.resource('book', { 
         author: String 
       }).action('/login', (req, res, next) => {});
 
-      resource.actions['/login'].getRouter();
+      action.getRouter();
 
       throw new Error('Invalid name should not accepted');
       

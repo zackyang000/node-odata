@@ -1,33 +1,15 @@
 import { Router } from 'express';
-import pipes from '../pipes';
 import Resource from '../ODataResource';
 import Function from '../ODataFunction';
 
 export default class Metadata {
   constructor(server) {
     this._server = server;
-    this._hooks = {
-    };
     this._count = 0;
     this._path = '/\\$metadata';
   }
 
   get() {
-    return this;
-  }
-
-  before(fn) {
-    this._hooks.before = fn;
-    return this;
-  }
-
-  after(fn) {
-    this._hooks.after = fn;
-    return this;
-  }
-
-  auth(fn) {
-    this._hooks.auth = fn;
     return this;
   }
 
@@ -39,19 +21,17 @@ export default class Metadata {
     return undefined;
   }
 
-  middleware = async (req, res) => {
+  middleware = async (req, res, next) => {
     try {
-      await pipes.authorizePipe(req, res, this._hooks.auth);
-      await pipes.beforePipe(req, res, this._hooks.before);
+      res.$odata.result = await this.ctrl(req);
+      res.$odata.status = 200;
+      res.$odata.supportedMimetypes = ['application/xml', 'application/json'];
+      next();
 
-      const result = await this.ctrl(req);
-      const data = await pipes.respondPipe(req, res, result || {});
-
-      pipes.afterPipe(req, res, this._hooks.after, data);
-    } catch (err) {
-      pipes.errorPipe(req, res, err);
+    } catch(err) {
+      next(err);
     }
-  };
+  }
 
   _router() {
     /*eslint-disable */
@@ -316,10 +296,7 @@ export default class Metadata {
     };
 
     return new Promise((resolve) => {
-      resolve({
-        status: 200,
-        $metadata: document,
-      });
+      resolve(document);
     });
   }
 }

@@ -4,7 +4,7 @@ import { odata, host, port, bookSchema } from '../support/setup';
 import books from '../support/books.json';
 import FakeDb from '../support/fake-db';
 
-describe('odata.query.count', function() {
+describe('odata.count', function() {
   let httpServer;
 
   before(async function() {

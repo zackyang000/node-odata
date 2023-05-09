@@ -1,19 +1,35 @@
 import { Router } from 'express';
-import pipes from './pipes';
+import Hooks from './spezialResources/Hooks';
 
 export default class Action {
   constructor(name, fn, options) {
 
     this.name = name;
-    this.fn = fn;
+    this.fn = async (req, res, next) => {
+      try {
+        res.$odata.status = 200;
+        await fn(req, res);
+        next();
+
+      } catch(err) {
+        next(err);
+      }
+    }
+    this.hooks = new Hooks();
 
     if (options) {
-      this.auth = options.auth;
       this.binding = options.binding;
       this.resource = options.resource;
-      this.server = options.server;
       this.$Parameter = options.$Parameter;
     }
+  }
+
+  addBefore(fn) {
+    this.hooks.addBefore(fn);
+  }
+
+  addAfter(fn) {
+    this.hooks.addAfter(fn);
   }
 
   match(method, url) {
@@ -32,7 +48,7 @@ export default class Action {
 
       const path = this.getPath();
 
-      this.router = this.getOperationRouter(path, this.fn, this.auth);
+      this.router = this.getOperationRouter(path, this.fn);
     }
 
     return this.router;
@@ -68,14 +84,10 @@ export default class Action {
     return path;
   }
 
-  getOperationRouter(path, fn, auth) {
-    const router = Router();
+  getOperationRouter(path, fn) {
+    let router = Router();
 
-    router.post(path, (req, res, next) => {
-      pipes.authorizePipe(req, res, auth)
-        .then(() => fn(req, res, next))
-        .catch((result) => pipes.errorPipe(req, res, result));
-    });
+    router.post(path, ...this.hooks.before, fn, ...this.hooks.after);
 
     return router;
   };

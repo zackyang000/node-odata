@@ -11,7 +11,11 @@ export default async (req, MongooseModel, options) => {
         reject(result);
 
       } else {
-        resolve(count.toString());
+        resolve({
+          result: count.toString(),
+          status: 200,
+          supportedMimetypes: ['text/plain']
+        });
 
       }
     });

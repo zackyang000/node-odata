@@ -67,6 +67,45 @@ const getRoutes = (url, hooks) => {
   ];
 };
 
+function replaceDot(value) {
+  if (!(value === null || value === undefined || typeof value === 'function')) {
+    if (Array.isArray(value)) {
+      return replaceDotinArray(value);
+    }
+    if (typeof value === 'object') {
+      return replaceObject(value);
+    }
+  }
+
+  return value;
+}
+
+function replaceDotinArray(array) {
+  const result = array;
+
+  result.forEach((item, index) => {
+    result[index] = replaceDot(item);
+  });
+  return result;
+}
+
+function replaceObject(obj) {
+  const result = obj;
+
+  Object.keys(result).forEach((item) => {
+    if (item.match(/^[^@][^.]+(\.[^.]+)+/)) {
+      const newPropertyName = item.replace('.', '-');
+
+      result[newPropertyName] = replaceDot(result[item]);
+      delete result[item];
+    } else {
+      result[item] = replaceDot(result[item]);
+    }
+  });
+
+  return result;
+}
+
 const getMiddlewares = (url, hooks, mongooseModel, options) => {
   const routes = getRoutes(url, hooks);
 
@@ -75,18 +114,24 @@ const getMiddlewares = (url, hooks, mongooseModel, options) => {
       ctrl, hook,
     } = route;
 
-    const middleware = async (req, res) => {
+    const middleware = async (req, res, next) => {
       try {
         await pipes.authorizePipe(req, res, hook.auth);
         await pipes.beforePipe(req, res, hook.before);
 
         const result = await ctrl(req, mongooseModel, options);
-        const data = await pipes.respondPipe(req, res, result || {});
 
-        pipes.afterPipe(req, res, hook.after, data);
+        debugger;
+        res.$odata.result = result.result ? replaceDot(result.result) : result.result;
+        res.$odata.status = result.status || res.$odata.status;
+        res.$odata.supportedMimetypes = result.supportedMimetypes || res.$odata.supportedMimetypes;
+
+        pipes.afterPipe(req, res, hook.after, res.$odata.result);
+
+        next();
 
       } catch (err) {
-        pipes.errorPipe(req, res, err);
+        next(err);
       }
     };
 
@@ -120,7 +165,7 @@ const getOperationRouter = (resourceUrl, actionUrl, fn, auth) => {
   router.post(`${resourceUrl}${actionUrl}`, (req, res, next) => {
     pipes.authorizePipe(req, res, auth)
       .then(() => fn(req, res, next))
-      .catch((result) => pipes.errorPipe(req, res, result));
+      .catch((result) => next(result));
   });
 
   return router;

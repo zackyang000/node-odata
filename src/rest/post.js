@@ -11,7 +11,10 @@ export default (req, MongooseModel) => new Promise((resolve, reject) => {
       if (err) {
         reject(err);
       } else {
-        resolve({ status: 201, entity });
+        resolve({ 
+          status: 201, 
+          result: entity 
+        });
       }
     });
   }

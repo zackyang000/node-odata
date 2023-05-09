@@ -52,6 +52,86 @@ The odata constructor takes 3 arguments: ```odata(<mongoURL>, <dbPrefix>, <optio
 
 The options object currently only supports one parameter: ```expressRequestLimit```, this will be parsed to the express middelware as the "limit" option, which allows for configuring express to support larger requests. It can be either a number or a string like "50kb", 20mb", etc.
 
+# How to
+
+## Actions
+
+### Unbound Actions
+
+Unbound Action will be defined over server directly. The interface of the passed function must correspond to the nodejs express middleware. In order for the after-hooks to be called, you should call the next callback. The errors are also passed on via the next callback.
+
+```
+server.action('login', async function(req, res, next) {
+	// in req.$odata.mongo is your db instance
+	try {
+		const user = await req.$odata.mongo.user.findOne({
+			email: req.body.email
+		});
+
+		next();
+
+	} catch(err) {
+		next(err);
+	}
+
+});
+```
+
+### Implementation of an action
+
+The interface of the passed function must correspond to the nodejs express middleware. In order for the after-hooks to be called, you should call the next callback. The errors are also passed on via the next callback.
+
+```
+server.action('login', async function(req, res, next) {
+	// in req.$odata.mongo is your db instance
+	try {
+		const user = await req.$odata.mongo.user.findOne({
+			email: req.body.email
+		});
+
+		next();
+
+	} catch(err) {
+		next(err);
+	}
+
+});
+
+
+### Parameter
+
+Parameters can be defined for the action. These will be output in the metadata.
+
+```
+server.action('login', async function(req, res, next) {
+	...
+}, {
+  $Parameter: [{
+    $Type: 'Edm.String',
+    $Name: 'email'
+  }, {
+    $Type: 'Edm.String',
+    $Name: 'password'
+  }]
+});
+```
+
+### Hooks
+
+It is possible to specify nodejs express middlewares for the actions to be performed before or after the action.
+
+```
+const action = server.action('login', ...);
+
+action.addBefore(function(req, res, next) {
+	...
+	next();
+});
+
+action.addAfter(function(req, res, next) {
+	...
+});
+```
 
 ## Current State
 

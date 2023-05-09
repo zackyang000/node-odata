@@ -1,72 +1,3 @@
-import http from 'http';
-import XmlWriter from './writer/xmlWriter';
-import JsonWirter from './writer/jsonWriter';
-import MultipartWriter from './writer/multipartWriter';
-import MimetypeParser from './parser/mimetypeParser'
-
-const xmlWriter = new XmlWriter();
-const jsonWriter = new JsonWirter();
-const multipartWriter = new MultipartWriter();
-
-function getContentType(req) {
-  if (req.headers && req.headers['content-type']) {
-    const result = req.headers['content-type'];
-
-    return result.indexOf(';') > 0 ? result.split(';')[0] : result;
-  }
-}
-
-function getWriter(req, res, result) {
-  let supportedFormats;
-  let format = req.query.$format;
-
-  if (typeof result !== 'object') {
-    supportedFormats = ['text/plain'];
-  } else if (result.$metadata) {
-    supportedFormats = ['application/xml', 'application/json'];
-  } else if (result.responses) {
-    supportedFormats = ['multipart/mixed', 'application/json'];
-    format = '';
-  } else {
-    supportedFormats = ['application/json'];
-  }
-
-  let accept;
-  let requrestContentType;
-  if (req.headers) {
-    accept = req.headers.accept ? req.headers.accept : undefined;
-    requrestContentType = result.responses && getContentType(req) ? getContentType(req) : undefined;
-  }
-
-  const mimetyeParser = new MimetypeParser();
-  const mediaType = mimetyeParser.getmMediaType(format, accept, supportedFormats, requrestContentType);
-
-  res.type(mediaType);
-
-  // xml representation of metadata
-  switch (mediaType) {
-    case 'application/json':
-      return jsonWriter.writeJson.bind(jsonWriter);
-
-    case 'application/xml':
-      return xmlWriter.writeXml.bind(xmlWriter);
-
-    case 'multipart/mixed':
-      return multipartWriter.write.bind(multipartWriter);
-
-    case 'text/plain':
-      return (res, data, status, resolve) => {
-        res.status(status).send(data);
-        resolve(data);
-      };
-
-    default:
-      const error406 = new Error('Not acceptable');
-
-      error406.status = 406;
-      throw error406;
-  }
-}
 
 const authorizePipe = async (req, res, auth) => {
   if (auth !== undefined && !await auth(req, res)) {
@@ -84,23 +15,6 @@ const beforePipe = (req, res, before) => new Promise((resolve) => {
   resolve();
 });
 
-const respondPipe = (req, res, result) => new Promise((resolve, reject) => {
-  try {
-    if (result.status === 204) { // no content
-      res.status(204).end();
-      resolve();
-      return;
-    }
-
-    const status = result.status || 200;
-    const writer = getWriter(req, res, result);
-
-    res.setHeader('OData-Version', `4.0`);
-    writer(res, result, status, resolve, req.httpVersion);
-  } catch (error) {
-    reject(error);
-  }
-});
 
 const afterPipe = (req, res, after, data) => new Promise((resolve) => {
   if (after) {
@@ -109,16 +23,8 @@ const afterPipe = (req, res, after, data) => new Promise((resolve) => {
   resolve();
 });
 
-const errorPipe = (req, res, err) => new Promise(() => {
-  const status = err.status || 500;
-  const text = err.text || err.message || http.STATUS_CODES[status];
-  res.status(status).send(text);
-});
-
 export default {
   afterPipe,
   authorizePipe,
-  beforePipe,
-  errorPipe,
-  respondPipe,
+  beforePipe
 };

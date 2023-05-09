@@ -11,12 +11,14 @@ describe('odata.batch', () => {
   beforeEach(async function () {
     const db = new FakeDb();
     const server = odata(db);
-    resource = server.resource('book', bookSchema)
-      .action('entity-action', (req, res, next) => {
-        res.status(200).jsonp({result: 'Hello! I am an action, that bound to entity.'})
+    resource = server.resource('book', bookSchema);
+    resource.action('entity-action', (req, res, next) => {
+        res.$odata.status = 200;
+        res.$odata.result = {result: 'Hello! I am an action, that bound to entity.'};
       }, { binding: 'entity'});
     server.action('unbound-action', (req, res, next) => {
-      res.status(200).jsonp({result: 'Hello! I am an unbound action.'})
+      res.$odata.status = 200;
+      res.$odata.result = { result: 'Hello! I am an unbound action.'};
     })
     books = JSON.parse(JSON.stringify(db.addData('book', data)));
     httpServer = server.listen(port);

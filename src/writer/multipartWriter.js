@@ -1,5 +1,5 @@
 export default class MultipartWriter {
-  write(res, result, status, resolve, httpVersion) {
+  write(res, result, status, httpVersion) {
     const boundary = 'batch_1';
     let body = '';
 
@@ -23,6 +23,5 @@ export default class MultipartWriter {
 
     res.setHeader('content-type',`multipart/mixed;boundary=${boundary}`);
     res.send(Buffer.from(body)).status(status);
-    resolve();
   }
 }

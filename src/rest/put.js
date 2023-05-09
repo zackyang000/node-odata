@@ -5,7 +5,10 @@ function _updateEntity(resolve, reject, MongooseModel, req, entity) {
     }
     const newEntity = req.body;
     newEntity.id = entity.id;
-    return resolve({ entity: newEntity, originEntity: entity });
+    return resolve({ 
+      result: newEntity,
+      status: 200 
+    });
   });
 }
 
@@ -20,7 +23,10 @@ function _createEntity(resolve, reject, MongooseModel, req, entity) {
     if (err) {
       return reject(err);
     }
-    return resolve({ status: 201, entity: newEntity, originEntity: entity });
+    return resolve({ 
+      status: 201, 
+      result: newEntity 
+    });
   });
 }
 

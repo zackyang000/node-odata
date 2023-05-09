@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import pipes from '../pipes';
-import MimetypeParser from '../parser/mimetypeParser';
+import error from '../middlewares/error';
 import { STATUS_CODES } from 'http';
+import writer from '../middlewares/writer';
 
 export default class Batch {
   constructor(server) {
     this._server = server;
-    this._hooks = {
-    };
     this._url = '/\\$batch';
   }
 
@@ -15,36 +13,20 @@ export default class Batch {
     return this;
   }
 
-  before(fn) {
-    this._hooks.before = fn;
-    return this;
-  }
-
-  after(fn) {
-    this._hooks.after = fn;
-    return this;
-  }
-
-  auth(fn) {
-    this._hooks.auth = fn;
-    return this;
-  }
-
-  middleware = async (req, res) => {
+  middleware = async (req, res, next) => {
     try {
-      await pipes.authorizePipe(req, res, this._hooks.auth);
-      await pipes.beforePipe(req, res, this._hooks.before);
-
-      const result = await this.ctrl(req, error => {
+      res.$odata.result = await this.ctrl(req, res, error => {
         if (error instanceof Error) {
           throw error;
         }
       });
-      const data = await pipes.respondPipe(req, res, result || {});
+      res.$odata.supportedMimetypes = ['multipart/mixed', 'application/json'];
+      res.$odata.status = 200;
 
-      pipes.afterPipe(req, res, this._hooks.after, data);
+      next();
+
     } catch (err) {
-      pipes.errorPipe(req, res, err);
+      next(err);
     }
   };
 
@@ -97,7 +79,43 @@ export default class Batch {
       }, {});
   }
 
-  async ctrl(req, next) {
+  async executeSingleRequest(handler, req, res) {
+    try {
+      for (let i = 0; i < this._server.hooks.before.length; ++i) {
+        const hook = this._server.hooks.before[i];
+
+        await hook(req, res, err => {
+          if (err) {
+            throw err;
+          }
+        });
+      }
+
+      await handler(req, res, err => {
+        if (err) {
+          throw err;
+        }
+      });
+
+
+      for(let i = 0; i < this._server.hooks.after.length; ++i) {
+        const hook = this._server.hooks.after[i];
+
+        if (hook !== error) {
+          await hook(req, res, err => {
+            if (err) {
+              throw err;
+            }
+          });
+        }
+      }
+
+    } catch (err) {
+      error(err, req, res);
+    }
+  }
+
+  async ctrl(req, res, next) {
     const responses = req.body.requests.map(async function (request) {
       const handler = Object.keys(this._server.resources)
         .map((name) => this._server.resources[name].match(request.method, request.url))
@@ -113,6 +131,7 @@ export default class Batch {
         headers: request.headers,
         query: Batch.mapToQuery(request.url),
         body: request.body,
+        $odata: res.$odata
       };
 
       const paramsMatch = request.url.match(/^\/[^#?(]+\('(\w+)'\)/);
@@ -162,7 +181,8 @@ export default class Batch {
           },
         };
 
-        await handler(currentRequest, currentResponse, next);
+        await this.executeSingleRequest(handler, currentRequest, currentResponse);
+
       }
       return result;
     }.bind(this));

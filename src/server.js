@@ -6,6 +6,9 @@ import ServiceDocument from './spezialResources/ODataServiceDocument';
 import Batch from './spezialResources/ODataBatch';
 import Db from './db/db';
 import Action from './Action';
+import error from './middlewares/error';
+import writer from './middlewares/writer';
+import Hooks from './spezialResources/Hooks';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -20,6 +23,20 @@ class Server {
       orderby: undefined,
     };
     this.defaultConfiguration(db, prefix);
+
+    this.hooks = new Hooks();
+    const dbValue = this.get('db');
+
+    this.hooks.addBefore(async (req, res) => {
+      req.$odata = {
+        mongo : dbValue._models
+      };
+      res.$odata = {
+        status: 404,
+        supportedMimetypes: ['application/json']
+      }
+    });
+    this.hooks.addAfter(writer);
 
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
     // Should mix _resources object and resources object: _resources + resource = resources.
@@ -108,13 +125,9 @@ class Server {
   }
 
   action(name, fn, options) {
-    this.actions[name] = new Action(name, fn,
-      {
-        ...options,
-        server: this
-      });
+    this.actions[name] = new Action(name, fn, options);
 
-    return this;
+    return this.actions[name];
   }
 
   _getRouter() {
@@ -142,7 +155,7 @@ class Server {
       result.push(action.getRouter());
     });
 
-    return result;
+    return [...this.hooks.before, ...result, ...this.hooks.after, error];
   }
 
   listen(...args) {
