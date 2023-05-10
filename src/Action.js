@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import Hooks from './spezialResources/Hooks';
+import Hooks from './odata/Hooks';
+import { validateParameters, validateIdentifier } from './odata/validator';
 
 export default class Action {
   constructor(name, fn, options) {
@@ -42,8 +43,10 @@ export default class Action {
 
   getRouter() {
     if (!this.router) {
-      if (!this.name || !this.name.match(/^^[_a-zA-Z0-9][_a-zA-Z0-9.-]*$/)) {
-        throw new Error(`Invalid action name '${this.name}'`);
+      validateIdentifier(this.name);
+
+      if (this.$Parameter) {
+        validateParameters(this.$Parameter);
       }
 
       const path = this.getPath();

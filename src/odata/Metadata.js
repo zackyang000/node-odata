@@ -177,7 +177,7 @@ export default class Metadata {
         const item = para;
 
         if (para.$Type.search(/^edm/i) === -1 ) {
-          item.$Type = `node.odata.${para.$Type}`;
+          item.$Type = `${para.$Type}`;
         }
 
         result.$Parameter.push(item);

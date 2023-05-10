@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mocked/rest.get.js"
+        "test/mocked/metadata.action.js"
       ]
     },
     {

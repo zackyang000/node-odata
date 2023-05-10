@@ -193,7 +193,7 @@ describe('metadata.action', () => {
       throw new Error('Invalid name should not accepted');
       
     } catch(error) {
-      error.message.should.equal(`Invalid action name '/login'`);
+      error.message.should.equal(`Invalid simple identifier '/login'`);
     }
   });
 
@@ -243,7 +243,7 @@ describe('metadata.action', () => {
       (req, res, next) => {}, { 
         $Parameter: [{
           $Name: 'book',
-          $Type: 'book'
+          $Type: 'node.odata.book'
         }]
       });
     httpServer = server.listen(port);
