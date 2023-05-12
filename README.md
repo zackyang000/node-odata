@@ -58,44 +58,80 @@ The options object currently only supports one parameter: ```expressRequestLimit
 
 ### Unbound Actions
 
-Unbound Action will be defined over server directly. The interface of the passed function must correspond to the nodejs express middleware. In order for the after-hooks to be called, you should call the next callback. The errors are also passed on via the next callback.
+Unbound Action will be defined over server directly. 
 
 ```
-server.action('login', async function(req, res, next) {
+server.action('login', async function(req, res) {
 	// in req.$odata.mongo is your db instance
-	try {
-		const user = await req.$odata.mongo.user.findOne({
-			email: req.body.email
-		});
 
-		next();
-
-	} catch(err) {
-		next(err);
-	}
+	res.$odata.result = await req.$odata.mongo.user.findOne({
+		email: req.body.email
+	});
 
 });
+```
+
+Calling an unbound action
+
+```
+POST /node.odata.login
+```
+
+### Bound Actions
+
+Bound Action are defined over resource. An action can be bound to single resource or to collection of resources.
+
+#### Entity Actions
+
+```
+resource.action('bound-action', (req, res) => {
+	...
+}, { binding: 'entity' });
+```
+
+will be called
+
+```
+POST /book('01234')/bound-action
+```
+
+#### Collection Actions
+
+```
+resource.action('bound-action', (req, res) => {
+	...
+}, { binding: 'collection' });
+```
+
+will be called
+
+```
+POST /book/bound-action
 ```
 
 ### Implementation of an action
 
-The interface of the passed function must correspond to the nodejs express middleware. In order for the after-hooks to be called, you should call the next callback. The errors are also passed on via the next callback.
+The interface of the passed function must correspond to the nodejs express middleware. You should assign the result to the res.$odata.result attribute. An error can be thrown and it can contain the status attribute.
 
 ```
-server.action('login', async function(req, res, next) {
+server.action('login', async function(req, res) {
 	// in req.$odata.mongo is your db instance
-	try {
-		const user = await req.$odata.mongo.user.findOne({
-			email: req.body.email
-		});
 
-		next();
+    res.$odata.result = {
+			user: await req.$odata.mongo.user.findOne({
+				email: req.body.email
+			})
+		}
 
-	} catch(err) {
-		next(err);
-	}
+		if (!res.$odata.result) {
+			const err = new Error('Login failed');
+
+			err.status = 403;
+			throw err;
+		}
 
 });
+```
 
 
 ### Parameter
@@ -118,17 +154,26 @@ server.action('login', async function(req, res, next) {
 
 ### Hooks
 
-It is possible to specify nodejs express middlewares for the actions to be performed before or after the action.
+It is possible to specify nodejs express middlewares for the actions to be performed before or after the action. Any data assigned to req.$odata or res.$odata will be available on action implementation and subsequent hooks. An error thrown in the hook interrupts further processing.
 
 ```
 const action = server.action('login', ...);
 
-action.addBefore(function(req, res, next) {
+action.addBefore(async (req, res) => {
 	...
-	next();
+	res.$odata.result = { result: 'any' }; // client receives: { result: 'any' }
 });
 
-action.addAfter(function(req, res, next) {
+action.addBefore(async (req, res) => {
+	if (!req.user) {
+		const err = new Error();
+
+		err.status = 401;
+		throw err;
+	}
+});
+
+action.addAfter(async (req, res) => {
 	...
 });
 ```
