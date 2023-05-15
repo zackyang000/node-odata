@@ -79,7 +79,7 @@ POST /node.odata.login
 
 ### Bound Actions
 
-Bound Action are defined over resource. An action can be bound to single resource or to collection of resources.
+Bound Action are defined over resource. An action can be bound to single resource or to collection of resources. For the bound action, the first parameter of the bound resource type is specified in the metadata.
 
 #### Entity Actions
 
@@ -151,6 +151,17 @@ server.action('login', async function(req, res, next) {
   }]
 });
 ```
+The following attributes can be specified for parameters:
+
+| Attribute     | Type    | Possible Values         |
+|---------------------------------------------------|
+| $Type         | string  | Build-In Types(Edm.*) or custom defined types(node.odata.*) |
+| $Collection   | boolean | true/false              |
+| $Nullable     | boolean | true/false              |
+| $MaxLength    | number  | Number bigger than zero |
+| $DefaultValue | string | Any text                 |
+| $Unicode      | boolean | true/false              |
+| $SRID         | number  | Not negative Number     |
 
 ### Hooks
 
