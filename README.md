@@ -153,15 +153,14 @@ server.action('login', async function(req, res, next) {
 ```
 The following attributes can be specified for parameters:
 
-| Attribute     | Type    | Possible Values         |
-|---------------------------------------------------|
-| $Type         | string  | Build-In Types(Edm.*) or custom defined types(node.odata.*) |
-| $Collection   | boolean | true/false              |
-| $Nullable     | boolean | true/false              |
-| $MaxLength    | number  | Number bigger than zero |
-| $DefaultValue | string | Any text                 |
-| $Unicode      | boolean | true/false              |
-| $SRID         | number  | Not negative Number     |
+- $Type	Build-In Types(Edm.\*) or custom defined types(node.odata.*)
+- $Collection true/false
+- $Nullable true/false
+- $MaxLength Number bigger than zero
+- $DefaultValue any text
+- $Unicode true/false
+- $SRID not negative Number
+  
 
 ### Hooks
 
