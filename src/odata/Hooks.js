@@ -1,27 +1,36 @@
+import Console from "../writer/Console";
+
 export default class Hooks {
   constructor() {
     this.before = [];
     this.after = [];
   }
 
-  addBefore(fn) {
+  addBefore(fn, name) {
     if (!fn) {
       throw new Error(`Parameter 'fn' should be given`);
     }
 
     if (Array.isArray(fn)) {
-      this.before = this.before.concat(fn.map(item => this.suppressNext(item)));
+      this.before = this.before.concat(fn.map(item => this.suppressNext(item, name)));
 
     } else {
-      this.before.push(this.suppressNext(fn));
+      this.before.push(this.suppressNext(fn, name));
     }
   }
 
-  suppressNext(fn) {
+  suppressNext(fn, name) {
     return async (req, res, next) => {
       try {
-        await fn(req, res);
-        next();
+        const con = new Console();
+
+        con.debug(`Hook ${name} started`);
+
+        const prom = fn(req, res, next);
+        if (prom && prom.then) {
+          await prom;
+          next();
+        }
 
       } catch (err) {
         next(err);
@@ -29,15 +38,15 @@ export default class Hooks {
     };
   }
 
-  addAfter(fn) {
+  addAfter(fn, name) {
     if (!fn) {
       throw new Error(`Parameter 'fn' should be given`);
     }
 
     if (Array.isArray(fn)) {
-      this.after = fn.map(item => this.suppressNext(item)).concat(this.after);
+      this.after = fn.map(item => this.suppressNext(item, name)).concat(this.after);
     } else {
-      this.after.unshift(this.suppressNext(fn));
+      this.after.unshift(this.suppressNext(fn, name));
     }
   }
 

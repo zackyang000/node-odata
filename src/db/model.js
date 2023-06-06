@@ -8,27 +8,31 @@ export default class {
     return new MongooseModel(data);
   }
 
+  async countDocuments() {
+    return await this.model.countDocuments();
+  }
+
   find() {
     return this.model.find();
   }
 
-  findById(id, callback) {
-    this.model.findById(id, callback);
+  async findById(id, callback) {
+    return await this.model.findById(id, callback);
   }
 
-  findByIdAndUpdate(id, data, callback) {
-    this.model.findByIdAndUpdate(id, data, callback);
+  async findByIdAndUpdate(id, data, callback) {
+    return await this.model.findByIdAndUpdate(id, data, callback);
   }
 
-  findOne(filter, callback) {
-    this.model.findOne(filter, callback);
+  async findOne(filter, callback) {
+    return await this.model.findOne(filter, callback);
   }
 
-  remove(filter, callback) {
-    this.model.remove(filter, callback);
+  async remove(filter, callback) {
+    return await this.model.remove(filter, callback);
   }
 
-  update(filter, data, callback) {
-    this.model.update(filter, data, callback);
+  async update(filter, data, callback) {
+    return await this.model.update(filter, data, callback);
   }
 }

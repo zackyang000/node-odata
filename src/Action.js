@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Hooks from './odata/Hooks';
 import { validateParameters, validateIdentifier } from './odata/validator';
+import Console from './writer/Console';
 
 export default class Action {
   constructor(name, fn, options) {
@@ -8,12 +9,23 @@ export default class Action {
     this.name = name;
     this.fn = async (req, res, next) => {
       try {
-        res.$odata.status = 200;
-        await fn(req, res);
-        next();
+        const con = new Console();
 
-      } catch(err) {
-        next(err);
+        con.debug(`Action ${this.name} started`);
+
+        res.$odata.status = 200;
+        const result = fn(req, res, next);
+
+        if (result || res.$odata.status === 204) {
+          if (result.then) {
+            await result;
+          } 
+
+          next();
+        }
+        
+      } catch (error) {
+        next(error);
       }
     }
     this.hooks = new Hooks();
@@ -25,12 +37,12 @@ export default class Action {
     }
   }
 
-  addBefore(fn) {
-    this.hooks.addBefore(fn);
+  addBefore(fn, name) {
+    this.hooks.addBefore(fn, name);
   }
 
-  addAfter(fn) {
-    this.hooks.addAfter(fn);
+  addAfter(fn, name) {
+    this.hooks.addAfter(fn, name);
   }
 
   match(method, url) {

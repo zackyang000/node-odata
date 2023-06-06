@@ -35,8 +35,8 @@ class Server {
         status: 404,
         supportedMimetypes: ['application/json']
       }
-    });
-    this.hooks.addAfter(writer);
+    }, 'service-initialization');
+    this.hooks.addAfter(writer, 'writer');
 
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
     // Should mix _resources object and resources object: _resources + resource = resources.
@@ -156,6 +156,10 @@ class Server {
     });
 
     return [...this.hooks.before, ...result, ...this.hooks.after, error];
+  }
+
+  complexType(name, properties) {
+    this.resources.$metadata.complexType(name, properties);
   }
 
   listen(...args) {

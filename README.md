@@ -118,7 +118,7 @@ server.action('login', async function(req, res) {
 	// in req.$odata.mongo is your db instance
 
     res.$odata.result = {
-			user: await req.$odata.mongo.user.findOne({
+				user: await req.$odata.mongo.user.findOne({
 				email: req.body.email
 			})
 		}
@@ -164,7 +164,7 @@ The following attributes can be specified for parameters:
 
 ### Hooks
 
-It is possible to specify nodejs express middlewares for the actions to be performed before or after the action. Any data assigned to req.$odata or res.$odata will be available on action implementation and subsequent hooks. An error thrown in the hook interrupts further processing.
+It is possible to specify nodejs express middlewares for the actions to be performed before or after the action. Any data assigned to req.$odata or res.$odata will be available on action implementation and subsequent hooks. An error thrown in the hook interrupts further processing. it is possible to provide a name of hook for tracing.
 
 ```
 const action = server.action('login', ...);
@@ -172,7 +172,7 @@ const action = server.action('login', ...);
 action.addBefore(async (req, res) => {
 	...
 	res.$odata.result = { result: 'any' }; // client receives: { result: 'any' }
-});
+}, 'name-of-hook');
 
 action.addBefore(async (req, res) => {
 	if (!req.user) {
@@ -185,8 +185,12 @@ action.addBefore(async (req, res) => {
 
 action.addAfter(async (req, res) => {
 	...
-});
+}, 'name-of-hook');
 ```
+
+## Loging
+
+In the event of an unexpected error, no meaningful error message is returned to the frontend. This is necessary to make it harder for hackers. However, the development will not be easy either. For this reason there are additional logging routines. Logging can be switched on and off by setting the log level. To do this, you would have to set the environment variable ```LOG_LEVEL``` to the value ```debug```. In this case, messages that are still not meaningful are sent to the frontend, but the exception objects are logged in the log files. In addition, the start of processing of each resource and each hook is also logged.
 
 ## Current State
 

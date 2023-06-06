@@ -58,7 +58,6 @@ function getWriter(req, res, result) {
 export default async function writer(req, res) {
   switch (res.$odata.status) {
     case 404:
-      debugger;
       // not found or no handler worked on
       const err = new Error();
       err.status = 404;

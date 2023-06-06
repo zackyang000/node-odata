@@ -1,12 +1,31 @@
 import { Router } from 'express';
 import Resource from '../ODataResource';
 import Function from '../ODataFunction';
+import { validate, validateIdentifier } from './validator';
 
 export default class Metadata {
   constructor(server) {
     this._server = server;
     this._count = 0;
     this._path = '/\\$metadata';
+
+    this.complexTypes = {};
+  }
+
+  complexType(name, properties) {
+    if (this.complexTypes[name]) {
+      throw new Error(`Complex type with name ${name} allready exists`);
+    }
+
+    validateIdentifier(name);
+
+    const typeObject = {
+      $Kind: 'ComplexType',
+      ...properties
+    };
+    validate(typeObject);
+
+    this.complexTypes[name] = typeObject;
   }
 
   get() {
@@ -42,7 +61,7 @@ export default class Metadata {
     return router;
   }
 
-  visitProperty(node, model, root) {
+  visitProperty(node, model) {
     const result = {};
 
     if (model.default) {
@@ -80,11 +99,11 @@ export default class Metadata {
           const notClassifiedName = `${node.path}Child${this._count}`;
           // Array of complex type
           result.$Type = `node.odata.${notClassifiedName}`;
-          root(notClassifiedName, this.visitor('ComplexType', node.schema.paths, model[0], root));
+          this.complexType(notClassifiedName, this.visitor('ComplexType', node.schema.paths, model[0]));
         } else {
           const arrayItemType = this.visitor('Property', {
             instance: node.options.type[0].name || node.options.type[0].type.name //Enums have an object with enum and type
-          }, model[0], root);
+          }, model[0]);
 
           result.$Type = arrayItemType.$Type;
         }
@@ -109,7 +128,7 @@ export default class Metadata {
     return model[property];
   }
 
-  visitEntityType(node, model, root) {
+  visitEntityType(node, model) {
     const properties = Object.keys(node)
       .filter((path) => path !== '_id')
       .reduce((previousProperty, curentProperty) => {
@@ -117,7 +136,7 @@ export default class Metadata {
         const propertyName = curentProperty.replace(/\./g, '-');
         const result = {
           ...previousProperty,
-          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty, root),
+          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty),
         };
 
         return result;
@@ -134,7 +153,7 @@ export default class Metadata {
     };
   }
 
-  visitComplexType(node, model, root) {
+  visitComplexType(node, model) {
     const properties = Object.keys(node)
       .filter((item) => item !== '_id')
       .reduce((previousProperty, curentProperty) => {
@@ -142,16 +161,13 @@ export default class Metadata {
         const modelProperty = this.resolveModelproperty(model, curentProperty);
         const result = {
           ...previousProperty,
-          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty, root),
+          [propertyName]: this.visitor('Property', node[curentProperty], modelProperty),
         };
 
         return result;
       }, {});
 
-    return {
-      $Kind: 'ComplexType',
-      ...properties,
-    };
+    return properties;
   }
 
   static visitAction(node) {
@@ -195,22 +211,22 @@ export default class Metadata {
     };
   }
 
-  visitor(type, node, model, root) {
+  visitor(type, node, model) {
     switch (type) {
       case 'Property':
-        return this.visitProperty(node, model, root);
+        return this.visitProperty(node, model);
 
       case 'ComplexType':
-        return this.visitComplexType(node, model, root);
+        return this.visitComplexType(node, model);
 
       case 'Action':
         return Metadata.visitAction(node);
 
       case 'Function':
-        return Metadata.visitFunction(node, root);
+        return Metadata.visitFunction(node);
 
       default:
-        return this.visitEntityType(node, model, root);
+        return this.visitEntityType(node, model);
     }
   }
 
@@ -219,20 +235,19 @@ export default class Metadata {
     const entityTypes = entityTypeNames.reduce((previousResource, currentResource) => {
       const resource = this._server.resources[currentResource];
       const result = { ...previousResource };
-      const attachToRoot = (name, value) => { result[name] = value; };
 
       if (resource instanceof Resource) {
         const { paths } = resource.model.model.schema;
 
-        result[currentResource] = this.visitor('EntityType', paths, resource._model, attachToRoot);
+        result[currentResource] = this.visitor('EntityType', paths, resource._model);
         const actions = Object.keys(resource.actions);
         if (actions && actions.length) {
           actions.forEach((action) => {
-            result[action] = this.visitor('Action', resource.actions[action], attachToRoot);
+            result[action] = this.visitor('Action', resource.actions[action]);
           });
         }
       } else if (resource instanceof Function) {
-        result[currentResource] = this.visitor('Function', resource, attachToRoot);
+        result[currentResource] = this.visitor('Function', resource);
       }
 
       return result;
@@ -260,7 +275,6 @@ export default class Metadata {
     const actionNames = Object.keys(this._server.actions);
     const actionImports = actionNames.reduce((previousAction, currentAction) => {
       const result = {...previousAction};
-      const action = this._server.actions[currentAction];
 
       result[`${currentAction}-import`] = {
         $Action: `node.odata.${currentAction}`
@@ -285,6 +299,7 @@ export default class Metadata {
         $UnderlyingType: 'Edm.String',
         $MaxLength: 24,
       },
+      ...this.complexTypes,
       ...entityTypes,
       ...unboundActions,
       $EntityContainer: 'node.odata',

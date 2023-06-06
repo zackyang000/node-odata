@@ -27,7 +27,6 @@ describe('hook.action', () => {
     }
   });
 
-
   it('should call fn and before hook', async function () {
     const callbackFn = sinon.spy();
     const action = server.action('salam-aleikum', async (req, res) => {
@@ -39,7 +38,7 @@ describe('hook.action', () => {
     action.addBefore(async (req, res) => {
       req.hook = 'data drives';
       callbackHook();
-    });
+    }, 'sample-before');
     httpServer = server.listen(port);
 
     const res = await request(host).post(`/node.odata.salam-aleikum`);
@@ -63,7 +62,7 @@ describe('hook.action', () => {
       error.status = 401;
       
       throw error;
-    });
+    }, 'sample-bug-hook');
     httpServer = server.listen(port);
 
     const res = await request(host).post(`/node.odata.salam-aleikum`);
@@ -74,7 +73,7 @@ describe('hook.action', () => {
 
   it('should call fn and after hook', async function () {
     const callbackFn = sinon.spy();
-    const action = server.action('salam-aleikum', (req, res) => {
+    const action = server.action('salam-aleikum', async (req, res) => {
       callbackFn();
       res.$odata.result = {result: 'data drives'};
     });
@@ -82,7 +81,7 @@ describe('hook.action', () => {
     const callbackHook = sinon.spy();
     action.addAfter(async (req, res) => {
       callbackHook();
-    });
+    }, 'sample-after-hook');
     httpServer = server.listen(port);
 
     const res = await request(host).post(`/node.odata.salam-aleikum`);
@@ -91,6 +90,31 @@ describe('hook.action', () => {
 
     callbackFn.should.be.callCount(1);
     callbackHook.should.be.callCount(1);
+  });
+
+  it('should call next callback by using async func', async function () {
+    const action = server.action('salam-aleikum', async (req, res) => {
+      res.$odata.status = 204;
+    });
+
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/node.odata.salam-aleikum`);
+
+    res.res.statusMessage.should.be.equal('No Content');
+  });
+
+  it('should works with next callback', async function () {
+    const action = server.action('salam-aleikum', async (req, res, next) => {
+      res.$odata.status = 204;
+      next();
+    });
+
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/node.odata.salam-aleikum`);
+
+    res.res.statusMessage.should.be.equal('No Content');
   });
 
 });

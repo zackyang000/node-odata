@@ -9,7 +9,6 @@ export const validateIdentifier = (identifier) => {
 function shouldContains(property,  member, list) {
   if (property[member] && list.indexOf(property[member]) === -1
     && (!property[member].match(/node\.odata/) || member != '$Type')) {// custom type
-      debugger;
     throw new Error(`${member} '${property[member]}' is invalid`);
   }
 }

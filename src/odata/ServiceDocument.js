@@ -23,7 +23,6 @@ export default class Metadata {
     try {
       res.$odata.result = await this.ctrl(req);
       res.$odata.status = 200;
-      debugger;
       
       next();
 

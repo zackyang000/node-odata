@@ -16,9 +16,10 @@ describe('model.complex.action', () => {
     resource.action('all-item-greater', (req, res, next) => {
         const { price } = req.query;
         const $elemMatch = { price: { $gt: price } };
-        server.resources.order.model.exec((err, data) => {
+        req.$odata.mongo.order.exec((err, data) => {
           res.$odata.result = data.slice(1);
           res.$odata.status = 200;
+          next();
         });
       }, { binding : 'collection' });
     httpServer = server.listen(port);

@@ -20,8 +20,11 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mocked/metadata.action.js"
-      ]
+        "test/mocked/odata.error.js"
+      ],
+      "env": {
+        "LOG_LEVEL": "debug"
+      }
     },
     {
         "type": "node",

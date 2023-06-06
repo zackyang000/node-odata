@@ -31,7 +31,10 @@ describe('odata.actions', () => {
       .action('50off', (req, res, next) => {
         req.$odata.mongo.book.findById(req.params.id, (err, book) => {
           book.price = halfPrice(book.price);
-          book.save((err) => res.$odata.result = book);
+          book.save((err) => {
+            res.$odata.result = book;
+            next();
+          });
         });
       }, {
         binding: 'entity'
@@ -47,7 +50,7 @@ describe('odata.actions', () => {
   });
 
   it('should work with unbound action', async function () {
-    server.action('salam-aleikum', (req, res, next) => {
+    server.action('salam-aleikum', async (req, res) => {
       res.$odata.result = {result: 'Wa aleikum assalam'};
     })
     httpServer = server.listen(port);
@@ -62,7 +65,7 @@ describe('odata.actions', () => {
   });
 
   it('should return 404 for action url without namespace', async function () {
-    server.action('salam-aleikum', (req, res, next) => {
+    server.action('salam-aleikum', async (req, res) => {
       res.$odata.result = {result: 'Wa aleikum assalam'};
     })
     httpServer = server.listen(port);

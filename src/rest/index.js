@@ -7,6 +7,7 @@ import patch from './patch';
 import get from './get';
 import pipes from '../pipes';
 import count from './count';
+import Console from '../writer/Console';
 
 const getRoutes = (url, hooks) => {
   const resourceListURL = `/${url}`;
@@ -111,17 +112,20 @@ const getMiddlewares = (url, hooks, mongooseModel, options) => {
 
   return routes.map((route) => {
     const {
-      ctrl, hook,
+      ctrl, hook, method, url
     } = route;
 
     const middleware = async (req, res, next) => {
       try {
+        const con = new Console();
+
+        con.debug(`resource handler for ${method} ${url} started`);
+
         await pipes.authorizePipe(req, res, hook.auth);
         await pipes.beforePipe(req, res, hook.before);
 
         const result = await ctrl(req, mongooseModel, options);
 
-        debugger;
         res.$odata.result = result.result ? replaceDot(result.result) : result.result;
         res.$odata.status = result.status || res.$odata.status;
         res.$odata.supportedMimetypes = result.supportedMimetypes || res.$odata.supportedMimetypes;
