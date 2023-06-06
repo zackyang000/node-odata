@@ -55,7 +55,7 @@ function getWriter(req, res, result) {
   }
 }
 
-export default async function writer(req, res) {
+export default function writer(req, res) {
   switch (res.$odata.status) {
     case 404:
       // not found or no handler worked on
