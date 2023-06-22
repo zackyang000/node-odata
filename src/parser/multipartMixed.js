@@ -28,7 +28,8 @@ function multipart(req, res, next) {
         result.method = matchMethodUrl[1].toLowerCase();
         result.url = matchMethodUrl[2];
 
-        const matchHeaders = singleRequestText.match(/^^([\w-]+)\s*:\s*([\w.-\/-]+)\s*$/gmi);
+        const headerText = singleRequestText.split(matchMethodUrl[1])[1];
+        const matchHeaders = headerText.match(/^^([\w-]+)\s*:\s*([\w\s;=.\/-]+)\s*$/gmi);
 
         result.headers = {
         };

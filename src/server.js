@@ -1,11 +1,12 @@
 import createExpress from './express';
-import Resource from './ODataResource';
+import ODataResource from './ODataResource';
+import Entity from './odata/Entity';
 import Func from './ODataFunction';
 import Metadata from './odata/Metadata';
 import ServiceDocument from './odata/ServiceDocument';
 import Batch from './odata/Batch';
 import Db from './db/db';
-import Action from './Action';
+import Action from './odata/Action';
 import error from './middlewares/error';
 import writer from './middlewares/writer';
 import Hooks from './odata/Hooks';
@@ -36,7 +37,7 @@ class Server {
         supportedMimetypes: ['application/json']
       }
     }, 'service-initialization');
-    this.hooks.addAfter(writer, 'writer');
+    this.hooks.addAfter(writer, 'writer', true);
 
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
     // Should mix _resources object and resources object: _resources + resource = resources.
@@ -63,9 +64,19 @@ class Server {
     }
 
     const db = this.get('db');
-    this.resources[name] = new Resource(this, name, model);
+    this.resources[name] = new ODataResource(this, name, model);
 
     this.resources[name].setModel(db.register(name, model));
+
+    return this.resources[name];
+  }
+
+  entity(name, handler, metadata) {
+    if (this.resources[name]) {
+      throw new Error(`Entity with name "${name}" already defined`);
+    }
+
+    this.resources[name] = new Entity(name, handler, metadata);
 
     return this.resources[name];
   }
@@ -138,7 +149,7 @@ class Server {
     Object.keys(this.resources).forEach((resourceKey) => {
       const resource = this.resources[resourceKey];
 
-      result.push(resource._router(this.getSettings()));
+      result.push(resource._router ? resource._router(this.getSettings()) : resource.getRouter());
 
       if (resource.actions) {
         Object.keys(resource.actions).forEach((actionKey) => {
@@ -177,7 +188,7 @@ class Server {
   }
 
   use(...args) {
-    if (args[0] instanceof Resource) {
+    if (args[0] instanceof ODataResource) {
       const [resource] = args;
       this.resources[resource.getName()] = resource;
       return;

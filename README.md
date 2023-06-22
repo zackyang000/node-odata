@@ -54,6 +54,62 @@ The options object currently only supports one parameter: ```expressRequestLimit
 
 # How to
 
+## Entities
+
+With entities you can provide a kind of virtual table via the OData service. The following operations can be implemented on an entity:
+ - list: Returns one or more items from the list. The result array must be encapsulated in a property named "value". e.g.({value: []})
+ - get: Returns exactly one item
+ - post: Creates a new Item
+ - put: Updates an existing item
+ - delete: Deletes an exsiting item
+ - patch: Merges properties of an existing items with incomming attributes
+ - count: Returns a count of items in the list
+
+Here an example of an entity implementation. To define an entity, you must call the server.entity method. Pass the name of the entity as the first parameter. The second parameter allows you to pass the implementation for each operation. If you do not pass a handler for an operation, calling that operation returns "Not Implemented". With the third parameter you pass the description of your entity. An object with the $Key property in which you list the names of all key columns. The other properties of the object describe the properties of your entity.
+
+```
+const odata = require('node-odata');
+const server = odata(process.env.DATABASE || 'mongodb://localhost:27017/example');
+
+
+server.complexType('fullName', {
+  first: {
+    $Type: 'Edm.String'
+  },
+  last: {
+    $Type: 'Edm.String'
+  }
+});
+
+const entity = server.entity('user', {
+  list: async (req, res) => {
+    res.$odata.status = 200;
+    res.$odata.result = {
+      value: [{ 
+				id: '1',
+				name: { first: 'Max', last: 'Mustermann' }
+			}]
+    };
+
+  },
+	count: async (req, res) => {
+    res.$odata.status = 200;
+    res.$odata.result = 1;
+	}
+}, {
+  $Key: ['title'],
+  id: {
+    $Type: 'node.odata.ObjectId'
+  },
+  name: {
+    $Type: 'node.odata.fullName'
+  },
+  email: {
+    $Type: 'Edm.String'
+  }
+});
+```
+
 ## Actions
 
 ### Unbound Actions
@@ -162,9 +218,9 @@ The following attributes can be specified for parameters:
 - $SRID not negative Number
   
 
-### Hooks
+## Hooks
 
-It is possible to specify nodejs express middlewares for the actions to be performed before or after the action. Any data assigned to req.$odata or res.$odata will be available on action implementation and subsequent hooks. An error thrown in the hook interrupts further processing. it is possible to provide a name of hook for tracing.
+It is possible to specify nodejs express middlewares for the actions or entities to be performed before or after the action. Any data assigned to req.$odata or res.$odata will be available on action implementation and subsequent hooks. An error thrown in the hook interrupts further processing. it is possible to provide a name of hook for tracing. You can use a [passportjs](https://www.passportjs.org/) middleware as before hook for authentication.
 
 ```
 const action = server.action('login', ...);

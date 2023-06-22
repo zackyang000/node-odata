@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Resource from '../ODataResource';
+import Entity from './Entity';
 
 export default class Metadata {
   constructor(server) {
@@ -43,7 +44,7 @@ export default class Metadata {
   ctrl(req) {
     const entityTypeNames = Object.keys(this._server.resources);
     const entitySets = entityTypeNames
-      .filter((item) => this._server.resources[item] instanceof Resource)
+      .filter((item) => this._server.resources[item] instanceof Resource || this._server.resources[item] instanceof Entity)
       .map((currentResource) => ({
         name: currentResource,
         kind: 'EntitySet',

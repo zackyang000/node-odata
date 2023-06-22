@@ -1,6 +1,6 @@
 import rest from './rest';
 import { min } from './utils';
-import Action from './Action';
+import Action from './odata/Action';
 
 function hook(resource, pos, fn) {
   let method = resource._currentMethod;
@@ -176,7 +176,7 @@ export default class {
     });
 
     if (route) {
-      return route.middleware;
+      return [route.middleware];
     }
 
     return Object.keys(this.actions)

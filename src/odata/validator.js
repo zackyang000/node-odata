@@ -6,7 +6,7 @@ export const validateIdentifier = (identifier) => {
 }
 
 
-function shouldContains(property,  member, list) {
+function shouldContains(property, member, list) {
   if (property[member] && list.indexOf(property[member]) === -1
     && (!property[member].match(/node\.odata/) || member != '$Type')) {// custom type
     throw new Error(`${member} '${property[member]}' is invalid`);
@@ -43,19 +43,19 @@ function validateSRID(name, property) {
   }
 }
 
-function validateMaxLength(name, property, member) {
-  const maxLength = property[name].member;
+function shouldBePositive(name, property, member) {
+  const value = property[member];
 
-  if (!maxLength) {
-    throw new Error(`If MaxLength is given, than the value had to be supplied`);
+  if (!value) {
+    throw new Error(`If '${member}' is given, than the value had to be supplied`);
   }
 
-  if (Number.isNaN(+maxLength)) {
-    throw new Error(`Value '${maxLength}' is invalid for MaxLength`);
+  if (Number.isNaN(+value)) {
+    throw new Error(`Value '${value}' is invalid for '${member}'`);
   }
 
-  if (+maxLength < 1) {
-    throw new Error(`If MaxLength is given, than the value had to be supplied`)
+  if (+value < 1) {
+    throw new Error(`If '${member}' is given, than the value had to be supplied`)
   }
 
 }
@@ -64,11 +64,11 @@ export const validateProperty = (name, property) => {
   validateIdentifier(name);
 
   const members = Object.keys(property);
+  const allowedMembers = ['$Type', '$Collection', '$Nullable', '$MaxLength',
+    '$Unicode', '$Precision', '$Scale', '$SRID', '$DefaultValue'];
+  const boolean = [true, false];
 
   members.forEach(member => {
-    const allowedMembers = ['$Type', '$Collection', '$Nullable', '$MaxLength',
-      '$Unicode', '$Precision', '$Scale', '$SRID', '$DefaultValue'];
-
     switch (member.trim()) {
       case '$Type':
         validateType(property, member);
@@ -77,9 +77,7 @@ export const validateProperty = (name, property) => {
       case '$Collection':
       case '$Nullable':
       case '$Unicode':
-        const boolean = [true, false];
-
-        shouldContains(property[name], member.trim(), boolean);
+        shouldContains(property, member.trim(), boolean);
         break;
 
       case '$SRID':
@@ -87,7 +85,9 @@ export const validateProperty = (name, property) => {
         break;
 
       case '$MaxLength':
-        validateMaxLength(name, property, member);
+      case '$Precision':
+      case '$Scale':
+        shouldBePositive(name, property, member);
         break;
 
       case '$DefaultValue':
@@ -132,6 +132,36 @@ function validateComplexType(node) {
 
   properties.filter(name => name !== '$Kind')
     .forEach(name => validateProperty(name, node[name]));
+
+  if (!properties.length) {
+    throw new Error('ComplexType without properties is not allowed')
+  }
+}
+
+function validateEntityType(node) {
+  const attributes = Object.keys(node);
+
+  if (!node.$Key || !node.$Key.length) {
+    throw new Error('EntityType without key is not allowed')
+  }
+
+  if (!Array.isArray(node.$Key)) {
+    throw new Error('$Key of Entitytype has to be an array of property names');
+  }
+
+  const properties = attributes.filter(name => name !== '$Kind' && name !== '$Key');
+
+  properties.forEach(name => validateProperty(name, node[name]));
+
+  if (!properties.length) {
+    throw new Error('ComplexType without properties is not allowed')
+  }
+
+  node.$Key.forEach(key => {
+    if (properties.indexOf(key) === -1) {
+      throw new Error(`EntityType has not a property for $Key with name "${key}"`)
+    }
+  });
 }
 
 export const validate = node => {
@@ -139,12 +169,16 @@ export const validate = node => {
     throw new Error('For validation an object should not be undefined');
   }
 
-  switch(node.$Kind) {
+  switch (node.$Kind) {
     case 'ComplexType':
       validateComplexType(node);
       break;
-    
-      default:
-        throw new Error('For validation an object need a property $Kind');
+
+    case 'EntityType':
+      validateEntityType(node);
+      break;
+
+    default:
+      throw new Error('For validation an object need a property $Kind');
   }
 }

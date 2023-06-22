@@ -91,12 +91,15 @@ export default class Batch {
         });
       }
 
-      await handler(req, res, err => {
-        if (err) {
-          throw err;
-        }
-      });
+      for (let i = 0; i < handler.length; ++i) {
+        const handlerOrHook = handler[i];
 
+        await handlerOrHook(req, res, err => {
+          if (err) {
+            throw err;
+          }
+        });
+      }
 
       for(let i = 0; i < this._server.hooks.after.length; ++i) {
         const hook = this._server.hooks.after[i];
@@ -162,6 +165,7 @@ export default class Batch {
         };
 
         const currentResponse = {
+          end: (message) => { throw new Error(message); },
           type: (mimetype) => {
             appendHeader('content-type', mimetype);
           },
@@ -178,7 +182,7 @@ export default class Batch {
                 result.body = body;
               }
             };
-          },
+          }
         };
 
         await this.executeSingleRequest(handler, currentRequest, currentResponse);

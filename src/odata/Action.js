@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import Hooks from './odata/Hooks';
-import { validateParameters, validateIdentifier } from './odata/validator';
-import Console from './writer/Console';
+import Hooks from './Hooks';
+import { validateParameters, validateIdentifier } from './validator';
+import Console from '../writer/Console';
 
 export default class Action {
   constructor(name, fn, options) {
@@ -49,7 +49,7 @@ export default class Action {
     const regex = this.getPath(true);
 
     if (method === 'post' && url.match(regex)) {
-      return this.fn;
+      return [...this.hooks.before, this.fn, ...this.hooks.after];
     }
   }
 
@@ -67,6 +67,40 @@ export default class Action {
     }
 
     return this.router;
+  }
+
+  getMetadata() {
+    const result = {
+      $Kind: 'Action'
+    };
+
+    if (this.binding) {
+      result.$IsBound = true;
+      result.$Parameter = [{
+        $Name: this.resource._url || this.resource.name,
+        $Type: `node.odata.${this.resource._url || this.resource.name}`,
+        $Collection: this.binding === 'collection' ? true : undefined,
+      }];
+    }
+
+    if (this.$Parameter) {
+      if (!result.$Parameter) {
+        result.$Parameter = [];
+      }
+
+      this.$Parameter.forEach(para => {
+        const item = para;
+
+        if (para.$Type.search(/^edm/i) === -1 ) {
+          item.$Type = `${para.$Type}`;
+        }
+
+        result.$Parameter.push(item);
+      });
+      result.$Parameter = result.$Parameter ? result.$Parameter.concat() : this.$Parameter;
+    }
+
+    return result;
   }
 
   getPath(asRegex) {

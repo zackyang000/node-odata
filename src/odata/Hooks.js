@@ -19,16 +19,36 @@ export default class Hooks {
     }
   }
 
-  suppressNext(fn, name) {
+  suppressNext(fn, name, isFinal) {
     return async (req, res, next) => {
       try {
         const con = new Console();
 
         con.debug(`Hook ${name} started`);
 
-        const prom = fn(req, res, next);
-        if (prom && prom.then) {
-          await prom;
+        const combine = new Promise(async (resolve, reject) => {
+          try {
+            const prom = fn(req, res, err => {
+              if (err) {
+                reject(err);
+              }
+              resolve();
+            });
+  
+            if (prom && prom.then) {
+              await prom;
+              resolve();
+            } else if (isFinal) {
+              resolve();
+            }
+
+          } catch(err) {
+            reject(err);
+          }
+        });
+
+        await combine;
+        if (!isFinal) {
           next();
         }
 
@@ -38,15 +58,15 @@ export default class Hooks {
     };
   }
 
-  addAfter(fn, name) {
+  addAfter(fn, name, isFinal) {
     if (!fn) {
       throw new Error(`Parameter 'fn' should be given`);
     }
 
     if (Array.isArray(fn)) {
-      this.after = fn.map(item => this.suppressNext(item, name)).concat(this.after);
+      this.after = fn.map(item => this.suppressNext(item, name, isFinal)).concat(this.after);
     } else {
-      this.after.unshift(this.suppressNext(fn, name));
+      this.after.unshift(this.suppressNext(fn, name, isFinal));
     }
   }
 

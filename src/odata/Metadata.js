@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import Resource from '../ODataResource';
+import ODataResource from '../ODataResource';
+import Entity from './Entity';
 import Function from '../ODataFunction';
 import { validate, validateIdentifier } from './validator';
 
@@ -47,7 +48,7 @@ export default class Metadata {
       res.$odata.supportedMimetypes = ['application/xml', 'application/json'];
       next();
 
-    } catch(err) {
+    } catch (err) {
       next(err);
     }
   }
@@ -170,40 +171,6 @@ export default class Metadata {
     return properties;
   }
 
-  static visitAction(node) {
-    const result = {
-      $Kind: 'Action'
-    };
-
-    if (node.binding) {
-      result.$IsBound = true;
-      result.$Parameter = [{
-        $Name: node.resource._url,
-        $Type: `node.odata.${node.resource._url}`,
-        $Collection: node.binding === 'collection' ? true : undefined,
-      }];
-    }
-
-    if (node.$Parameter) {
-      if (!result.$Parameter) {
-        result.$Parameter = [];
-      }
-
-      node.$Parameter.forEach(para => {
-        const item = para;
-
-        if (para.$Type.search(/^edm/i) === -1 ) {
-          item.$Type = `${para.$Type}`;
-        }
-
-        result.$Parameter.push(item);
-      });
-      result.$Parameter = result.$Parameter ? result.$Parameter.concat() : node.$Parameter;
-    }
-
-    return result;
-  }
-
   static visitFunction(node) {
     return {
       $Kind: 'Function',
@@ -219,9 +186,6 @@ export default class Metadata {
       case 'ComplexType':
         return this.visitComplexType(node, model);
 
-      case 'Action':
-        return Metadata.visitAction(node);
-
       case 'Function':
         return Metadata.visitFunction(node);
 
@@ -236,16 +200,25 @@ export default class Metadata {
       const resource = this._server.resources[currentResource];
       const result = { ...previousResource };
 
-      if (resource instanceof Resource) {
+      if (resource instanceof ODataResource) {
         const { paths } = resource.model.model.schema;
 
         result[currentResource] = this.visitor('EntityType', paths, resource._model);
         const actions = Object.keys(resource.actions);
         if (actions && actions.length) {
           actions.forEach((action) => {
-            result[action] = this.visitor('Action', resource.actions[action]);
+            result[action] = resource.actions[action].getMetadata();
           });
         }
+      } else if (resource instanceof Entity) {
+        result[currentResource] = resource.getMetadata();
+        const actions = Object.keys(resource.actions);
+        if (actions && actions.length) {
+          actions.forEach((action) => {
+            result[action] = resource.actions[action].getMetadata();
+          });
+        }
+
       } else if (resource instanceof Function) {
         result[currentResource] = this.visitor('Function', resource);
       }
@@ -258,7 +231,7 @@ export default class Metadata {
       const result = { ...previousResource };
       const resource = this._server.resources[currentResource];
 
-      if (resource instanceof Resource) {
+      if (resource instanceof ODataResource || resource instanceof Entity) {
         result[currentResource] = {
           $Collection: true,
           $Type: `node.odata.${currentResource}`,
@@ -274,7 +247,7 @@ export default class Metadata {
 
     const actionNames = Object.keys(this._server.actions);
     const actionImports = actionNames.reduce((previousAction, currentAction) => {
-      const result = {...previousAction};
+      const result = { ...previousAction };
 
       result[`${currentAction}-import`] = {
         $Action: `node.odata.${currentAction}`
@@ -283,11 +256,11 @@ export default class Metadata {
       return result;
     }, {})
     const unboundActions = actionNames.reduce((previousAction, currentAction) => {
-      const result = {...previousAction};
+      const result = { ...previousAction };
       const action = this._server.actions[currentAction];
       const attachToRoot = (name, value) => { result[name] = value; };
 
-      result[currentAction] = this.visitor('Action', action, attachToRoot);
+      result[currentAction] = action.getMetadata();
 
       return result;
     }, {})
