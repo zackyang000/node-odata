@@ -24,11 +24,12 @@ export default class {
     this._connection.on(name, event);
   }
 
-  register(name, model) {
+  register(name, model, options) {
     const conf = {
       _id: false,
       versionKey: false,
       collection: name,
+      ...options
     };
     const schema = new mongoose.Schema(model, conf);
     schema.plugin(id);
