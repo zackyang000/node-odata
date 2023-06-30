@@ -65,13 +65,37 @@ export default class Entity {
       return [
         ...this.hooks.before,
         this.handler[route.name],
-        ...this.hooks.after
+        ...this.hooks.after,
+        this.convertAttributes.bind(this)
       ];
     }
 
     return Object.keys(this.actions)
       .map(name => this.actions[name].match(method, url))
       .find(ctrl => ctrl);
+  }
+
+  // convert DattimeOffset to valid value
+  convertAttributes(req, res, next) {
+    if (res.$odata.result?.value && Array.isArray(res.$odata.result?.value)) {
+      // list of entities
+      res.$odata.result.value.forEach(this.checkPropertyValues.bind(this));
+    } else if (res.$odata.result) {
+      this.checkPropertyValues(res.$odata.result);
+    }
+    next();
+  }
+
+  checkPropertyValues(entity) {
+    const entityMetadata = this.getMetadata();
+    const keys = Object.keys(entity);
+
+    keys.forEach(member => {
+      if (entityMetadata[member]?.$Type === "Edm.DateTimeOffset" 
+        && Object.prototype.toString.call(entity[member]) === '[object Date]') {
+          entity[member] = entity[member].toISOString().replace(/\.[0-9]{3}/,'')
+        }
+    });
   }
 
   getRouter() {
@@ -89,7 +113,9 @@ export default class Entity {
         (req, res, next) => {
           res.$odata.status = 200;
           this.handler[name](req, res, next);
-        }, ...this.hooks.after);
+        },
+        this.convertAttributes.bind(this),
+        ...this.hooks.after);
     });
     return router;
   }

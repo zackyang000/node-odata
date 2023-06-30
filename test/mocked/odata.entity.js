@@ -1,7 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { odata, host, port, bookSchema } from '../support/setup';
-import data from '../support/books.json';
+import { odata, host, port } from '../support/setup';
 import FakeDb from '../support/fake-db';
 
 describe('odata.entity', () => {
@@ -60,8 +59,6 @@ describe('odata.entity', () => {
     res.body.should.deepEqual(result);
   });
 
-
-
   it('should return 501 for not implemented methods', async function () {
     const result = [{
       "id": '1',
@@ -95,6 +92,35 @@ describe('odata.entity', () => {
     res.res.statusMessage.should.be.equal('Not Implemented');
 
     res.body.should.deepEqual({ error: { code: '501', message: 'Not Implemented' } });
+  });
+
+  it('should return datetimeoffsets without milliseconds', async function () {
+    server.entity('book', {
+      get: (req, res, next) => {
+        res.$odata.result = {
+          "id": '1',
+          "createdAt": new Date(Date.parse("2019-01-01T00:00:00.000Z"))
+        };
+        next();
+      }
+    }, {
+      $Key: ['id'],
+      id: {
+        $Type: 'node.odata.ObjectId',
+        $Nullable: false
+      },
+      createdAt: {
+        $Type: 'Edm.DateTimeOffset'
+      }
+    });
+    httpServer = server.listen(port);
+
+    const res = await request(host).get(`/book('1')`);
+
+    res.body.should.deepEqual({
+      "id": '1',
+      "createdAt": "2019-01-01T00:00:00Z"
+    });
   });
 
 });
