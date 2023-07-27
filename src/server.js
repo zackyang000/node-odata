@@ -1,11 +1,10 @@
 import createExpress from './express';
-import ODataResource from './ODataResource';
-import Entity from './odata/Entity';
+import MongoEntity from './mongo/Entity';
+import Entity from './odata/entity/Entity';
 import Func from './ODataFunction';
 import Metadata from './odata/Metadata';
 import ServiceDocument from './odata/ServiceDocument';
 import Batch from './odata/Batch';
-import Db from './db/db';
 import Action from './odata/Action';
 import error from './middlewares/error';
 import writer from './middlewares/writer';
@@ -16,22 +15,18 @@ function checkAuth(auth, req) {
 }
 
 class Server {
-  constructor(db, prefix, options) {
+  constructor(prefix, options) {
     this._app = createExpress(options);
     this._settings = {
       maxTop: 10000,
       maxSkip: 10000,
       orderby: undefined,
     };
-    this.defaultConfiguration(db, prefix);
+    this.defaultConfiguration(prefix);
 
     this.hooks = new Hooks();
-    const dbValue = this.get('db');
 
     this.hooks.addBefore(async (req, res) => {
-      req.$odata = {
-        mongo : dbValue._models
-      };
       res.$odata = {
         status: 404,
         supportedMimetypes: ['application/json']
@@ -52,87 +47,69 @@ class Server {
     this._serviceDocument = new ServiceDocument(this);
   }
 
+  addBefore(fn, name) {
+    this.hooks.addBefore(fn, name);
+  }
+
+  addAfter(fn, name) {
+    this.hooks.addAfter(fn, name);
+  }
+  
   function(url, middleware, params) {
     const func = new Func(url.replace(/[ /]+/, ''), middleware, params);
 
     this.resources[func.getName()] = func;
   }
 
-  resource(name, model) {
-    if (model === undefined) {
-      return this.resources[name];
-    }
-
-    const db = this.get('db');
-    this.resources[name] = new ODataResource(this, name, model);
-
-    this.resources[name].setModel(db.register(name, model));
-
-    return this.resources[name];
-  }
-
-  entity(name, handler, metadata) {
+  entity(name, handler, metadata, settings, mapping) {
     if (this.resources[name]) {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Entity(name, handler, metadata);
+    this.resources[name] = new Entity(name, handler, metadata, {
+      maxSkip: this._settings.maxSkip,
+      maxTop: this._settings.maxTop,
+      orderby: this._settings.orderby,
+      ...settings
+    }, mapping);
 
     return this.resources[name];
   }
 
-  defaultConfiguration(db, prefix = '') {
+  mongoEntity(name, model, handler, metadata, settings, mapping) {
+    if (model === undefined) {
+      return this.resources[name];
+    }
+
+    const entity = new MongoEntity(name, model);
+
+    //this.resources[name].setModel(db.register(name, model));
+    const complexTypes = entity.getComplexTypes();
+
+    if (complexTypes) {
+      Object.keys(complexTypes)
+        .forEach(typeName => {
+          const type = complexTypes[typeName];
+
+          this.complexType(typeName, type);
+        });
+    }
+
+    return this.entity(name, {
+      ...entity.getHandler(),
+      ...handler
+    }, {
+      ...entity.getMetadata(),
+      ...metadata
+    }, settings, {
+      ...entity.getMapping(),
+      ...mapping
+    });
+  }
+  
+  defaultConfiguration(prefix = '') {
     this.set('app', this._app);
-    this.set('db', db);
     this.set('prefix', prefix);
-  }
-
-  post(url, callback, auth) {
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    app.post(`${prefix}${url}`, (req, res, next) => {
-      if (checkAuth(auth, req)) {
-        callback(req, res, next);
-      } else {
-        res.status(401).end();
-      }
-    });
-  }
-
-  put(url, callback, auth) {
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    app.put(`${prefix}${url}`, (req, res, next) => {
-      if (checkAuth(auth, req)) {
-        callback(req, res, next);
-      } else {
-        res.status(401).end();
-      }
-    });
-  }
-
-  delete(url, callback, auth) {
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    app.delete(`${prefix}${url}`, (req, res, next) => {
-      if (checkAuth(auth, req)) {
-        callback(req, res, next);
-      } else {
-        res.status(401).end();
-      }
-    });
-  }
-
-  patch(url, callback, auth) {
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    app.patch(`${prefix}${url}`, (req, res, next) => {
-      if (checkAuth(auth, req)) {
-        callback(req, res, next);
-      } else {
-        res.status(401).end();
-      }
-    });
   }
 
   action(name, fn, options) {
@@ -141,7 +118,7 @@ class Server {
     return this.actions[name];
   }
 
-  _getRouter() {
+  getRouter() {
     const result = [];
 
     result.push(this._serviceDocument._router());
@@ -149,7 +126,7 @@ class Server {
     Object.keys(this.resources).forEach((resourceKey) => {
       const resource = this.resources[resourceKey];
 
-      result.push(resource._router ? resource._router(this.getSettings()) : resource.getRouter());
+      result.push(resource._router ? resource._router() : resource.getRouter());
 
       if (resource.actions) {
         Object.keys(resource.actions).forEach((actionKey) => {
@@ -174,7 +151,7 @@ class Server {
   }
 
   listen(...args) {
-    const router = this._getRouter();
+    const router = this.getRouter();
 
     router.forEach((item) => {
       this._app.use(this.get('prefix'), item);
@@ -183,54 +160,12 @@ class Server {
     return this._app.listen(...args);
   }
 
-  getSettings() {
-    return this._settings;
-  }
-
-  use(...args) {
-    if (args[0] instanceof ODataResource) {
-      const [resource] = args;
-      this.resources[resource.getName()] = resource;
-      return;
-    }
-    this._app.use(...args);
-  }
-
-  get(key, callback, auth) {
-    if (callback === undefined) {
-      return this._settings[key];
-    }
-    // TODO: Need to refactor, same as L70-L80
-    const app = this.get('app');
-    const prefix = this.get('prefix');
-    return app.get(`${prefix}${key}`, (req, res, next) => {
-      if (checkAuth(auth, req)) {
-        callback(req, res, next);
-      } else {
-        res.status(401).end();
-      }
-    });
+  get(key) {
+    return this._settings[key];
   }
 
   set(key, val) {
     switch (key) {
-      case 'db': {
-        let db = val;
-
-        if (typeof val === 'string') {
-          db = new Db();
-          db.createConnection(val, null, (err) => {
-            if (err) {
-              console.error(err.message);
-              console.error('Failed to connect to database on startup.');
-              process.exit();
-            }
-          });
-        }
-
-        this._settings[key] = db;
-        break;
-      }
       case 'prefix': {
         let prefix = val;
         if (prefix === '/') {
@@ -248,15 +183,6 @@ class Server {
       }
     }
     return this;
-  }
-
-  // provide a event listener to handle not able to connect DB.
-  on(name, event) {
-    if (['connected', 'disconnected'].indexOf(name) > -1) {
-      const db = this.get('db');
-
-      db.on(name, event);
-    }
   }
 
   engine(...args) {

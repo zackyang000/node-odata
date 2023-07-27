@@ -47,9 +47,11 @@ export default class Action {
 
   match(method, url) {
     const regex = this.getPath(true);
+    const beforeHooks = this.binding === 'entity' ? [...this.resource.getNavigation().beforeHooks, ...this.hooks.before] : this.hooks.before;
+
 
     if (method === 'post' && url.match(regex)) {
-      return [...this.hooks.before, this.fn, ...this.hooks.after];
+      return [...beforeHooks, this.fn, ...this.hooks.after];
     }
   }
 
@@ -77,8 +79,8 @@ export default class Action {
     if (this.binding) {
       result.$IsBound = true;
       result.$Parameter = [{
-        $Name: this.resource._url || this.resource.name,
-        $Type: `node.odata.${this.resource._url || this.resource.name}`,
+        $Name: this.resource.name,
+        $Type: `node.odata.${this.resource.name}`,
         $Collection: this.binding === 'collection' ? true : undefined,
       }];
     }
@@ -111,20 +113,20 @@ export default class Action {
         if (!this.resource) {
           throw new Error(`Binding '${this.binding}' require a resource`)
         }
-        path = asRegex ? new RegExp(`\/?${this.resource._url}\\('?[A-Fa-f0-9]*'?\\)\/${this.name}$`) : `/${this.resource._url}\\(:id\\)/${this.name}`;
+        path = asRegex ? new RegExp(`\/?${this.resource.name}\\('?[A-Fa-f0-9]*'?\\)\/${this.name}$`) : `${this.resource.getNavigation().url}/${this.name}`;
         break;
       case 'collection':
         if (!this.resource) {
           throw new Error(`Binding '${this.binding}' require a resource`)
         }
-        path = asRegex ? new RegExp(`\/?${this.resource._url}\/${this.name}$`) : `/${this.resource._url}/${this.name}`;
+        path = asRegex ? new RegExp(`\/?${this.resource.name}\/${this.name}$`) : `/${this.resource.name}/${this.name}`;
         break;
       default:
         if (this.binding) {
           throw new Error(`Invalid binding '${this.binding}'`);
         } else {
           if (this.resource) {
-            throw new Error(`Use of the unbound action '${this.name}' by a resource '${this.resource._url}' is not intended`)
+            throw new Error(`Use of the unbound action '${this.name}' by a resource '${this.resource.name}' is not intended`)
           }
           path = asRegex ? new RegExp(`(node\.odata)?\/?${this.name}$`) : `/node.odata.${this.name}`;
         }
@@ -135,8 +137,9 @@ export default class Action {
 
   getOperationRouter(path, fn) {
     let router = Router();
+    const beforeHooks = this.binding === 'entity' ? [...this.resource.getNavigation().beforeHooks, ...this.hooks.before] : this.hooks.before;
 
-    router.post(path, ...this.hooks.before, fn, ...this.hooks.after);
+    router.post(path, ...beforeHooks, fn, ...this.hooks.after);
 
     return router;
   };

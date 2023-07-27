@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mocked/odata.entity.js"
+        "test/odata.filter.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"
@@ -33,7 +33,7 @@
         "skipFiles": [
             "<node_internals>/**"
         ],
-        "program": "${workspaceFolder}/examples/simple/index.js"
+        "program": "${workspaceFolder}/examples/server.js"
     }
   ]
 }

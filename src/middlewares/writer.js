@@ -71,6 +71,9 @@ export default function writer(req, res) {
       throw new Error('Status not setted');
 
     default:
+      if (!res.$odata.result) {
+        throw new Error('If status not equal 204 res.$odata.result has to be set');
+      }
   }
 
   const status = res.$odata.status;

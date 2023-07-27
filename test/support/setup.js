@@ -6,14 +6,9 @@ export const host = 'http://localhost:3000';
 export const port = '3000';
 export const conn = 'mongodb://localhost/odata-test';
 
-export const bookSchema = {
-  author: String,
-  description: String,
-  genre: String,
-  price: Number,
-  publish_date: Date,
-  title: String
-};
+const { BookShema, BookModel } = require('./books.model');
+
+export const model = BookModel;
 
 export const books = require('./books.json');
 

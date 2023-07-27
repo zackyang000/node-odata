@@ -22,9 +22,11 @@ export default class Hooks {
   suppressNext(fn, name, isFinal) {
     return async (req, res, next) => {
       try {
-        const con = new Console();
+        if (name) {
+          const con = new Console();
 
-        con.debug(`Hook ${name} started`);
+          con.debug(`Hook ${name} started`);
+        }
 
         const combine = new Promise(async (resolve, reject) => {
           try {
@@ -34,7 +36,7 @@ export default class Hooks {
               }
               resolve();
             });
-  
+
             if (prom && prom.then) {
               await prom;
               resolve();
@@ -42,7 +44,7 @@ export default class Hooks {
               resolve();
             }
 
-          } catch(err) {
+          } catch (err) {
             reject(err);
           }
         });

@@ -16,6 +16,7 @@
     "node": ">=0.12"
   },
   "scripts": {
+    "start": "node ./examples/server.js",
     "lint": "eslint src/",
     "prepublish": "make",
     "test": "make",
