@@ -1,13 +1,23 @@
 import 'should';
 import request from 'supertest';
-import { odata, host, port, bookSchema } from '../support/setup';
-import FakeDb from '../support/fake-db';
+import { odata, host, port, assertSuccess } from './support/setup';
+import { BookMetadata } from './support/books.model';
 
 describe('options.prefix', () => {
-  let httpServer, db;
+  let httpServer, server;
+  function initEntity(server) {
+    server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        next();
+      }
+    }, BookMetadata);
+  }
 
   before(() => {
-    db = new FakeDb();
+    server = odata();
+    initEntity(server);
   });
 
   afterEach(() => {
@@ -15,26 +25,28 @@ describe('options.prefix', () => {
   });
 
   it('should be work', async function() {
-    const server = odata(db);
-    server.resource('book', bookSchema);
     server.set('prefix', '/api');
     httpServer = server.listen(port);
+
     const res = await request(host).get('/api/book');
-    res.status.should.be.equal(200);
+    
+    assertSuccess(res);
   });
   it('should be 200 when do not add `/`', async function() {
-    const server = odata(db);
-    server.resource('book', bookSchema);
     server.set('prefix', 'api');
     httpServer = server.listen(port);
+
     const res = await request(host).get('/api/book');
-    res.status.should.be.equal(200);
+
+    assertSuccess(res);
   });
   it('should be 200 when set it at init-function', async function() {
-    const server = odata(db, '/api');
-    server.resource('book', bookSchema);
+    server = odata('/api');
+    initEntity(server);
     httpServer = server.listen(port);
+
     const res = await request(host).get('/api/book');
-    res.status.should.be.equal(200);
+
+    assertSuccess(res);
   });
 });

@@ -1,5 +1,5 @@
 export default (req, res, next) => {
-  req.$odata.Model.findById(req.params.id, (err, entity) => {
+  req.$odata.Model.findById(req.$odata.$Key._id, (err, entity) => {
     if (err) {
       return next(err);
     }

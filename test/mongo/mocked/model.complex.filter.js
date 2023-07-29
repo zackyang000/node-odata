@@ -34,10 +34,8 @@ describe('model.complex.filter', () => {
     };
     modelMock = sinon.mock(ComplexModel);
     queryMock = sinon.mock(query);
-    modelMock.expects('find').once().returns(query);
+    modelMock.expects('find').once().withArgs({"product.price": {$gt: 30}}).returns(query);
 
-    queryMock.expects('where').once().withArgs('product.price').returns(query);
-    queryMock.expects('gt').once().withArgs(30);
     queryMock.expects('select').once().withArgs({ _id: 0, product: 1});
     queryMock.expects('exec').once().callsArgWith(0, null, [{
       toObject: () => ({
@@ -54,7 +52,7 @@ describe('model.complex.filter', () => {
   });
 
   it('should work when filter a complex entity', async function () {
-    let res = await request(host).get(`/complex-model-filter?$select=product&$filter=product-price gt 30`);
+    let res = await request(host).get(`/complex-model-filter?$select=product&$filter=product.price gt 30`);
     assertSuccess(res);
     res.body.should.deepEqual({
       value: [{

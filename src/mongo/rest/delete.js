@@ -1,5 +1,5 @@
 export default (req, res, next) => {
-  req.$odata.Model.remove({ _id: req.params.id }, (err, result) => {
+  req.$odata.Model.remove({ _id: req.$odata.$Key._id }, (err, result) => {
     if (err) {
       return next(err);
     }

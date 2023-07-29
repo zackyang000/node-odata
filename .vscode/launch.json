@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.filter.js"
+        "test/mongo/mocked/rest.delete.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

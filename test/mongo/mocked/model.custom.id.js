@@ -71,10 +71,7 @@ describe('model.custom.id', () => {
     };
     modelMock = sinon.mock(Model);
     queryMock = sinon.mock(query);
-    modelMock.expects('find').once().returns(query);
-
-    queryMock.expects('where').once().withArgs('id').returns(query);
-    queryMock.expects('equals').once().withArgs(100);
+    modelMock.expects('find').once().withArgs({id: {$eq: 100}}).returns(query);
     queryMock.expects('exec').once().callsArgWith(0, null, [{
       toObject: () => ({
         id: 100

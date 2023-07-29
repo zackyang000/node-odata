@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import request from 'supertest';
 import { odata, host, port, assertSuccess } from '../../support/setup';
 import data from '../../support/books.json';
-import FakeDb from '../../support/fake-db';
 import { BookModel } from '../../support/books.model';
 
 describe('odata.query.filter.functions', function () {
@@ -39,8 +38,7 @@ describe('odata.query.filter.functions', function () {
 
       modelMock = sinon.mock(BookModel);
       queryMock = sinon.mock(query);
-      modelMock.expects('find').once().returns(query);
-      queryMock.expects('$where').once().withArgs(`this.title.indexOf('i') != -1`);
+      modelMock.expects('find').once().withArgs({title: {$where: `this.title.indexOf('i') != -1`}}).returns(query);
       queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
 
       const res = await request(host).get(`/book?$filter=contains(title,'i')`);
@@ -57,8 +55,7 @@ describe('odata.query.filter.functions', function () {
 
       modelMock = sinon.mock(BookModel);
       queryMock = sinon.mock(query);
-      modelMock.expects('find').once().returns(query);
-      queryMock.expects('$where').once().withArgs(`this.title.indexOf('Visual Studio') != -1`);
+      modelMock.expects('find').once().withArgs({title: {$where: `this.title.indexOf('Visual Studio') != -1`}}).returns(query);
       queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
 
       const res = await request(host).get(`/book?$filter=contains(title,'Visual Studio')`);
@@ -78,8 +75,7 @@ describe('odata.query.filter.functions', function () {
 
       modelMock = sinon.mock(BookModel);
       queryMock = sinon.mock(query);
-      modelMock.expects('find').once().returns(query);
-      queryMock.expects('$where').once().withArgs(`this.title.indexOf('i') >= 1`);
+      modelMock.expects('find').once().withArgs({title: {$where: `this.title.indexOf('i') >= 1`}}).returns(query);
       queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
 
       const res = await request(host).get(`/book?$filter=indexof(title,'i') ge 1`);
@@ -96,8 +92,7 @@ describe('odata.query.filter.functions', function () {
 
       modelMock = sinon.mock(BookModel);
       queryMock = sinon.mock(query);
-      modelMock.expects('find').once().returns(query);
-      queryMock.expects('$where').once().withArgs(`this.title.indexOf('Visual Studio') >= 0`);
+      modelMock.expects('find').once().withArgs({title: {$where: `this.title.indexOf('Visual Studio') >= 0`}}).returns(query);
       queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
 
       const res = await request(host).get(`/book?$filter=indexof(title,'Visual Studio') ge 0`);
@@ -117,10 +112,9 @@ describe('odata.query.filter.functions', function () {
 
       modelMock = sinon.mock(BookModel);
       queryMock = sinon.mock(query);
-      modelMock.expects('find').once().returns(query);
-      queryMock.expects('where').once().withArgs(`publish_date`).returns(query);
-      queryMock.expects('gte').once().withArgs(new Date(2000, 0, 1)).returns(query);
-      queryMock.expects('lt').once().withArgs(new Date(2001, 0, 1)).returns(query);
+      modelMock.expects('find').once().withArgs({
+        publish_date: {$gte: new Date(2000, 0, 1), $lt: new Date(2001, 0, 1)}
+      }).returns(query);
       queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
 
       const res = await request(host).get(`/book?$filter=year(publish_date) eq 2000`);

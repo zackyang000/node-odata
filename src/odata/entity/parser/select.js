@@ -1,13 +1,11 @@
-export default function(req, entity, metadata) {
+import parseProperty from "./property";
+import validateProperty from "../validators/property";
+
+export default function(req, entity, metadata, mapping) {
   return req.query.$select?.split(',').map((item) => {
-    const property = item.trim();
+    const property = parseProperty(item.trim(), mapping);
 
-    if (!metadata[property]) {
-      const err = new Error(`Entity '${entity}' have not a property with name '${property}'`);
-
-      err.status = 400;
-      throw err;
-    }
+    validateProperty(item.trim(), req, entity, metadata);
 
     return property;
   });

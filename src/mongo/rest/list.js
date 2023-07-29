@@ -1,5 +1,4 @@
 import filterParser from '../parser/filterParser';
-import orderbyParser from '../parser/orderbyParser';
 import skipParser from '../parser/skipParser';
 import topParser from '../parser/topParser';
 import selectParser from '../parser/selectParser';
@@ -9,8 +8,12 @@ function _dataQuery(model, {
 }) {
   return new Promise((resolve, reject) => {
     const query = model.find(filterParser(filter));
-    orderbyParser(query, orderby)
-      .then(() => skipParser(query, skip))
+
+    if (orderby) {
+      query.sort(orderby);
+    }
+    
+    skipParser(query, skip)
       .then(() => topParser(query, top))
       .then(() => selectParser(query, select))
       .then(() => query.exec((err, data) => {

@@ -1,6 +1,10 @@
 import parseValue from './value';
+import parseProperty from './property';
+import validateProperty from '../validators/property';
 
-export default function (req, entity, metadata) {
+export default function (req, entity, metadata, mapping) {
+  const funcRegex = /(contains|indexof|year)\s*\(\s*([^,]+)\s*[,]?\s*([^)]*)\)\s*(eq|ne|gt|ge|lt|le)?\s*([0-9]*)/i;
+
   const replaceString = (filter, dictionary) => {
     const replacer = (match, p1) => {
       const result = `$${dictionary.length}`;
@@ -70,7 +74,7 @@ export default function (req, entity, metadata) {
   const splitCondition = (filter, dictionary) => {
     const operatorIndex = filter.search(/\s+(eq|ne|gt|ge|lt|le)\s+/i);
 
-    if (operatorIndex === -1) {
+    if (filter.match(funcRegex)) {
       return visitor('parseFunction', filter, dictionary);
     }
 
@@ -105,20 +109,12 @@ export default function (req, entity, metadata) {
         throw new Error(`Unexpected operator '${operatorPrettified}' in '${$filter}'`);
     }
 
-    const property = operands[0].trim();
-
-    if (!metadata[property]) {
-      const err = new Error(`Entity '${entity}' has not a property named '${property}'`);
-
-      err.status = 400;
-      throw err;
-    }
-
+    const property = parseProperty(operands[0], mapping);
     const value = operands[2].trim();
 
     return {
       [property]: {
-        [operator]: parseValue(dictionary[value] || value, metadata[property])
+        [operator]: parseValue(dictionary[value] || value, validateProperty(operands[0].trim(), req, entity, metadata))
       }
     };
   };
@@ -127,7 +123,7 @@ export default function (req, entity, metadata) {
     // contains(CompanyName,'freds')
     // indexof(CompanyName,'lfreds') eq 1
     // year(BirthDate) eq 0
-    const match = filter.match(/(contains|indexof|year)\s*\(\s*([^,]+)\s*[,]?\s*([^)]*)\)\s*(eq|ne|gt|ge|lt|le)?\s*([0-9]*)/i);
+    const match = filter.match(funcRegex);
 
     if (!match) {
       const err = new Error(`Text '${filter}' can not be interpreted`);
@@ -137,15 +133,7 @@ export default function (req, entity, metadata) {
     }
 
     const func = match[1].toLowerCase();
-    const property = match[2];
-
-    if (!metadata[property]) {
-      const err = new Error(`Entity '${entity}' has no property named '${property}'`);
-
-      err.status = 400;
-      throw err;
-    }
-
+    const property = parseProperty(match[2], mapping);
     const parameter = match[3] && dictionary[match[3]] ? dictionary[match[3]] : match[3];
 
     // 0	indexof(CompanyName,$0) eq 10

@@ -1,12 +1,13 @@
 import { validateIdentifier, validate } from "../validator";
 import { Router } from 'express';
 import Hooks from "../Hooks";
-import { min } from '../../utils';
 import Action from '../Action';
 import parseSelect from './parser/select';
 import parseKeys from './parser/keys';
 import parseCount from './parser/count';
 import parseFilter from './parser/filter';
+import parseOrderBy from "./parser/orderby";
+import { parseSkip, parseTop } from "./parser/skiptop";
 
 export default class Entity {
   constructor(name, handler, metadata, settings, mapping) {
@@ -102,22 +103,47 @@ export default class Entity {
     next();
   }
 
+  get(key) {
+    if (value) {
+      if (Number.isNaN(+value) || +value < 0) {
+        throw new Error(`Max-Skip value should be a positive number`);
+      }
+      this.options.maxSkip = value;
+    }
+
+    return this.options[key];
+  }
+
+  set(key, value) {
+    const positiveOnly = value => {
+      if (value && (Number.isNaN(+value) || +value < 0)) {
+        throw new Error(`'${key}' value should be a positive number`);
+      }
+    };
+
+    switch (key) {
+      case 'maxSkip':
+      case 'maxTop':
+        positiveOnly(value);
+        this.options[key] = value;
+        break;
+    }
+
+  }
 
   parsingMiddleware(req, res, next) {
     try {
-      req.$odata = req.$odata || {};
-
-      req.$odata.$Key = parseKeys(req, this.name, this.metadata);
-      req.$odata.$select = parseSelect(req, this.name, this.metadata);
-      req.$odata.$filter = parseFilter(req, this.name, this.metadata);
+      req.$odata.$Key = parseKeys(req, this.name, this.metadata, this.mapping);
+      req.$odata.$select = parseSelect(req, this.name, this.metadata, this.mapping);
+      req.$odata.$filter = parseFilter(req, this.name, this.metadata, this.mapping);
       req.$odata.$count = parseCount(req, this.name, this.metadata);
+      req.$odata.$orderby = parseOrderBy(req, this.name, this.metadata, this.mapping, this.options.orderby);
+      req.$odata.$skip = parseSkip(req, this.options.maxSkip);
+      req.$odata.$top = parseTop(req, this.options.maxTop);
 
       req.$odata = {
         ...req.$odata,
         body: req.body,
-        $top: req.query.$top && min([req.query.$top, this.options.maxTop]),
-        $skip: req.query.$skip && min([req.query.$skip, this.options.maxSkip]),
-        $orderby: this.options.orderby || req.query.$orderby,
         $expand: req.query.$expand, // TODO : implement expand
         $search: req.query.$search // TODO : implement search
       };

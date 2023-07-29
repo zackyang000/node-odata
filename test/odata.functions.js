@@ -1,7 +1,6 @@
 import 'should';
 import request from 'supertest';
 import { odata, host, port, assertSuccess } from './support/setup';
-import FakeDb from './support/fake-db';
 
 describe('odata.functions', () => {
   ['get', 'post', 'put', 'delete'].map((method) => {

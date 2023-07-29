@@ -5,6 +5,7 @@ import { conn } from '../support/setup';
 export function init(server) {
   server.addBefore((req, res, next) => {
     req.$odata = {
+      ...req.$odata,
       mongo: mongoose.default.connection
     };
     next();

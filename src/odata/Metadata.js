@@ -56,6 +56,16 @@ export default class Metadata {
       throw new Error(`Complex type with name ${name} allready exists`);
     }
 
+    if (!properties) { // get call
+      const returnType = name.replace('node.odata.', '');
+
+      if (!this.complexTypes[returnType]) {
+        throw new Error(`Complex type with name ${name} does not exists`);
+      }
+
+      return this.complexTypes[returnType];
+    }
+
     validateIdentifier(name);
 
     const typeObject = {

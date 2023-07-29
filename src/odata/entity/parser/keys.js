@@ -1,6 +1,8 @@
 import parseValue from './value';
+import parseProperty from './property';
+import validateProperty from '../validators/property';
 
-export default function(req, entity, metadata) {
+export default function(req, entity, metadata, mapping) {
   const result = {};
 
   if (req.params) {
@@ -9,7 +11,10 @@ export default function(req, entity, metadata) {
 
     if (params) {
       params.forEach(param => {
-        result[param] = parseValue(req.params[param], metadata[param]);
+        const property = parseProperty(param, mapping);
+        const propertyMetadata = validateProperty(param, req, entity, metadata);
+
+        result[property] = parseValue(req.params[param], propertyMetadata);
       });
     }
   }

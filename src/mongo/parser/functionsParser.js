@@ -27,7 +27,7 @@ const convertToOperator = (odataOperator) => {
 
 // contains(CompanyName,'icrosoft')
 const contains = (name, $filter) => ({
-  $where: `this.${name}.indexOf(${$filter.$parameter}) != -1`
+  $where: `this.${name}.indexOf('${$filter.$parameter}') != -1`
 });
 
 // indexof(CompanyName,'X') eq 1
@@ -36,7 +36,7 @@ const indexof = (name, $filter) => {
   const operator = convertToOperator($operator);
 
   return {
-    $where: `this.${name}.indexOf(${$parameter}) ${operator} ${$value}`
+    $where: `this.${name}.indexOf('${$parameter}') ${operator} ${$value}`
   };
 };
 

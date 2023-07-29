@@ -26,14 +26,6 @@ class Server {
 
     this.hooks = new Hooks();
 
-    this.hooks.addBefore(async (req, res) => {
-      res.$odata = {
-        status: 404,
-        supportedMimetypes: ['application/json']
-      }
-    }, 'service-initialization');
-    this.hooks.addAfter(writer, 'writer', true);
-
     // TODO: Infact, resources is a mongooseModel instance, origin name is repositories.
     // Should mix _resources object and resources object: _resources + resource = resources.
     // Encapsulation to a object, separate mognoose, try to use *repository pattern*.
@@ -44,6 +36,19 @@ class Server {
     };
     //unbound actions
     this.actions = {};
+
+
+    this.hooks.addBefore(async (req, res) => {
+      req.$odata = {
+        $metadata: this.resources.$metadata
+      };
+      res.$odata = {
+        status: 404,
+        supportedMimetypes: ['application/json']
+      }
+    }, 'service-initialization');
+    this.hooks.addAfter(writer, 'writer', true);
+
     this._serviceDocument = new ServiceDocument(this);
   }
 
@@ -179,6 +184,14 @@ class Server {
       }
       default: {
         this._settings[key] = val;
+        if (this.resources) {
+          Object.keys(this.resources)
+            .forEach(name => {
+              if (this.resources[name].set) {
+                this.resources[name].set(key, val);
+              }
+            });
+        }
         break;
       }
     }
