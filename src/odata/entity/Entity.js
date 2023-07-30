@@ -239,7 +239,6 @@ export default class Entity {
             next(err);
           }
 
-          debugger;
           res.$odata.result = {
             ['@odata.count']: countResponse.$odata.result
           };

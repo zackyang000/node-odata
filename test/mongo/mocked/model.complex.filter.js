@@ -51,6 +51,11 @@ describe('model.complex.filter', () => {
     httpServer.close();
   });
 
+  afterEach(() => {
+    modelMock.restore();
+    queryMock?.restore();
+  })
+  
   it('should work when filter a complex entity', async function () {
     let res = await request(host).get(`/complex-model-filter?$select=product&$filter=product.price gt 30`);
     assertSuccess(res);

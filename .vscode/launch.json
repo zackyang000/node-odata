@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/rest.delete.js"
+        "test/mongo/mocked/*.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

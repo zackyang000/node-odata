@@ -16,6 +16,7 @@ describe('odata.query.orderby', () => {
     model: BookModel
   };
   let httpServer, modelMock, queryMock;
+  const dataIsolated = JSON.parse(JSON.stringify(data));
 
   before(async function() {
     const server = odata();
@@ -35,7 +36,7 @@ describe('odata.query.orderby', () => {
   });
 
   it('should default let items order with asc', async function() {
-    const books = data.sort((a, b) => a.price - b.price);
+    const books = dataIsolated.sort((a, b) => a.price - b.price);
 
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
@@ -54,7 +55,7 @@ describe('odata.query.orderby', () => {
   });
 
   it('should let items order asc', async function() {
-    const books = data.sort((a, b) => a.price - b.price);
+    const books = dataIsolated.sort((a, b) => a.price - b.price);
 
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
@@ -73,7 +74,7 @@ describe('odata.query.orderby', () => {
   });
 
   it('should let items order desc', async function() {
-    const books = data.sort((a, b) => b.price - a.price);
+    const books = dataIsolated.sort((a, b) => b.price - a.price);
 
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
@@ -92,7 +93,7 @@ describe('odata.query.orderby', () => {
   });
 
   it('should let items order when use multiple fields', async function() {
-    const books = data.sort((a, b) => {
+    const books = dataIsolated.sort((a, b) => {
       const result = a.price - b.price;
 
       if (!result) {

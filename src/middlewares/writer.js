@@ -59,7 +59,7 @@ export default function writer(req, res) {
   switch (res.$odata.status) {
     case 404:
       // not found or no handler worked on
-      const err = new Error();
+      const err = new Error('Not found');
       err.status = 404;
       throw err;
 

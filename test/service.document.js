@@ -1,7 +1,7 @@
 import 'should';
 import request from 'supertest';
-import { host, port, bookSchema, odata, assertSuccess } from '../support/setup';
-import FakeDb from '../support/fake-db';
+import { host, port, odata, assertSuccess } from './support/setup';
+import { BookMetadata } from './support/books.model';
 
 describe('service.document', () => {
   let httpServer, server, db;
@@ -15,9 +15,8 @@ describe('service.document', () => {
     }]
   }; 
   beforeEach(async function() {
-    db = new FakeDb();
-    server = odata(db);
-    server.resource('book', bookSchema);
+    server = odata();
+    server.entity('book', null, BookMetadata);
 
   });
 

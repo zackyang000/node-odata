@@ -3,8 +3,7 @@
 
 import 'should';
 import request from 'supertest';
-import { host, conn, port, odata, assertSuccess } from './support/setup';
-import FakeDb from './support/fake-db';
+import { host, port, odata, assertSuccess } from './support/setup';
 
 describe('metadata.action', () => {
   let httpServer, server, db;

@@ -1,5 +1,5 @@
 import 'should';
-import { min, split } from '../../lib/utils';
+import { min, split } from '../lib/utils';
 
 describe('min', () => {
   return it('should work', () => {

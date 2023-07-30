@@ -14,12 +14,18 @@ test:
 	@node_modules/.bin/mocha\
 		--require @babel/register \
 		--reporter $(REPORTER) \
-		--exclude test/failing/**/*.js \
-		test/**/*.js
+		--exclude test/failing/*.js \
+		--exclude test/support/*.js \
+		test/**/**/*.js \
+		test/**/*.js \
+		test/*.js
 
 test-cov:
 	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
-		./node_modules/mocha/bin/_mocha test/*.js -- \
+		./node_modules/mocha/bin/_mocha test/*.js test/**/*.js test/**/**/*.js -- \
 		--require @babel/register \
 		--reporter $(REPORTER) \
+		--exclude test/failing/*.js \
+		test/**/**/*.js \
+		test/**/*.js \
 		test/*.js \
