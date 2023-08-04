@@ -228,7 +228,9 @@ export default class Entity {
 
   ctrl(name, handler) {
     return async (req, res, next) => {
+      try {
       res.$odata.status = 200;
+
       if (name === 'list' && req.$odata.$count) {
         const countResponse = {
           $odata: {}
@@ -237,6 +239,7 @@ export default class Entity {
         this.handler.count(req, countResponse, async err => {
           if (err) {
             next(err);
+            return;
           }
 
           res.$odata.result = {
@@ -249,6 +252,10 @@ export default class Entity {
         await handler(req, res, next);
 
       }
+
+    } catch(err) { 
+      next(err);
+    }
     };
   }
 
