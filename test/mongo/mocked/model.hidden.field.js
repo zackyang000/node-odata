@@ -7,7 +7,7 @@ import { init } from '../../support/db';
 
 const Schema = mongoose.Schema;
 
-describe('model.hidden.field', function () {
+describe('mongo.mocked.model.hidden.field', function () {
   let httpServer, modelMock, queryMock, Model;
 
   before(async function () {
@@ -54,12 +54,15 @@ describe('model.hidden.field', function () {
       _id: 0,
       name: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, [{
-      toObject: () => ({
-        name: 'zack'
-      })
-    }]);
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve([{
+        toObject: () => ({
+          name: 'zack'
+        })
+      }])));
+
     const res = await request(host).get('/hidden-field?$select=name, password');
+
     assertSuccess(res);
     res.body.should.deepEqual({
       value: [{
@@ -82,13 +85,16 @@ describe('model.hidden.field', function () {
     modelMock.expects('find').once().returns(query);
 
     queryMock.expects('select').never();
-    queryMock.expects('exec').once().callsArgWith(0, null, [{
-      toObject: () => ({
-        _id: 'AFFE',
-        name: 'zack'
-      })
-    }]);
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve([{
+        toObject: () => ({
+          _id: 'AFFE',
+          name: 'zack'
+        })
+      }])));
+
     const res = await request(host).get('/hidden-field?$select=password');
+
     assertSuccess(res);
     res.body.should.deepEqual({
       value: [{

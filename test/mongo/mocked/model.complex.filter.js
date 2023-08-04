@@ -10,7 +10,7 @@ import { init } from '../../support/db';
 
 const Schema = mongoose.Schema;
 
-describe('model.complex.filter', () => {
+describe('mongo.mocked.model.complex.filter', () => {
   let httpServer, modelMock, queryMock;
 
   before(() => {
@@ -37,13 +37,14 @@ describe('model.complex.filter', () => {
     modelMock.expects('find').once().withArgs({"product.price": {$gt: 30}}).returns(query);
 
     queryMock.expects('select').once().withArgs({ _id: 0, product: 1});
-    queryMock.expects('exec').once().callsArgWith(0, null, [{
+    queryMock.expects('exec').once()
+    .returns(new Promise(resolve => resolve([{
       toObject: () => ({
         product: {
           price: 50
         }
       })
-    }]);
+    }])));
     httpServer = server.listen(port);
   });
 

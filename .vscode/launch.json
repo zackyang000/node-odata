@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/singleton.js"
+        "test/mongo/mocked/rest.get.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

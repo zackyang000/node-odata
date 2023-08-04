@@ -4,7 +4,7 @@ import { odata, host, port, assertSuccess } from '../../support/setup';
 import { BookModel } from '../../support/books.model';
 import sinon from 'sinon';
 
-describe('rest.delete', function() {
+describe('mongo.mocked.rest.delete', function() {
   let httpServer, modelMock;
 
   before(async function() {
@@ -23,8 +23,8 @@ describe('rest.delete', function() {
 
   it('should delete resource if it exist', async function() {
     modelMock = sinon.mock(BookModel);
-    modelMock.expects('remove').once().withArgs({_id: '1'})
-      .callsArgWith(1, null, JSON.stringify({n:1}));
+    modelMock.expects('deleteOne').once().withArgs({_id: '1'})
+      .returns(new Promise(resolve => resolve(JSON.stringify({n:1}))));
 
     const res = await request(host).del(`/book('1')`);
 
@@ -34,8 +34,8 @@ describe('rest.delete', function() {
   });
   it('should be 404 if resource not exist', async function() {
     modelMock = sinon.mock(BookModel);
-    modelMock.expects('remove').once().withArgs({_id: '666'})
-      .callsArgWith(1, null, JSON.stringify({n:0}));
+    modelMock.expects('deleteOne').once().withArgs({_id: '666'})
+      .returns(new Promise(resolve => resolve(JSON.stringify({n:0}))));
 
     const res = await request(host).del(`/book('666')`);
 

@@ -7,7 +7,7 @@ import sinon from 'sinon';
 
 const Schema = mongoose.Schema;
 
-describe('rest.get', () => {
+describe('mongo.mocked.rest.get', () => {
   const query = {
     $where: () => { },
     limit: () => { },
@@ -55,7 +55,7 @@ describe('rest.get', () => {
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(bookQuery);
     modelMock.expects('find').once().returns(bookQuery);
-    queryMock.expects('exec').once().callsArgWith(0, null, []);
+    queryMock.expects('exec').once().returns(new Promise(resolve => resolve([])));
 
     const res = await request(host).get(`/book`);
 
@@ -67,7 +67,7 @@ describe('rest.get', () => {
   it('should return special resource', async function() {
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findById').once().withArgs('1')
-      .callsArgWith(1, null, {toObject: () => ({title: 'Krieg und Frieden'})});
+      .returns(new Promise(resolve => resolve({toObject: () => ({title: 'Krieg und Frieden'})})));
 
     const res = await request(host).get(`/book('1')`);
     
@@ -83,7 +83,7 @@ describe('rest.get', () => {
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(bookQuery);
     modelMock.expects('findById').once().withArgs('1')
-      .callsArgWith(1, null, null)
+      .returns(new Promise(resolve => resolve()));
 
     const res = await request(host).get(`/book('1')`);
     res.status.should.be.equal(404);
@@ -92,7 +92,7 @@ describe('rest.get', () => {
   it('should return deep structure', async function() {
     modelMock = sinon.mock(ComplexModel);
     modelMock.expects('findById').once().withArgs('1')
-      .callsArgWith(1, null, {toObject: () => ({p1:{p2: 'Krieg und Frieden'}})})
+      .returns(new Promise(resolve => resolve({toObject: () => ({p1:{p2: 'Krieg und Frieden'}})})));
 
     const res = await request(host).get(`/complex-type('1')`);
     res.body.should.be.have.property('p1');

@@ -5,7 +5,7 @@ import books from '../../support/books.json';
 import { BookModel } from '../../support/books.model';
 import sinon from 'sinon';
 
-describe('rest.put', () => {
+describe('mongo.mocked.rest.put', () => {
   let httpServer, modelMock, bookInstanceMock;
 
   before(async function () {
@@ -30,9 +30,9 @@ describe('rest.put', () => {
     book.title = 'modify book';
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findOne').once().withArgs({_id: '1'})
-      .callsArgWith(1, null, (JSON.parse(JSON.stringify(books[0]))));
+      .returns(new Promise((resolve, reject) => resolve(JSON.parse(JSON.stringify(books[0])))));
     modelMock.expects('findByIdAndUpdate').once().withArgs('1', book)
-      .callsArgWith(2, null);
+      .returns(new Promise(resolve => resolve()));
 
     const res = await request(host)
       .put(`/book('${book.id}')`)
@@ -49,11 +49,11 @@ describe('rest.put', () => {
     book.title = 'new book';
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findOne').once().withArgs({_id: book.id})
-      .callsArgWith(1, null, null);
+      .returns(new Promise(resolve => resolve()))
     // mocking save method of created with new instance
     bookInstanceMock = sinon.mock(BookModel.prototype);
     bookInstanceMock.expects('save').once()
-      .callsArgWith(0, null);
+      .returns(new Promise(resolve => resolve()))
 
     const res = await request(host)
       .put(`/book('${book.id}')`)
@@ -74,7 +74,7 @@ describe('rest.put', () => {
     book.title = 'new book';
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findOne').once().withArgs({_id: book.id})
-      .callsArgWith(1, null, null);
+     .returns(new Promise(resolve => resolve()))
 
     const res = await request(host).put(`/book('1')`).send(books[0]);
 

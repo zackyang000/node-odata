@@ -1,16 +1,13 @@
-export default (req, res, next) => {
-  req.$odata.Model.findOne({ id: req.params.id }, (err, entity) => {
-    if (err) {
-      next(err);
-    } else {
-      req.$odata.Model.update({ id: req.params.id }, { ...entity, ...req.body }, (err1) => {
-        if (err1) {
-          next(err1);
-        } else {
-          res.$odata.result = { ...entity.toObject(), ...req.body };
-          next();
-        }
-      });
-    }
-  });
-};
+export default async (req, res, next) => {
+  try {
+    const entity = await req.$odata.Model.findOne({ id: req.params.id });
+    const patched = { ...entity.toObject(), ...req.body };
+
+    await req.$odata.Model.update({ id: req.params.id }, patched);
+    res.$odata.result = patched;
+    next();
+
+  } catch (err) {
+    next(err);
+  }
+}

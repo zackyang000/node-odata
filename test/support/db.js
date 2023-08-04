@@ -12,13 +12,14 @@ export function init(server) {
   });
 }
 
-export function connect(server) {
-  mongoose.connect(process.env.DATABASE || conn, null, (err) => {
-    if (err) {
-      console.error(err.message);
-      console.error('Failed to connect to database on startup.');
-      process.exit();
-    }
-  });
-  init(server);
+export async function connect(server) {
+  try {
+    await mongoose.connect(process.env.DATABASE || conn);
+    init(server);
+    
+  } catch(err) {
+    console.error(err.message);
+    console.error('Failed to connect to database on startup.');
+    process.exit();
+  }
 }

@@ -1,5 +1,3 @@
-// For issue: https://github.com/TossShinHwa/node-odata/issues/55
-
 import 'should';
 import request from 'supertest';
 import { odata, host, port, assertSuccess } from '../../support/setup';
@@ -25,7 +23,7 @@ function queryResource(id) {
   .get(`/complex-model('${id}')`);
 }
 
-describe('model.complex', () => {
+describe('mongo.connected.model.complex', () => {
   let httpServer;
 
   before(() => {

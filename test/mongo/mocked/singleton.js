@@ -45,7 +45,8 @@ describe('mongo.mocked.singleton', () => {
       _id: 0,
       price: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, { toObject: () => books[0] });
+    queryMock.expects('exec').once()
+    .returns(new Promise(resolve => resolve({ toObject: () => books[0] })));
 
     const res = await request(host).get('/book?$select=price');
 

@@ -7,7 +7,7 @@ import { init } from '../../support/db';
 
 const Schema = mongoose.Schema;
 
-describe('model.custom.id', () => {
+describe('mongo.mocked.model.custom.id', () => {
   let httpServer, modelMock, queryMock, Model;
 
   before(async function () {
@@ -50,13 +50,15 @@ describe('model.custom.id', () => {
 
   it('should work when use a custom id to query specific entity', async function () {
     modelMock = sinon.mock(Model);
-    modelMock.expects('findById').once().callsArgWith(1, null, {
+    modelMock.expects('findById').once()
+    .returns(new Promise(resolve => resolve({
       toObject: () => ({
         id: 100
       })
-    });
+    })));
 
     const res = await request(host).get('/custom-id(100)');
+    
     assertSuccess(res);
     res.body.id.should.be.equal(100);
     modelMock.verify();
@@ -72,12 +74,15 @@ describe('model.custom.id', () => {
     modelMock = sinon.mock(Model);
     queryMock = sinon.mock(query);
     modelMock.expects('find').once().withArgs({id: {$eq: 100}}).returns(query);
-    queryMock.expects('exec').once().callsArgWith(0, null, [{
+    queryMock.expects('exec').once()
+    .returns(new Promise(resolve => resolve([{
       toObject: () => ({
         id: 100
       })
-    }]);
+    }])));
+
     const res = await request(host).get('/custom-id?$filter=id eq 100');
+
     assertSuccess(res);
     res.body.value.length.should.be.greaterThan(0);
     queryMock.verify();

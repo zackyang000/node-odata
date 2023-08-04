@@ -1,17 +1,19 @@
-export default (req, res, next) => {
-  req.$odata.Model.findById(req.$odata.$Key._id, (err, entity) => {
-    if (err) {
-      return next(err);
-    }
+export default async (req, res, next) => {
+  try {
+    const entity = await req.$odata.Model.findById(req.$odata.$Key._id);
 
     if (!entity) {
       const result = new Error('Not Found');
 
       result.status = 404;
-      return next(result);
+      throw result;
     }
 
     res.$odata.result = entity.toObject();
-    return next();
-  });
+    next();
+
+  } catch (err) {
+    next(err);
+  }
+
 };

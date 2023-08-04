@@ -6,7 +6,7 @@ import books from '../../support/books.json';
 import { init } from '../../support/db';
 import { BookModel } from '../../support/books.model';
 
-describe('odata.query.count', function () {
+describe('mongo.mocked.odata.query.count', function () {
   const query = {
     count: () => { },
     exec: () => { },
@@ -34,8 +34,10 @@ describe('odata.query.count', function () {
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
     modelMock.expects('find').twice().returns(query);
-    queryMock.expects('count').once().callsArgWith(0, null, 13);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('count').once()
+      .returns(new Promise(resolve => resolve(13)));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$count=true');
     assertSuccess(res);
@@ -50,7 +52,8 @@ describe('odata.query.count', function () {
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
     modelMock.expects('find').twice().returns(query);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+    .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$count=false');
     res.body.should.be.not.have.property('@odata.count');

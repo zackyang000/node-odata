@@ -1,19 +1,15 @@
-export default (req, res, next) => {
-  const query = req.$odata.Model.find();
+export default async (req, res, next) => {
+  try {
+    const query = req.$odata.Model.find();
+    const count = await query.count();
 
-  query.count((err, count) => {
-    if (err) {
-      const result = new Error(err.message);
+    res.$odata.result = count.toString();
+    res.$odata.supportedMimetypes = ['text/plain'];
 
-      result.previous = err;
-      result.status = 500;
-      next(result);
+    next();
 
-    } else {
-      res.$odata.result = count.toString();
-      res.$odata.supportedMimetypes = ['text/plain'];
-      next();
+  } catch(err) {
+    next(err);
+  }
 
-    }
-  });
 };

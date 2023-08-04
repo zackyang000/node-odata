@@ -5,7 +5,7 @@ import { odata, host, port } from '../../support/setup';
 import { init } from '../../support/db';
 import { BookModel } from '../../support/books.model';
 
-describe('odata.count', function() {
+describe('mongo.mocked.odata.count', function() {
   let httpServer, modelMock, queryMock;
 
   before(async function() {
@@ -30,7 +30,8 @@ describe('odata.count', function() {
     modelMock = sinon.mock(BookModel);
     queryMock = sinon.mock(query);
     modelMock.expects('find').once().returns(query);
-    queryMock.expects('count').once().callsArgWith(0, null, 13);
+    queryMock.expects('count').once()
+      .returns(new Promise(resolve => resolve(13)));
 
     const res = await request(host).get('/book/$count');
 
