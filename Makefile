@@ -21,7 +21,7 @@ test:
 		test/*.js
 
 test-cov:
-	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' \
+	@node node_modules/istanbul/lib/cli.js cover -x '**/examples/**' -x '**/lib/**' \
 		./node_modules/mocha/bin/_mocha test/*.js test/**/*.js test/**/**/*.js -- \
 		--require @babel/register \
 		--reporter $(REPORTER) \

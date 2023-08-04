@@ -96,6 +96,42 @@ describe('odata.batch', () => {
     });
   });
 
+  it('should work with get one of multiple entity types', async function () {
+    const server = odata();
+
+    server.entity('affe', null, BookMetadata);
+
+    server.entity('book', {
+      get: (req, res, next) => {
+        req.$odata.$Key.id.should.be.equal(books[0].id);
+        res.$odata.result = books[0];
+        next();
+      }
+    }, BookMetadata);
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "get",
+        url: `/book('${books[0].id}')`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 200,
+        statusText: 'OK',
+        headers: {
+          'OData-Version': '4.0',
+          'content-type': 'application/json'
+        },
+        body: books[0]
+      }]
+    });
+  });
+
   it('should work with post entity', async function () {
     const result = {
       title: "War and peace"
@@ -317,6 +353,67 @@ describe('odata.batch', () => {
         body: {
           result: 'Hello! I am an action, that bound to entity.'
         }
+      }]
+    });
+  });
+
+  it('Calls to bevore hooks should be done synchronously', async function () {
+    const server = odata();
+    const resource = server.entity('book', {
+      delete: (req, res, next) => {
+        req.$odata.$Key.id.should.be.equal('1');
+        res.$odata.status = 204;
+        next();
+      }
+    }, BookMetadata);
+
+    resource.addBefore([(req, res, next) => {
+      res.$odata.should.not.have.property('result');
+      res.$odata.result = 0;
+      next();
+    },(req, res, next) => {
+      res.$odata.result.should.be.equal(0);
+      res.$odata.result = 1;
+      next();
+    }, async (req, res, next) => {
+      res.$odata.result.should.be.equal(1);
+      
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(2);
+        }, 0);
+      });
+      res.$odata.result = await promise;
+    }, async (req, res, next) => {
+      res.$odata.result.should.be.equal(2);
+      
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(3);
+        }, 0);
+      });
+      res.$odata.result = await promise;
+      next();
+    }, (req, res, next) => {
+      res.$odata.result.should.be.equal(3);
+      next();
+    }])
+
+    httpServer = server.listen(port);
+
+    const res = await request(host).post(`/$batch`).send({
+      requests: [{
+        id: "1",
+        method: "delete",
+        url: `/book('1')`
+      }]
+    });
+    assertSuccess(res);
+    res.body.should.deepEqual({
+      responses: [{
+        id: "1",
+        status: 204,
+        statusText: "No Content"
       }]
     });
   });

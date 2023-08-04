@@ -81,7 +81,7 @@ export default class Entity {
       }
     });
 
-    return [
+    return route && [
       this.parsingMiddleware.bind(this),
       ...this.hooks.before,
       this.ctrl(route.name, this.handler[route.name]),
@@ -227,14 +227,14 @@ export default class Entity {
   }
 
   ctrl(name, handler) {
-    return (req, res, next) => {
+    return async (req, res, next) => {
       res.$odata.status = 200;
       if (name === 'list' && req.$odata.$count) {
         const countResponse = {
           $odata: {}
         };
 
-        this.handler.count(req, countResponse, err => {
+        this.handler.count(req, countResponse, async err => {
           if (err) {
             next(err);
           }
@@ -242,11 +242,11 @@ export default class Entity {
           res.$odata.result = {
             ['@odata.count']: countResponse.$odata.result
           };
-          handler(req, res, next);
+          await handler(req, res, next);
         });
 
       } else {
-        handler(req, res, next);
+        await handler(req, res, next);
 
       }
     };

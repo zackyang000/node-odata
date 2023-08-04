@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import error from '../middlewares/error';
 import { STATUS_CODES } from 'http';
-import writer from '../middlewares/writer';
 
 export default class Batch {
   constructor(server) {
@@ -81,37 +80,72 @@ export default class Batch {
 
   async executeSingleRequest(handler, req, res) {
     try {
+      let promise = null;
+
       for (let i = 0; i < this._server.hooks.before.length; ++i) {
         const hook = this._server.hooks.before[i];
 
-        await hook(req, res, err => {
-          if (err) {
-            throw err;
-          }
-        });
+        if (promise) {
+          promise = promise.then(() => {
+            return hook(req, res, err => {
+              if (err) {
+                throw err;
+              }
+            });
+          });
+        } else {
+          promise = hook(req, res, err => {
+            if (err) {
+              throw err;
+            }
+          });
+        }
+        
       }
 
       for (let i = 0; i < handler.length; ++i) {
         const handlerOrHook = handler[i];
 
-        await handlerOrHook(req, res, err => {
-          if (err) {
-            throw err;
-          }
-        });
-      }
-
-      for(let i = 0; i < this._server.hooks.after.length; ++i) {
-        const hook = this._server.hooks.after[i];
-
-        if (hook !== error) {
-          await hook(req, res, err => {
+        if (promise) {
+          promise = promise.then(() => {
+            return handlerOrHook(req, res, err => {
+              if (err) {
+                throw err;
+              }
+            });
+          });
+        } else {
+          promise = handlerOrHook(req, res, err => {
             if (err) {
               throw err;
             }
           });
         }
       }
+
+      for(let i = 0; i < this._server.hooks.after.length; ++i) {
+        const hook = this._server.hooks.after[i];
+
+        if (hook !== error) {
+          if (promise) {
+            promise = promise.then(() => {
+              return hook(req, res, err => {
+                if (err) {
+                  throw err;
+                }
+              });
+            });
+          } else {
+            promise = hook(req, res, err => {
+              if (err) {
+                throw err;
+              }
+            });
+          }
+        }
+      }
+
+      await promise;
 
     } catch (err) {
       error(err, req, res);
@@ -131,7 +165,8 @@ export default class Batch {
         result.id = request.id;
       }
       const currentRequest = {
-        headers: request.headers,
+        headers: request.headers || {},
+        method: request.method,
         query: Batch.mapToQuery(request.url),
         body: request.body,
         $odata: res.$odata

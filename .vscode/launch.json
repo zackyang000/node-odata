@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/*.js"
+        "test/odata.batch.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

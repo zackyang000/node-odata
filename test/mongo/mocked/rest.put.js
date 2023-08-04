@@ -27,8 +27,6 @@ describe('rest.put', () => {
   it('should modify resource', async function () {
     const book = JSON.parse(JSON.stringify(books[0]));
 
-    debugger;
-
     book.title = 'modify book';
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findOne').once().withArgs({_id: '1'})

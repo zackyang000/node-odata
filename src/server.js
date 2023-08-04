@@ -1,4 +1,5 @@
 import createExpress from './express';
+import bodyParser from 'body-parser';
 import MongoEntity from './mongo/Entity';
 import Entity from './odata/entity/Entity';
 import Func from './ODataFunction';
@@ -9,6 +10,7 @@ import Action from './odata/Action';
 import error from './middlewares/error';
 import writer from './middlewares/writer';
 import Hooks from './odata/Hooks';
+import multipartMixed from './parser/multipartMixed';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -16,6 +18,9 @@ function checkAuth(auth, req) {
 
 class Server {
   constructor(prefix, options) {
+    const opts = (options && options.expressRequestLimit)
+    ? { limit: options.expressRequestLimit } : {};
+
     this._app = createExpress(options);
     this._settings = {
       maxTop: 10000,
@@ -37,7 +42,8 @@ class Server {
     //unbound actions
     this.actions = {};
 
-
+    this.hooks.addBefore(multipartMixed);
+    this.hooks.addBefore(bodyParser.json(opts));
     this.hooks.addBefore(async (req, res) => {
       req.$odata = {
         $metadata: this.resources.$metadata
@@ -82,13 +88,15 @@ class Server {
   }
 
   mongoEntity(name, model, handler, metadata, settings, mapping) {
-    if (model === undefined) {
+    if (name && !model) {
+      if (!this.resources[name]) {
+        throw new Error(`Entity '${name}' is not defined`);
+      }
       return this.resources[name];
     }
 
     const entity = new MongoEntity(name, model);
 
-    //this.resources[name].setModel(db.register(name, model));
     const complexTypes = entity.getComplexTypes();
 
     if (complexTypes) {
