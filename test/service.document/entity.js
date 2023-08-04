@@ -1,9 +1,10 @@
 import 'should';
 import request from 'supertest';
-import { host, port, odata, assertSuccess } from './support/setup';
-import { BookMetadata } from './support/books.model';
+import { host, port, odata, assertSuccess } from '../support/setup';
+import { BookMetadata } from '../support/books.model';
+import checkContentType from '../support/checkContentType';
 
-describe('service.document', () => {
+describe('service.document.entity', () => {
   let httpServer, server, db;
 
   const jsonDocument = {
@@ -47,9 +48,3 @@ describe('service.document', () => {
   });
 
 });
-
-
-function checkContentType(res, value) {
-  res.header.should.have.property('content-type');
-  res.header['content-type'].should.containEql(value);
-}

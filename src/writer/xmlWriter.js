@@ -16,6 +16,9 @@ export default class XmlWriter {
       case 'EntitySet':
         return this.visitEntitySet(node, name);
 
+      case 'Singleton':
+        return this.visitSingleton(node, name);
+
       case 'TypeDefinition':
         return this.visitTypeDefinition(node, name);
 
@@ -62,16 +65,23 @@ export default class XmlWriter {
     return `<EntitySet Name="${name}" EntityType="${node.$Type}"/>`;
   }
 
+  visitSingleton(node, name) {
+    return `<Singleton Name="${name}" Type="${node.$Type}"/>`;
+  }
+
   visitEntityContainter(node) {
     let entitySets = '';
+    let singletons = '';
     let functions = '';
     let actions = ''
 
     Object.keys(node)
       .filter((item) => item !== '$Kind')
       .forEach((item) => {
-        if (node[item].$Type) {
+        if (node[item].$Collection === true) {
           entitySets += this.visitor('EntitySet', node[item], item);
+        } else if(node[item].$Type) {
+          singletons += this.visitor('Singleton', node[item], item);
         } else if (node[item].$Action) {
           actions += this.visitor('ActionImport', node[item], item);
         } else {
@@ -80,7 +90,7 @@ export default class XmlWriter {
       });
     return (
       `<EntityContainer Name="Container">
-    ${entitySets}${functions}${actions}
+    ${entitySets}${singletons}${functions}${actions}
   </EntityContainer>`);
   }
 

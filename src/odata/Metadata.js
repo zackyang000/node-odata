@@ -2,6 +2,7 @@ import { Router } from 'express';
 import Entity from './entity/Entity';
 import Function from '../ODataFunction';
 import { validate, validateIdentifier } from './validator';
+import Singleton from './entity/Singleton';
 
 export default class Metadata {
   constructor(server) {
@@ -92,6 +93,9 @@ export default class Metadata {
           });
         }
 
+      } if (resource instanceof Singleton && !result[currentResource]) {
+        result[currentResource] = resource.getMetadata();
+
       } else if (resource instanceof Function) {
         result[currentResource] = this.visitor('Function', resource);
       }
@@ -104,11 +108,15 @@ export default class Metadata {
       const result = { ...previousResource };
       const resource = this._server.resources[currentResource];
 
-      if (resource instanceof Entity) {
+      if (resource instanceof Entity || resource instanceof Singleton) {
         result[currentResource] = {
-          $Collection: true,
-          $Type: `node.odata.${currentResource}`,
+          $Type: `node.odata.${currentResource}`
         };
+
+        if(resource instanceof Entity) {
+          result[currentResource].$Collection = true;
+        }
+
       } else if (resource instanceof Function) {
         result[currentResource] = {
           $Function: `node.odata.${currentResource}`,

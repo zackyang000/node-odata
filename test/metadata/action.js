@@ -3,10 +3,10 @@
 
 import 'should';
 import request from 'supertest';
-import { host, port, odata, assertSuccess } from './support/setup';
+import { host, port, odata, assertSuccess } from '../support/setup';
 
 describe('metadata.action', () => {
-  let httpServer, server, db;
+  let httpServer, server;
 
   beforeEach(async function() {
     server = odata();

@@ -1,9 +1,6 @@
-// For issue: https://github.com/TossShinHwa/node-odata/issues/96
-// For issue: https://github.com/TossShinHwa/node-odata/issues/25
-
 import 'should';
 import request from 'supertest';
-import { host, port, odata, assertSuccess } from './support/setup';
+import { host, port, odata, assertSuccess } from '../support/setup';
 
 describe('metadata.complex.type', () => {
   let httpServer, server, db;

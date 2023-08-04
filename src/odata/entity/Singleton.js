@@ -1,0 +1,115 @@
+import Entity from "./Entity";
+import { validate, validateIdentifier } from "../validator";
+import Hooks from "../Hooks";
+import { Router } from 'express';
+
+export default class Singleton {
+  constructor(name, handler, metadata, settings, mapping) {
+    const notSupported = (req, res) => {
+      const error = new Error();
+
+      error.status = 405;
+      throw error;
+    };
+
+    this.name = name;
+    this.entity = new Entity(name, handler, metadata, mapping);
+
+    this.handler = {
+      ...this.entity.handler, // get, post, put, delete, patch
+      list: notSupported,
+      count: notSupported,
+      ...handler
+    };
+
+    this.hooks = new Hooks();
+    /*
+    this.metadata = {
+      $Kind: 'EntityType',
+      ...metadata
+    };
+
+    this.mapping = mapping || {};*/
+  }
+
+  addBefore(fn, name) {
+    this.hooks.addBefore(fn, name);
+  }
+
+  addAfter(fn, name) {
+    this.hooks.addAfter(fn, name);
+  }
+
+  getMetadata() {
+    return this.entity.getMetadata();
+  }
+
+  match(method, url) {
+    validateIdentifier(this.name);
+
+    const routes = this.getRoutes()
+    const route = routes.find((item) => {
+      if (item.method === method) {
+        const match = url.match(item.regex);
+
+        return match;
+      }
+    });
+
+    return route && [
+      this.entity.parsingMiddleware.bind(this.entity),
+      ...this.hooks.before,
+      this.ctrl(route.name, this.handler[route.name]),
+      ...this.hooks.after,
+      this.entity.adaptResultAccordingMetadata.bind(this.entity)
+    ];
+
+
+  }
+
+  getRouter() {
+    validateIdentifier(this.name);
+    validate(this.entity.metadata);
+
+    const router = Router();
+    const routes = this.getRoutes();
+
+    routes.forEach((route) => {
+      const {
+        name, method, url
+      } = route;
+
+      router[method](url,
+        this.entity.parsingMiddleware.bind(this.entity),
+        ...this.hooks.before,
+        this.ctrl(name, this.handler[name]),
+        this.entity.adaptResultAccordingMetadata.bind(this.entity),
+        ...this.hooks.after);
+    });
+
+    return [router];
+  }
+
+  ctrl(name, handler) {
+    return async (req, res, next) => {
+      try {
+      res.$odata.status = 200;
+      await handler(req, res, next);
+
+    } catch(err) { 
+      next(err);
+    }
+    };
+  }
+
+  getRoutes() {
+    const listRoute = this.entity.getRoutes().find(item => item.name === 'list');
+
+    return [ 'post', 'put', 'patch', 'delete', 'get'].map(item => ({
+        name: item,
+        method: item,
+        url: listRoute.url,
+        regex: listRoute.regex
+      }));
+  }
+}

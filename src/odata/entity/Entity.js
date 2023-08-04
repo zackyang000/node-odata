@@ -198,7 +198,7 @@ export default class Entity {
       .map(name => this.actions[name].getRouter());
 
     const router = Router();
-    const routes = this.getRoutes(this.name);
+    const routes = this.getRoutes();
 
     routes.forEach((route) => {
       const {

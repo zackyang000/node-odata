@@ -11,6 +11,7 @@ import error from './middlewares/error';
 import writer from './middlewares/writer';
 import Hooks from './odata/Hooks';
 import multipartMixed from './parser/multipartMixed';
+import Singleton from './odata/entity/Singleton';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -78,11 +79,21 @@ class Server {
     }
 
     this.resources[name] = new Entity(name, handler, metadata, {
-      maxSkip: this._settings.maxSkip,
+      maxSkip: this._settings.maxSkip, //TODO: Validation of possible Mappings
       maxTop: this._settings.maxTop,
       orderby: this._settings.orderby,
       ...settings
     }, mapping);
+
+    return this.resources[name];
+  }
+
+  singleton(name, handler, metadata, mapping) {
+    if (this.resources[name]) {
+      throw new Error(`Entity with name "${name}" already defined`);
+    }
+
+    this.resources[name] = new Singleton(name, handler, metadata, mapping);
 
     return this.resources[name];
   }

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Entity from './entity/Entity';
+import Singleton from './entity/Singleton';
 
 export default class Metadata {
   constructor(server) {
@@ -43,11 +44,13 @@ export default class Metadata {
   ctrl(req) {
     const entityTypeNames = Object.keys(this._server.resources);
     const entitySets = entityTypeNames
-      .filter((item) => this._server.resources[item] instanceof Entity)
-      .map((currentResource) => ({
-        name: currentResource,
-        kind: 'EntitySet',
-        url: currentResource,
+      .filter((item) => 
+        this._server.resources[item] instanceof Entity
+          || this._server.resources[item] instanceof Singleton )
+      .map((item) => ({
+        name: item,
+        kind: this._server.resources[item] instanceof Singleton ? 'Singleton' : 'EntitySet',
+        url: item,
       }));
 
     const document = {
