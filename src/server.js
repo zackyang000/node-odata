@@ -1,6 +1,7 @@
 import createExpress from './express';
 import bodyParser from 'body-parser';
 import MongoEntity from './mongo/Entity';
+import MongoSingleton from './mongo/Singleton';
 import Entity from './odata/entity/Entity';
 import Func from './ODataFunction';
 import Metadata from './odata/Metadata';
@@ -88,16 +89,6 @@ class Server {
     return this.resources[name];
   }
 
-  singleton(name, handler, metadata, mapping) {
-    if (this.resources[name]) {
-      throw new Error(`Entity with name "${name}" already defined`);
-    }
-
-    this.resources[name] = new Singleton(name, handler, metadata, mapping);
-
-    return this.resources[name];
-  }
-
   mongoEntity(name, model, handler, metadata, settings, mapping) {
     if (name && !model) {
       if (!this.resources[name]) {
@@ -127,6 +118,49 @@ class Server {
       ...metadata
     }, settings, {
       ...entity.getMapping(),
+      ...mapping
+    });
+  }
+
+  singleton(name, handler, metadata, mapping) {
+    if (this.resources[name]) {
+      throw new Error(`Entity with name "${name}" already defined`);
+    }
+
+    this.resources[name] = new Singleton(name, handler, metadata, mapping);
+
+    return this.resources[name];
+  }
+
+  mongoSingleton(name, model, handler, metadata, mapping) {
+    if (name && !model) {
+      if (!this.resources[name]) {
+        throw new Error(`Entity '${name}' is not defined`);
+      }
+      return this.resources[name];
+    }
+
+    const entity = new MongoSingleton(name, model);
+
+    const complexTypes = entity.entity.getComplexTypes();
+
+    if (complexTypes) {
+      Object.keys(complexTypes)
+        .forEach(typeName => {
+          const type = complexTypes[typeName];
+
+          this.complexType(typeName, type);
+        });
+    }
+
+    return this.singleton(name, {
+      ...entity.getHandler(),
+      ...handler
+    }, {
+      ...entity.entity.getMetadata(),
+      ...metadata
+    }, null, {
+      ...entity.entity.getMapping(),
       ...mapping
     });
   }

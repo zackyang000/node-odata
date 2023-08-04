@@ -4,7 +4,7 @@ import Hooks from "../Hooks";
 import { Router } from 'express';
 
 export default class Singleton {
-  constructor(name, handler, metadata, settings, mapping) {
+  constructor(name, handler, metadata, mapping) {
     const notSupported = (req, res) => {
       const error = new Error();
 

@@ -7,7 +7,7 @@ import get from './rest/get';
 import count from './rest/count';
 import { validate, validateIdentifier } from '../odata/validator';
 
-export default class Entity {
+export default class MongoEntity {
   constructor(name, model) {
     this.name = name;
     this.model = model;

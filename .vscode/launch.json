@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.entity.js"
+        "test/mongo/mocked/singleton.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

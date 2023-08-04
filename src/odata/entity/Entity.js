@@ -11,8 +11,8 @@ import { parseSkip, parseTop } from "./parser/skiptop";
 
 export default class Entity {
   constructor(name, handler, metadata, settings, mapping) {
-    const notImplemented = (req, res) => {
-      const error = new Error();
+    const notImplemented = op => (req, res) => {
+      const error = new Error(`Operation '${op}' is not implemented'`);
 
       error.status = 501;
       throw error;
@@ -20,13 +20,13 @@ export default class Entity {
 
     this.name = name;
     this.handler = {
-      list: notImplemented,
-      get: notImplemented,
-      post: notImplemented,
-      put: notImplemented,
-      delete: notImplemented,
-      patch: notImplemented,
-      count: notImplemented,
+      list: notImplemented('list'),
+      get: notImplemented('get'),
+      post: notImplemented('post'),
+      put: notImplemented('put'),
+      delete: notImplemented('delete'),
+      patch: notImplemented('patch'),
+      count: notImplemented('count'),
       ...handler
     };
     this.metadata = {
