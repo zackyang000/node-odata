@@ -5,7 +5,7 @@ import { odata, host, port, assertSuccess } from '../../support/setup';
 import { BookModel } from '../../support/books.model';
 import data from '../../support/books.json';
 
-describe('odata.query.skip', () => {
+describe('mongo.mocked.odata.query.skip', () => {
   const query = {
     $where: () => { },
     where: () => { },
@@ -39,7 +39,8 @@ describe('odata.query.skip', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('skip').once().withArgs(1);
-    queryMock.expects('exec').once().callsArgWith(0, null, data.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(data.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$skip=1');
 
@@ -52,7 +53,8 @@ describe('odata.query.skip', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('skip').once().withArgs(1024);
-    queryMock.expects('exec').once().callsArgWith(0, null, data.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(data.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$skip=1024');
 

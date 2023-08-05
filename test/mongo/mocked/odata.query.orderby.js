@@ -5,7 +5,7 @@ import { odata, host, port, assertSuccess } from '../../support/setup';
 import data from '../../support/books.json';
 import { BookModel } from '../../support/books.model';
 
-describe('odata.query.orderby', () => {
+describe('mongo.mocked.odata.query.orderby', () => {
   const query = {
     $where: () => { },
     where: () => { },
@@ -42,7 +42,8 @@ describe('odata.query.orderby', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('sort').once().withArgs([['price', 'asc']]);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$orderby=price');
 
@@ -61,7 +62,8 @@ describe('odata.query.orderby', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('sort').once().withArgs([['price', 'asc']]);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$orderby=price asc');
 
@@ -80,7 +82,8 @@ describe('odata.query.orderby', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('sort').once().withArgs([['price', 'desc']]);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$orderby=price desc');
 
@@ -107,7 +110,8 @@ describe('odata.query.orderby', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('sort').once().withArgs([['price', 'asc'], ['title', 'asc']]);
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$orderby=price,title');
 

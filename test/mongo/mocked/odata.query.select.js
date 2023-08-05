@@ -5,7 +5,7 @@ import { odata, host, port, assertSuccess } from '../../support/setup';
 import data from '../../support/books.json';
 import { BookModel } from '../../support/books.model';
 
-describe('odata.query.select', () => {
+describe('mongo.mocked.odata.query.select', () => {
   const query = {
     $where: () => { },
     where: () => { },
@@ -45,7 +45,8 @@ describe('odata.query.select', () => {
       _id: 0,
       price: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$select=price');
 
@@ -70,7 +71,8 @@ describe('odata.query.select', () => {
       price: 1,
       title: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$select=price,title');
 
@@ -95,7 +97,8 @@ describe('odata.query.select', () => {
       price: 1,
       title: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$select=price,   title');
 
@@ -121,7 +124,8 @@ describe('odata.query.select', () => {
       price: 1,
       title: 1
     });
-    queryMock.expects('exec').once().callsArgWith(0, null, books.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$select=price,title,id');
 

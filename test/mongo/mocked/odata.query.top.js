@@ -5,7 +5,7 @@ import { odata, host, port, assertSuccess } from '../../support/setup';
 import { BookModel } from '../../support/books.model';
 import data from '../../support/books.json';
 
-describe('odata.query.top', () => {
+describe('mongo.mocked.odata.query.top', () => {
   const query = {
     $where: () => { },
     limit: () => { },
@@ -38,7 +38,8 @@ describe('odata.query.top', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('find').returns(query);
     queryMock.expects('limit').once().withArgs(1);
-    queryMock.expects('exec').once().callsArgWith(0, null, data.map(item => ({ toObject: () => item })));
+    queryMock.expects('exec').once()
+      .returns(new Promise(resolve => resolve(data.map(item => ({ toObject: () => item })))));
 
     const res = await request(host).get('/book?$top=1');
 
