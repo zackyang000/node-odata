@@ -18,11 +18,6 @@ describe('metadata.custom.resource', () => {
   it('[json] should render entity type if only singleton defined', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         ...BookMetadata
@@ -47,13 +42,11 @@ describe('metadata.custom.resource', () => {
     ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="node.odata.ObjectId"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="author" Type="Edm.String"/>
             <Property Name="genre" Type="Edm.String"/>
             <Property Name="price" Type="Edm.Double"/>
@@ -74,5 +67,36 @@ describe('metadata.custom.resource', () => {
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
     res.text.should.equal(xmlDocument);
+  });
+
+
+
+  it('[json] should render entity type once', async function() {
+    const jsonDocument = {
+      $Version: '4.0',
+      book: {
+        $Kind: "EntityType",
+        ...BookMetadata
+      },
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
+        $Kind: 'EntityContainer',
+        book: {
+          $Collection: true,
+          $Type: `node.odata.book`
+        },
+        "current-book": {
+          $Type: `node.odata.book`
+        }
+      },
+    };
+    const bookEntity = server.entity('book', null, BookMetadata);
+    server.singleton('current-book', null, bookEntity);
+    httpServer = server.listen(port);
+
+    const res = await request(host).get('/$metadata?$format=json');
+
+    assertSuccess(res);
+    res.body.should.deepEqual(jsonDocument);
   });
 });

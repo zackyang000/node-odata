@@ -132,6 +132,16 @@ class Server {
     return this.resources[name];
   }
 
+  singleton(name, handler, entity) {
+    if (this.resources[name]) {
+      throw new Error(`Entity with name "${name}" already defined`);
+    }
+
+    this.resources[name] = new Singleton(name, handler, entity);
+
+    return this.resources[name];
+  }
+
   mongoSingleton(name, model, handler, metadata, mapping) {
     if (name && !model) {
       if (!this.resources[name]) {

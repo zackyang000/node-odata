@@ -1,6 +1,3 @@
-// For issue: https://github.com/TossShinHwa/node-odata/issues/96
-// For issue: https://github.com/TossShinHwa/node-odata/issues/25
-
 import 'should';
 import request from 'supertest';
 import { host, port, odata, assertSuccess } from '../support/setup';
@@ -8,7 +5,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-describe('metadata.resource.complex', () => {
+describe('mongo.metadata.resource.complex', () => {
   let httpServer, server;
 
   before(() => {
@@ -26,16 +23,11 @@ describe('metadata.resource.complex', () => {
   it('should return json metadata for nested document array', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       "complex-modelp1Child1": {
         $Kind: 'ComplexType',
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         p2: {
           $Type: 'Edm.String'
@@ -45,8 +37,8 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         p1: {
           $Type: 'node.odata.complex-modelp1Child1',
@@ -81,18 +73,16 @@ describe('metadata.resource.complex', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <ComplexType Name="complex-modelp1Child1">
             <Property Name="p2" Type="Edm.String"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </ComplexType>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="p1" Type="node.odata.complex-modelp1Child1" Collection="true"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p1" Type="Collection(node.odata.complex-modelp1Child1)"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -117,17 +107,12 @@ describe('metadata.resource.complex', () => {
   it('should return json metadata for nested array', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       'complex-model': {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         p3: {
           $Type: 'Edm.String',
@@ -160,14 +145,12 @@ describe('metadata.resource.complex', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="p3" Type="Edm.String" Collection="true"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p3" Type="Collection(Edm.String)"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -193,14 +176,12 @@ describe('metadata.resource.complex', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="p3" Type="Edm.String" Collection="true"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p3" Type="Collection(Edm.String)"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -227,11 +208,6 @@ describe('metadata.resource.complex', () => {
   it('should return json metadata for nested document in document', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       "complex-modelp4Child1": {
         $Kind: 'ComplexType',
         p5: {
@@ -242,8 +218,8 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         p4: {
           $Type: 'node.odata.complex-modelp4Child1'
@@ -277,8 +253,6 @@ describe('metadata.resource.complex', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <ComplexType Name="complex-modelp4Child1">
             <Property Name="p5" Type="Edm.String"/>
           </ComplexType>
@@ -286,7 +260,7 @@ describe('metadata.resource.complex', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="p4" Type="node.odata.complex-modelp4Child1"/>
           </EntityType>
           <EntityContainer Name="Container">
@@ -312,11 +286,6 @@ describe('metadata.resource.complex', () => {
   it('should return json metadata for nested document in array', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       p1p2Child1: {
         $Kind: "ComplexType",
         p3: {
@@ -326,8 +295,8 @@ describe('metadata.resource.complex', () => {
           $Type: "node.odata.p1p4Child2"
         },
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         }
       },
       p1p4Child2:{
@@ -340,8 +309,8 @@ describe('metadata.resource.complex', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         p2: {
           $Type: 'node.odata.p1p2Child1',
@@ -379,22 +348,20 @@ describe('metadata.resource.complex', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <ComplexType Name="p1p4Child2">
             <Property Name="p5" Type="Edm.String"/>
           </ComplexType>
           <ComplexType Name="p1p2Child1">
             <Property Name="p3" Type="Edm.String"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="p4" Type="node.odata.p1p4Child2"/>
           </ComplexType>
           <EntityType Name="p1">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="p2" Type="node.odata.p1p2Child1" Collection="true"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="p2" Type="Collection(node.odata.p1p2Child1)"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="p1" EntityType="node.odata.p1"/>

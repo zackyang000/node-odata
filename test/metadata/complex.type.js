@@ -17,11 +17,6 @@ describe('metadata.complex.type', () => {
   it('should return explizit defined custom type in json format', async function() {
     const jsonDocument = {
       $Version: '4.0',      
-      ObjectId: {
-        $Kind: 'TypeDefinition',
-        $UnderlyingType: 'Edm.String',
-        $MaxLength: 24,
-      },
       fullName: {
         $Kind: "ComplexType",
         first: {
@@ -55,7 +50,6 @@ describe('metadata.complex.type', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24"></TypeDefinition>
           <ComplexType Name="fullName">
             <Property Name="first" Type="Edm.String"/>
             <Property Name="last" Type="Edm.String"/>

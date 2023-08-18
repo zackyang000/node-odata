@@ -18,8 +18,8 @@ export default class MongoEntity {
       id: {
         target: '_id',
         attributes: {
-          $Type: 'node.odata.ObjectId',
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         }
       }
     };
@@ -99,15 +99,15 @@ export default class MongoEntity {
   visitProperty(node) {
     const result = {};
 
+    if (node.selected === false) {// hidden field
+      return;
+    }
+
     if ('Array ObjectID'.indexOf(node.instance) === -1 && node.defaultValue) {
       result.$DefaultValue = node.defaultValue;
     }
 
     switch (node.instance) {
-      case 'ObjectID':
-        result.$Type = 'node.odata.ObjectId';
-        break;
-
       case 'Boolean':
         result.$Type = 'Edm.Boolean';
         break;
@@ -136,6 +136,10 @@ export default class MongoEntity {
           const arrayItemType = this.visitor('Property', {
             instance: node.options.type[0].name || node.options.type[0].type.name //Enums have an object with enum and type
           });
+
+          if (!arrayItemType) { // hidden properties returns undefined
+            return;
+          }
 
           result.$Type = arrayItemType.$Type;
         }
@@ -195,10 +199,13 @@ export default class MongoEntity {
             this.addMapping(curentProperty, propertyName);
           }
 
-          result = {
+          const property = this.visitor('Property', node[curentProperty]);
+
+          result = property ? {
             ...previousProperty,
-            [propertyName]: this.visitor('Property', node[curentProperty]),
-          };
+            [propertyName]: property
+          } : previousProperty;
+
         }
 
         return result;

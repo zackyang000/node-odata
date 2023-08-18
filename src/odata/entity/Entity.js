@@ -266,7 +266,6 @@ export default class Entity {
   getKeyParam(type, name) {
     switch (type) {
       case 'Edm.String':
-      case 'node.odata.ObjectId':
         return `%27:${name}%27`;
 
       default:
@@ -274,8 +273,9 @@ export default class Entity {
     }
   }
 
-  getResourceUrl() {
-    const resourceListURL = `/${this.name}`;
+  getResourceUrl(name) {
+    const entityName = name || this.name;
+    const resourceListURL = `/${entityName}`;
 
     if (this.metadata.$Key.length === 1) {
       const value = this.getKeyParam(this.metadata[this.metadata.$Key[0]].$Type, this.metadata.$Key[0]);
@@ -294,11 +294,12 @@ export default class Entity {
     }
   }
 
-  getRoutes() {
-    const resourceListURL = `/${this.name}`;
-    const resourceListRegex = new RegExp(`(^\/?${this.name}[?#])|(^\/?${this.name}$)`);
-    const resourceURL = this.getResourceUrl();
-    const resourceRegex = new RegExp(`^\/?${this.name}\\([^)]+\\)`);
+  getRoutes(name) {
+    const entityName = name || this.name;
+    const resourceListURL = `/${entityName}`;
+    const resourceListRegex = new RegExp(`(^\/?${entityName}[?#])|(^\/?${entityName}$)`);
+    const resourceURL = this.getResourceUrl(name);
+    const resourceRegex = new RegExp(`^\/?${entityName}\\([^)]+\\)`);
 
     return [
       {
@@ -335,7 +336,7 @@ export default class Entity {
         name: 'count',
         method: 'get',
         url: resourceListURL + '/([\$])count',
-        regex: new RegExp(`(^\/?${this.name}\/\\$count[?]?)|(^\/?${this.name}\/\\$count$)`)
+        regex: new RegExp(`(^\/?${entityName}\/\\$count[?]?)|(^\/?${entityName}\/\\$count$)`)
       },
       {
         name: 'list',

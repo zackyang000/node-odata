@@ -36,8 +36,8 @@ describe('odata.entity', () => {
     }, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       title: {
         $Type: 'Edm.String'
@@ -75,8 +75,8 @@ describe('odata.entity', () => {
     server.entity('book', null, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       title: {
         $Type: 'Edm.String'
@@ -108,8 +108,8 @@ describe('odata.entity', () => {
     }, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       createdAt: {
         $Type: 'Edm.DateTimeOffset'

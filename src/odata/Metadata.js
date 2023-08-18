@@ -93,7 +93,7 @@ export default class Metadata {
           });
         }
 
-      } if (resource instanceof Singleton && !result[currentResource]) {
+      } if (resource instanceof Singleton && resource.name === resource.entity.name) {
         result[currentResource] = resource.getMetadata();
 
       } else if (resource instanceof Function) {
@@ -108,14 +108,18 @@ export default class Metadata {
       const result = { ...previousResource };
       const resource = this._server.resources[currentResource];
 
-      if (resource instanceof Entity || resource instanceof Singleton) {
+      if (resource instanceof Entity) {
         result[currentResource] = {
-          $Type: `node.odata.${currentResource}`
+          $Type: `node.odata.${currentResource}`,
+          $Collection: true
         };
 
-        if(resource instanceof Entity) {
-          result[currentResource].$Collection = true;
-        }
+      } else if (resource instanceof Singleton) {
+        const singletonType = resource.name === resource.entity.name ? currentResource : resource.entity.name;
+
+        result[currentResource] = {
+          $Type: `node.odata.${singletonType}`
+        };
 
       } else if (resource instanceof Function) {
         result[currentResource] = {
@@ -148,11 +152,6 @@ export default class Metadata {
 
     const document = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: 'TypeDefinition',
-        $UnderlyingType: 'Edm.String',
-        $MaxLength: 24,
-      },
       ...this.complexTypes,
       ...entityTypes,
       ...unboundActions,

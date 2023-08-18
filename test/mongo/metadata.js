@@ -28,17 +28,12 @@ describe('metadata', () => {
   it('should return json metadata and ignore unknown attributes', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         price: {
           $Type: 'Edm.Double'
@@ -90,15 +85,13 @@ describe('metadata', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="price" Type="Edm.Double"/>
             <Property Name="author" Type="Edm.String"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -136,17 +129,12 @@ describe('metadata', () => {
   it('should return json metadata with maxLength attribute', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         author: {
           $Type: 'Edm.String',
@@ -183,14 +171,12 @@ describe('metadata', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="author" Type="Edm.String" MaxLength="25"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -217,17 +203,12 @@ describe('metadata', () => {
   it('should return json metadata with default value attribute', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         author: {
           $Type: 'Edm.String',
@@ -264,14 +245,12 @@ describe('metadata', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="author" Type="Edm.String" DefaultValue="William Shakespeare"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -298,17 +277,12 @@ describe('metadata', () => {
   it('should return json metadata with boolean property', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         salted: {
           $Type: 'Edm.Boolean'
@@ -343,14 +317,12 @@ describe('metadata', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="salted" Type="Edm.Boolean"/>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>

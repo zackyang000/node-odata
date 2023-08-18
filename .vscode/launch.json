@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/rest.get.js"
+        "test/mongo/mocked/model.hidden.field.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

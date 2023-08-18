@@ -99,7 +99,8 @@ const entity = server.entity('user', {
 }, {
   $Key: ['title'],
   id: {
-    $Type: 'node.odata.ObjectId'
+    $Type: 'Edm.String',
+		$MaxLength: 24
   },
   name: {
     $Type: 'node.odata.fullName'

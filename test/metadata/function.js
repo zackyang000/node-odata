@@ -17,11 +17,6 @@ describe('metadata.function', () => {
   it('should return json metadata for function', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       'odata-function': {
         $Kind: 'Function',
         $ReturnType: {
@@ -53,8 +48,6 @@ describe('metadata.function', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <Function Name="odata-function">
             <ReturnType Type="Edm.String"/>
           </Function>

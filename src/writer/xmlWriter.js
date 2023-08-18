@@ -95,22 +95,20 @@ export default class XmlWriter {
   }
 
   visitProperty(node, name) {
+    const type = node.$Collection ? `Collection(${node.$Type})` : node.$Type;
     let attributes = '';
 
-    if (node.$Nullable === false) {
-      attributes += ' Nullable="false"';
+    if (node.$Nullable) {
+      attributes += ' Nullable="true"';
     }
     if (node.$MaxLength) {
       attributes += ` MaxLength="${node.$MaxLength}"`;
-    }
-    if (node.$Collection) {
-      attributes += ' Collection="true"';
     }
     if (node.$DefaultValue) {
       attributes += ` DefaultValue="${node.$DefaultValue}"`;
     }
 
-    return `<Property Name="${name}" Type="${node.$Type}"${attributes}/>`;
+    return `<Property Name="${name}" Type="${type}"${attributes}/>`;
   }
 
   visitEntityType(node, name) {
@@ -186,11 +184,11 @@ export default class XmlWriter {
   }
 
   visitFunction(node, name) {
-    const collection = node.$ReturnType.$Collection ? ' Collection="true"' : '';
+    const type = node.$ReturnType.$Collection ? `Collection(${node.$ReturnType.$Type})` : node.$ReturnType.$Type;
 
     return (`
   <Function Name="${name}">
-    <ReturnType Type="${node.$ReturnType.$Type}"${collection}/>
+    <ReturnType Type="${type}"/>
   </Function>
   `);
   }

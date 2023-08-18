@@ -8,8 +8,8 @@ describe('metadata.format', () => {
   const metadata = {
     $Key: ["id"],
     id: {
-      $Type: "node.odata.ObjectId",
-      $Nullable: false,
+      $Type: 'Edm.String',
+      $MaxLength: 24
     },
     author: {
       $Type: 'Edm.String'
@@ -32,11 +32,6 @@ describe('metadata.format', () => {
   };
   const jsonDocument = {
     $Version: '4.0',
-    ObjectId: {
-      $Kind: "TypeDefinition",
-      $UnderlyingType: "Edm.String",
-      $MaxLength: 24
-    },
     book: {
       $Kind: "EntityType",
       ...metadata
@@ -54,13 +49,11 @@ describe('metadata.format', () => {
     ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="author" Type="Edm.String"/>
             <Property Name="description" Type="Edm.String"/>
             <Property Name="genre" Type="Edm.String"/>

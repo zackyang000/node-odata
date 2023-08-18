@@ -19,7 +19,7 @@ export default async (req, res, next) => {
       Object.keys(res.$odata.result)
         .forEach(item => {
           if (req.$odata.$select.indexOf(item) === -1) {
-            delete req.$odata.result[item];
+            delete res.$odata.result[item];
           }
         });
     }

@@ -13,7 +13,7 @@ export default class Singleton {
     };
 
     this.name = name;
-    this.entity = new Entity(name, handler, metadata, mapping);
+    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, mapping);
 
     this.handler = {
       ...this.entity.handler, // get, post, put, delete, patch
@@ -23,13 +23,7 @@ export default class Singleton {
     };
 
     this.hooks = new Hooks();
-    /*
-    this.metadata = {
-      $Kind: 'EntityType',
-      ...metadata
-    };
 
-    this.mapping = mapping || {};*/
   }
 
   addBefore(fn, name) {
@@ -103,7 +97,8 @@ export default class Singleton {
   }
 
   getRoutes() {
-    const listRoute = this.entity.getRoutes().find(item => item.name === 'list');
+    const name = this.name === this.entity.name ? undefined : this.name;
+    const listRoute = this.entity.getRoutes(name).find(item => item.name === 'list');
 
     return [ 'post', 'put', 'patch', 'delete', 'get'].map(item => ({
         name: item,

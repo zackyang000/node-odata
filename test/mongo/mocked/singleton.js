@@ -15,7 +15,7 @@ describe('mongo.mocked.singleton', () => {
     exec: () => { },
     model: BookModel
   };
-  let httpServer, modelMock, queryMock;
+  let httpServer, modelMock, queryMock, bookInstanceMock;
 
   before(async function() {
     const server = odata();
@@ -31,6 +31,7 @@ describe('mongo.mocked.singleton', () => {
   afterEach(() => {
     modelMock?.restore();
     queryMock?.restore();
+    bookInstanceMock?.restore();
   });
 
   it('should select anyone field', async function() {
@@ -53,6 +54,32 @@ describe('mongo.mocked.singleton', () => {
     assertSuccess(res);
     modelMock.verify();
     queryMock.verify();
+    res.body.should.deepEqual(books[0]);
+  });
+
+  it('should select anyone field for upsert', async function() {
+    const books = data.map(item => ({
+      price: item.price
+    }));
+
+    modelMock = sinon.mock(BookModel);
+    queryMock = sinon.mock(query);
+    modelMock.expects('findOne').once().returns(query);
+    queryMock.expects('select').once().withArgs({
+      _id: 0,
+      price: 1
+    });
+    queryMock.expects('exec').once()
+    .returns(new Promise(resolve => resolve(undefined)));
+    bookInstanceMock = sinon.mock(BookModel.prototype);
+    bookInstanceMock.expects('toObject').once().returns(JSON.parse(JSON.stringify(data[0])));
+
+    const res = await request(host).get('/book?$select=price');
+
+    assertSuccess(res);
+    modelMock.verify();
+    queryMock.verify();
+    bookInstanceMock.verify();
     res.body.should.deepEqual(books[0]);
   });
 });

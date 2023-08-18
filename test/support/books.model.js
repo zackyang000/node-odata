@@ -25,7 +25,8 @@ export const BookModel = mongoose.model('Book', BookSchema);
 export const BookMetadata = {
   $Key: ['id'],
   id: {
-    $Type: 'node.odata.ObjectId'
+    $Type: 'Edm.String',
+    $MaxLength: 24
   },
   author: {
     $Type: 'Edm.String'

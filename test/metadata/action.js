@@ -20,11 +20,6 @@ describe('metadata.action', () => {
   it('should return json metadata for action that bound to instance', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       'bound-action': {
         $Kind: 'Action',
         $IsBound: true,
@@ -37,8 +32,8 @@ describe('metadata.action', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         author: {
           $Type: 'Edm.String'
@@ -56,8 +51,8 @@ describe('metadata.action', () => {
     server.entity('book', null, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       author: {
         $Type: 'Edm.String'
@@ -76,13 +71,11 @@ describe('metadata.action', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="author" Type="Edm.String"/>
           </EntityType>
           <Action Name="bound-action" IsBound="true">
@@ -97,8 +90,8 @@ describe('metadata.action', () => {
     server.entity('book', null, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       author: {
         $Type: 'Edm.String'
@@ -115,11 +108,6 @@ describe('metadata.action', () => {
   it('should return json metadata for action that bound to collection', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       'bound-action': {
         $Kind: 'Action',
         $IsBound: true,
@@ -133,8 +121,8 @@ describe('metadata.action', () => {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         author: {
           $Type: 'Edm.String'
@@ -152,8 +140,8 @@ describe('metadata.action', () => {
     server.entity('book', null, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       author: {
         $Type: 'Edm.String'
@@ -172,13 +160,11 @@ describe('metadata.action', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <EntityType Name="book">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="node.odata.ObjectId" Nullable="false"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
             <Property Name="author" Type="Edm.String"/>
           </EntityType>
           <Action Name="bound-action" IsBound="true">
@@ -193,8 +179,8 @@ describe('metadata.action', () => {
     server.entity('book', null, {
       $Key: ['id'],
       id: {
-        $Type: 'node.odata.ObjectId',
-        $Nullable: false
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       author: {
         $Type: 'Edm.String'
@@ -224,11 +210,6 @@ describe('metadata.action', () => {
   it('should return json metadata for unbound action', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       'unbound-action': {
         $Kind: 'Action',
         $Parameter: [{
@@ -262,8 +243,6 @@ describe('metadata.action', () => {
   ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
       <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
-          <TypeDefinition Name="ObjectId" UnderlyingType="Edm.String" MaxLength="24">
-          </TypeDefinition>
           <Action Name="unbound-action">
           </Action>
           <EntityContainer Name="Container">

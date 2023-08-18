@@ -21,17 +21,12 @@ describe('metadata.custom.resource', () => {
   it('should return json metadata for custom resource', async function() {
     const jsonDocument = {
       $Version: '4.0',
-      ObjectId: {
-        $Kind: "TypeDefinition",
-        $UnderlyingType: "Edm.String",
-        $MaxLength: 24
-      },
       book: {
         $Kind: "EntityType",
         $Key: ["id"],
         id: {
-          $Type: "node.odata.ObjectId",
-          $Nullable: false,
+          $Type: 'Edm.String',
+          $MaxLength: 24
         },
         salted: {
           $Type: 'Edm.Boolean'
@@ -49,8 +44,8 @@ describe('metadata.custom.resource', () => {
     server.entity('book', {}, {
       $Key: ["id"],
       id: {
-        $Type: "node.odata.ObjectId",
-        $Nullable: false,
+        $Type: 'Edm.String',
+        $MaxLength: 24
       },
       salted: {
         $Type: 'Edm.Boolean'
