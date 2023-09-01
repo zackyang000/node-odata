@@ -22,7 +22,6 @@ describe('metadata', () => {
 
   afterEach(() => {
     httpServer.close();
-    debugger;
   });
 
   it('should return json metadata and ignore unknown attributes', async function() {
@@ -36,7 +35,8 @@ describe('metadata', () => {
           $MaxLength: 24
         },
         price: {
-          $Type: 'Edm.Double'
+          $Type: 'Edm.Double',
+          $Nullable: true
         },
         author: {
           $Type: 'Edm.String'
@@ -89,7 +89,7 @@ describe('metadata', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="price" Type="Edm.Double"/>
+            <Property Name="price" Type="Edm.Double" Nullable="true"/>
             <Property Name="author" Type="Edm.String"/>
             <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
@@ -138,7 +138,8 @@ describe('metadata', () => {
         },
         author: {
           $Type: 'Edm.String',
-          $MaxLength: 25
+          $MaxLength: 25,
+          $Nullable: true
         }
       },
       $EntityContainer: 'node.odata',
@@ -175,7 +176,7 @@ describe('metadata', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="author" Type="Edm.String" MaxLength="25"/>
+            <Property Name="author" Type="Edm.String" Nullable="true" MaxLength="25"/>
             <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
@@ -212,7 +213,8 @@ describe('metadata', () => {
         },
         author: {
           $Type: 'Edm.String',
-          $DefaultValue: "William Shakespeare"
+          $DefaultValue: "William Shakespeare",
+          $Nullable: true
         }
       },
       $EntityContainer: 'node.odata',
@@ -249,7 +251,7 @@ describe('metadata', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="author" Type="Edm.String" DefaultValue="William Shakespeare"/>
+            <Property Name="author" Type="Edm.String" Nullable="true" DefaultValue="William Shakespeare"/>
             <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
@@ -285,7 +287,8 @@ describe('metadata', () => {
           $MaxLength: 24
         },
         salted: {
-          $Type: 'Edm.Boolean'
+          $Type: 'Edm.Boolean',
+          $Nullable: true
         }
       },
       $EntityContainer: 'node.odata',
@@ -321,7 +324,7 @@ describe('metadata', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="salted" Type="Edm.Boolean"/>
+            <Property Name="salted" Type="Edm.Boolean" Nullable="true"/>
             <Property Name="id" Type="Edm.String" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">

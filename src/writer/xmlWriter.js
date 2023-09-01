@@ -37,13 +37,28 @@ export default class XmlWriter {
       case 'FunctionImport':
         return this.visitFunctionImport(node, name);
 
+      case 'Term':
+        return this.visitTerm(node, name);
+
       default:
         throw new Error(`Type ${type} is not supported`);
     }
   }
 
+  visitTerm(node, name) {
+    const appliesTo = node.$AppliesTo.reduce((previos, current) => {
+      return previos ? `${previos} ${current}` : current;
+    }, "");
+
+    return `
+    <Term Name="${name}" Type="${node.$Type}" AppliesTo="${appliesTo}"/>
+    `;
+  }
+
   visitDocument(node) {
     let body = '';
+
+    this.document = node;
 
     Object.keys(node).forEach((subnode) => {
       if (node[subnode].$Kind) {
@@ -80,7 +95,7 @@ export default class XmlWriter {
       .forEach((item) => {
         if (node[item].$Collection === true) {
           entitySets += this.visitor('EntitySet', node[item], item);
-        } else if(node[item].$Type) {
+        } else if (node[item].$Type) {
           singletons += this.visitor('Singleton', node[item], item);
         } else if (node[item].$Action) {
           actions += this.visitor('ActionImport', node[item], item);
@@ -96,6 +111,9 @@ export default class XmlWriter {
 
   visitProperty(node, name) {
     const type = node.$Collection ? `Collection(${node.$Type})` : node.$Type;
+    const annotations = Object.keys(node)
+      .filter(attribute => attribute[0] === '@')
+      .reduce((previous, current) => `${previous}${this.visitAnnotation(node[current], current)}`, "");
     let attributes = '';
 
     if (node.$Nullable) {
@@ -108,7 +126,29 @@ export default class XmlWriter {
       attributes += ` DefaultValue="${node.$DefaultValue}"`;
     }
 
-    return `<Property Name="${name}" Type="${type}"${attributes}/>`;
+    if (!annotations) {
+      return `<Property Name="${name}" Type="${type}"${attributes}/>`;
+    }
+    return `<Property Name="${name}" Type="${type}"${attributes}>
+                ${annotations}
+              </Property>`;
+
+  }
+
+  visitAnnotation(node, name) {
+    const termName = name.substr(1);
+    const term = this.document[termName];
+
+    if (!term) {
+      throw new Error(`Term '${termName}' is not defined in scope`);
+    }
+
+    const type = term.$Type.split('.')[1];
+
+    return `
+    <Annotation Term="${termName}">
+      <${type}>${node}</${type}>
+    </Annotation>`;
   }
 
   visitEntityType(node, name) {

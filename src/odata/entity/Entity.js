@@ -10,7 +10,7 @@ import parseOrderBy from "./parser/orderby";
 import { parseSkip, parseTop } from "./parser/skiptop";
 
 export default class Entity {
-  constructor(name, handler, metadata, settings, mapping) {
+  constructor(name, handler, metadata, settings, annotations, mapping) {
     const notImplemented = op => (req, res) => {
       const error = new Error(`Operation '${op}' is not implemented'`);
 
@@ -41,6 +41,7 @@ export default class Entity {
       ...settings
     };
 
+    this.annotations = annotations;
     this.mapping = mapping || {};
   }
 
@@ -261,6 +262,29 @@ export default class Entity {
 
   getMetadata() {
     return this.metadata;
+  }
+
+  annotateProperty(prop, anno, value) {
+    if (!prop) {
+      throw new Error('Property name should be given');
+    }
+    if (!anno) {
+      throw new Error('Name of annotation term should be given');
+    }
+    const term = `@${anno}`;
+
+    if (!this.metadata[prop]) {
+      throw new Error(`Entity '${this.name}' doesn't have property named '${prop}'`);
+    }
+
+    if (this.metadata[prop][term]) {
+      throw new Error(`property '${prop}' is allready annotated with term '${anno}'`);
+    }
+
+    this.metadata[prop] = {
+      ...this.metadata[prop],
+      ...this.annotations.annotate(anno, 'Property', value)
+    };
   }
 
   getKeyParam(type, name) {

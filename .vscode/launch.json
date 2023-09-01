@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/model.hidden.field.js"
+        "test/odata.actions.parameter.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

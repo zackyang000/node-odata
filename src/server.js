@@ -13,6 +13,7 @@ import writer from './middlewares/writer';
 import Hooks from './odata/Hooks';
 import multipartMixed from './parser/multipartMixed';
 import Singleton from './odata/entity/Singleton';
+import Vocabulary from './odata/Vocabulary';
 
 function checkAuth(auth, req) {
   return !auth || auth(req);
@@ -58,6 +59,11 @@ class Server {
     this.hooks.addAfter(writer, 'writer', true);
 
     this._serviceDocument = new ServiceDocument(this);
+    this.annotations = new Vocabulary();
+  }
+
+  vocabulary() {
+    return this.annotations;
   }
 
   addBefore(fn, name) {
@@ -84,7 +90,7 @@ class Server {
       maxTop: this._settings.maxTop,
       orderby: this._settings.orderby,
       ...settings
-    }, mapping);
+    }, this.annotations, mapping);
 
     return this.resources[name];
   }
@@ -97,7 +103,7 @@ class Server {
       return this.resources[name];
     }
 
-    const entity = new MongoEntity(name, model);
+    const entity = new MongoEntity(name, model, this.annotations, mapping);
 
     const complexTypes = entity.getComplexTypes();
 
@@ -116,10 +122,7 @@ class Server {
     }, {
       ...entity.getMetadata(),
       ...metadata
-    }, settings, {
-      ...entity.getMapping(),
-      ...mapping
-    });
+    }, settings, entity.getMapping());
   }
 
   singleton(name, handler, metadata, mapping) {
@@ -127,7 +130,7 @@ class Server {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Singleton(name, handler, metadata, mapping);
+    this.resources[name] = new Singleton(name, handler, metadata, this.annotations, mapping);
 
     return this.resources[name];
   }
@@ -137,7 +140,7 @@ class Server {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Singleton(name, handler, entity);
+    this.resources[name] = new Singleton(name, handler, entity, this.annotations);
 
     return this.resources[name];
   }
@@ -150,7 +153,7 @@ class Server {
       return this.resources[name];
     }
 
-    const entity = new MongoSingleton(name, model);
+    const entity = new MongoSingleton(name, model, this.annotations, mapping);
 
     const complexTypes = entity.entity.getComplexTypes();
 
@@ -215,7 +218,10 @@ class Server {
   }
 
   complexType(name, properties) {
-    this.resources.$metadata.complexType(name, properties);
+    if (!properties) {
+      throw new Error('Metadata for complex type should be given');
+    }
+    return this.resources.$metadata.complexType(name, properties);
   }
 
   listen(...args) {

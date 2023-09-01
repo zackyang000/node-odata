@@ -76,6 +76,8 @@ export default class Metadata {
     validate(typeObject);
 
     this.complexTypes[name] = typeObject;
+
+    return this.complexTypes[name];
   }
 
   ctrl() {
@@ -152,6 +154,7 @@ export default class Metadata {
 
     const document = {
       $Version: '4.0',
+      ...this._server.annotations.getMetadata(),
       ...this.complexTypes,
       ...entityTypes,
       ...unboundActions,

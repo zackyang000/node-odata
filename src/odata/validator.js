@@ -94,7 +94,11 @@ export const validateProperty = (name, property) => {
         break;
 
       default:
-        throw new Error(`'${member.trim()}' ist not allowed as member of property '${name}'`);
+        const trimmedMember = member.trim();
+
+        if (!trimmedMember.match(/^(@\w+(\.\w+)?(#\w+)?)+$/)) { // annotations should be ignored
+          throw new Error(`'${trimmedMember}' ist not allowed as member of property '${name}'`);
+        }
     }
   });
 }

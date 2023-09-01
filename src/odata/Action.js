@@ -33,8 +33,14 @@ export default class Action {
     if (options) {
       this.binding = options.binding;
       this.resource = options.resource;
-      this.$Parameter = options.$Parameter;
+      this.$Parameter = options.$Parameter || [];
+
+      if (this.binding === 'entity') {
+        this.addBefore(this.resource.getNavigation().beforeHooks);
+      }
     }
+
+    this.addBefore(this.parseParameter.bind(this));
   }
 
   addBefore(fn, name) {
@@ -47,25 +53,18 @@ export default class Action {
 
   match(method, url) {
     const regex = this.getPath(true);
-    const beforeHooks = this.binding === 'entity' ? [...this.resource.getNavigation().beforeHooks, ...this.hooks.before] : this.hooks.before;
-
 
     if (method === 'post' && url.match(regex)) {
-      return [...beforeHooks, this.fn, ...this.hooks.after];
+      return this.getMiddlewares();
     }
   }
 
   getRouter() {
     if (!this.router) {
-      validateIdentifier(this.name);
-
-      if (this.$Parameter) {
-        validateParameters(this.$Parameter);
-      }
-
       const path = this.getPath();
-
-      this.router = this.getOperationRouter(path, this.fn);
+      
+      this.router = Router();
+      this.router.post(path, ...this.getMiddlewares());
     }
 
     return this.router;
@@ -85,7 +84,7 @@ export default class Action {
       }];
     }
 
-    if (this.$Parameter) {
+    if (this.$Parameter.length) {
       if (!result.$Parameter) {
         result.$Parameter = [];
       }
@@ -135,12 +134,41 @@ export default class Action {
     return path;
   }
 
-  getOperationRouter(path, fn) {
-    let router = Router();
-    const beforeHooks = this.binding === 'entity' ? [...this.resource.getNavigation().beforeHooks, ...this.hooks.before] : this.hooks.before;
+  getMiddlewares() {
+    if (!this.midddlewares) {
+      validateIdentifier(this.name);
 
-    router.post(path, ...beforeHooks, fn, ...this.hooks.after);
+      if (this.$Parameter.length) {
+        validateParameters(this.$Parameter);
+      }
 
-    return router;
-  };
+      this.midddlewares = [...this.hooks.before, this.fn, ...this.hooks.after];
+    }
+
+    return this.midddlewares;
+  }
+
+  parseParameter(req, res, next) {
+    if (req.body) {
+      req.$odata.$Parameter = {};
+    }
+
+    this.$Parameter.forEach(param => {
+      if (req.body && req.body[param.$Name]) {
+        req.$odata.$Parameter[param.$Name] = this.parseValue(param.$Type, req.body[param.$Name]);
+        
+      } else if (param.$Nullable && (!req.body || !req.body[param.$Name])) {
+        const error = new Error(`Obligatory parameter '${param.$Name}' not given`);
+
+        error.status = 400;
+
+        throw error;
+      }
+    });
+  }
+
+  parseValue(type, value) {
+    
+  }
+
 } 

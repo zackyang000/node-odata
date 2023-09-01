@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { connect } from '../../support/db';
 import { BookModel } from '../../support/books.model';
 
-describe('mongo.Entity', () => {
+describe('mongo.connected.rest.list', () => {
   let httpServer
   
   before(() => {

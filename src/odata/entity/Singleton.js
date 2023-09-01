@@ -4,7 +4,7 @@ import Hooks from "../Hooks";
 import { Router } from 'express';
 
 export default class Singleton {
-  constructor(name, handler, metadata, mapping) {
+  constructor(name, handler, metadata, annotations, mapping) {
     const notSupported = (req, res) => {
       const error = new Error();
 
@@ -13,7 +13,7 @@ export default class Singleton {
     };
 
     this.name = name;
-    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, mapping);
+    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, annotations, mapping);
 
     this.handler = {
       ...this.entity.handler, // get, post, put, delete, patch

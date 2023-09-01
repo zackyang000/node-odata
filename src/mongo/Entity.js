@@ -8,9 +8,10 @@ import count from './rest/count';
 import { validate, validateIdentifier } from '../odata/validator';
 
 export default class MongoEntity {
-  constructor(name, model) {
+  constructor(name, model, annotations, mapping) {
     this.name = name;
     this.model = model;
+    this.annotations = annotations;
 
     this.complexTypes = {};
     this.count = 0;
@@ -21,7 +22,8 @@ export default class MongoEntity {
           $Type: 'Edm.String',
           $MaxLength: 24
         }
-      }
+      },
+      ...mapping
     };
 
   }
@@ -97,10 +99,14 @@ export default class MongoEntity {
   }
 
   visitProperty(node) {
-    const result = {};
+    let result = {};
 
     if (node.selected === false) {// hidden field
       return;
+    }
+
+    if (!node.isRequired) {
+      result.$Nullable = true;
     }
 
     if ('Array ObjectID'.indexOf(node.instance) === -1 && node.defaultValue) {
@@ -117,6 +123,18 @@ export default class MongoEntity {
         break;
 
       case 'Date':
+        // annotate generated timestamps as readonly
+        const { createdAt, updatedAt } = this.model.schema.$timestamps;
+
+        if ((node.path === createdAt || node.path === updatedAt)
+          && this.annotations.isDefined('readonly')) {
+        debugger;
+          result = {
+            ...result,
+            ...this.annotations.annotate('readonly', 'Property', true)
+          };
+        }
+
         result.$Type = 'Edm.DateTimeOffset';
         break;
 
@@ -153,6 +171,12 @@ export default class MongoEntity {
   }
 
   complexType(node) {
+    const mapping = Object.keys(this.mapping).find(item => this.mapping[item].target === node.path);
+
+    if (mapping && this.mapping[mapping].attributes?.$Type) {
+      return this.mapping[mapping].attributes?.$Type;
+    }
+
     this.count += 1;
 
     const notClassifiedName = `${this.name}${node.path}Child${this.count}`;
@@ -191,7 +215,7 @@ export default class MongoEntity {
           result = {
             ...previousProperty,
             [propertyName]: this.mapping[propertyName].attributes
-          }
+          };
 
         } else {
           propertyName = curentProperty.replace(/\./g, '-');
@@ -238,20 +262,20 @@ export default class MongoEntity {
 
         return previousProperty;
       }, {});
-      
-      const deepProperties = Object.keys(deepNodes)
-        .reduce((previousProperty, curentProperty) => {
-          previousProperty[curentProperty] = {
-            $Type: this.complexType(deepNodes[curentProperty])
-          };
 
-          return previousProperty;
-        }, {});
+    const deepProperties = Object.keys(deepNodes)
+      .reduce((previousProperty, curentProperty) => {
+        previousProperty[curentProperty] = {
+          $Type: this.complexType(deepNodes[curentProperty])
+        };
 
-      return {
-        ...simpleProperties,
-        ...deepProperties
-      }
+        return previousProperty;
+      }, {});
+
+    return {
+      ...simpleProperties,
+      ...deepProperties
+    }
   }
 
   visitEntityType(node) {

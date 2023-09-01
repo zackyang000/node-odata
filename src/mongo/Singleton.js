@@ -6,9 +6,9 @@ import patch from './rest/patch';
 import getSingleton from "./rest/getSingleton";
 
 export default class MongoSingleton {
-  constructor(name, model) {
+  constructor(name, model, annotations, mapping) {
     this.name = name;
-    this.entity = new MongoEntity(name, model);
+    this.entity = new MongoEntity(name, model, annotations, mapping);
 
   }
 
