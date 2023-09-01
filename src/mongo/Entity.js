@@ -128,7 +128,6 @@ export default class MongoEntity {
 
         if ((node.path === createdAt || node.path === updatedAt)
           && this.annotations.isDefined('readonly')) {
-        debugger;
           result = {
             ...result,
             ...this.annotations.annotate('readonly', 'Property', true)

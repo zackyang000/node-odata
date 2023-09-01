@@ -1,4 +1,4 @@
-import parseValue from '../parser/value';
+import parseValue from '../../parser/value';
 import parseProperty from './property';
 import validateProperty from '../validators/property';
 

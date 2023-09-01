@@ -1,46 +1,66 @@
 import { Router } from 'express';
 import Hooks from './Hooks';
 import { validateParameters, validateIdentifier } from './validator';
-import Console from '../writer/Console';
+import parseValue from './parser/value';
 
 export default class Action {
-  constructor(name, fn, options) {
+  constructor(name, fn, annotations, options) {
 
     this.name = name;
     this.fn = async (req, res, next) => {
       try {
-        const con = new Console();
-
-        con.debug(`Action ${this.name} started`);
-
         res.$odata.status = 200;
+
         const result = fn(req, res, next);
 
         if (result || res.$odata.status === 204) {
-          if (result.then) {
+          if (result?.then) {
             await result;
-          } 
+          }
 
           next();
         }
-        
+
       } catch (error) {
         next(error);
       }
     }
     this.hooks = new Hooks();
 
-    if (options) {
-      this.binding = options.binding;
-      this.resource = options.resource;
-      this.$Parameter = options.$Parameter || [];
+    this.binding = options?.binding;
+    this.resource = options?.resource;
+    this.$Parameter = options?.$Parameter || [];
+    this.annotations = annotations;
 
-      if (this.binding === 'entity') {
-        this.addBefore(this.resource.getNavigation().beforeHooks);
-      }
+    if (this.binding === 'entity') {
+      this.addBefore(this.resource.getNavigation().beforeHooks);
     }
 
     this.addBefore(this.parseParameter.bind(this));
+  }
+
+  annotateParameter(name, anno, value) {
+    if (!name) {
+      throw new Error('Parameter name should be given');
+    }
+    if (!anno) {
+      throw new Error('Name of annotation term should be given');
+    }
+    const term = `@${anno}`;
+
+    this.getMetadata();
+
+    const param = this.metadata.$Parameter.find(item => item.$Name === name);
+
+    if (!param) {
+      throw new Error(`Entity '${this.name}' doesn't have parameter named '${name}'`);
+    }
+
+    if (param[term]) {
+      throw new Error(`Parameter '${name}' is allready annotated with term '${anno}'`);
+    }
+    
+    param[term] = this.annotations.annotate(anno, 'Parameter', value)[term];
   }
 
   addBefore(fn, name) {
@@ -62,7 +82,7 @@ export default class Action {
   getRouter() {
     if (!this.router) {
       const path = this.getPath();
-      
+
       this.router = Router();
       this.router.post(path, ...this.getMiddlewares());
     }
@@ -71,37 +91,41 @@ export default class Action {
   }
 
   getMetadata() {
-    const result = {
-      $Kind: 'Action'
-    };
+    if (!this.metadata) {
+      const result = {
+        $Kind: 'Action'
+      };
 
-    if (this.binding) {
-      result.$IsBound = true;
-      result.$Parameter = [{
-        $Name: this.resource.name,
-        $Type: `node.odata.${this.resource.name}`,
-        $Collection: this.binding === 'collection' ? true : undefined,
-      }];
-    }
-
-    if (this.$Parameter.length) {
-      if (!result.$Parameter) {
-        result.$Parameter = [];
+      if (this.binding) {
+        result.$IsBound = true;
+        result.$Parameter = [{
+          $Name: this.resource.name,
+          $Type: `node.odata.${this.resource.name}`,
+          $Collection: this.binding === 'collection' ? true : undefined,
+        }];
       }
 
-      this.$Parameter.forEach(para => {
-        const item = para;
-
-        if (para.$Type.search(/^edm/i) === -1 ) {
-          item.$Type = `${para.$Type}`;
+      if (this.$Parameter.length) {
+        if (!result.$Parameter) {
+          result.$Parameter = [];
         }
 
-        result.$Parameter.push(item);
-      });
-      result.$Parameter = result.$Parameter ? result.$Parameter.concat() : this.$Parameter;
+        this.$Parameter.forEach(para => {
+          const item = para;
+
+          if (para.$Type.search(/^edm/i) === -1) {
+            item.$Type = `${para.$Type}`;
+          }
+
+          result.$Parameter.push(item);
+        });
+        result.$Parameter = result.$Parameter ? result.$Parameter.concat() : this.$Parameter;
+      }
+
+      this.metadata = result;
     }
 
-    return result;
+    return this.metadata;
   }
 
   getPath(asRegex) {
@@ -149,26 +173,29 @@ export default class Action {
   }
 
   parseParameter(req, res, next) {
-    if (req.body) {
-      req.$odata.$Parameter = {};
-    }
-
-    this.$Parameter.forEach(param => {
-      if (req.body && req.body[param.$Name]) {
-        req.$odata.$Parameter[param.$Name] = this.parseValue(param.$Type, req.body[param.$Name]);
-        
-      } else if (param.$Nullable && (!req.body || !req.body[param.$Name])) {
-        const error = new Error(`Obligatory parameter '${param.$Name}' not given`);
-
-        error.status = 400;
-
-        throw error;
+    try {
+      if (req.body) {
+        req.$odata.$Parameter = {};
       }
-    });
-  }
 
-  parseValue(type, value) {
-    
+      this.$Parameter.forEach(param => {
+        if (req.body && req.body[param.$Name]) {
+          req.$odata.$Parameter[param.$Name] = parseValue(req.body[param.$Name], param);
+
+        } else if (!param.$Nullable && (!req.body || !req.body[param.$Name])) {
+          const error = new Error(`Obligatory parameter '${param.$Name}' not given`);
+
+          error.status = 400;
+
+          throw error;
+        }
+      });
+
+      next();
+
+    } catch (err) {
+      next(err);
+    }
   }
 
 } 

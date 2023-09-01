@@ -184,7 +184,7 @@ class Server {
   }
 
   action(name, fn, options) {
-    this.actions[name] = new Action(name, fn, options);
+    this.actions[name] = new Action(name, fn, this.annotations, options);
 
     return this.actions[name];
   }

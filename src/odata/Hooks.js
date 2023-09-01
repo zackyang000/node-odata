@@ -1,5 +1,3 @@
-import Console from "../writer/Console";
-
 export default class Hooks {
   constructor() {
     this.before = [];
@@ -22,12 +20,6 @@ export default class Hooks {
   suppressNext(fn, name, isFinal) {
     return async (req, res, next) => {
       try {
-        if (name) {
-          const con = new Console();
-
-          con.debug(`Hook ${name} started`);
-        }
-
         const combine = new Promise(async (resolve, reject) => {
           try {
             const prom = fn(req, res, err => {

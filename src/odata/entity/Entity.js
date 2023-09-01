@@ -54,7 +54,7 @@ export default class Entity {
   }
 
   action(name, fn, options) {
-    this.actions[name] = new Action(name, fn,
+    this.actions[name] = new Action(name, fn, this.annotations,
       {
         ...options,
         resource: this

@@ -145,7 +145,6 @@ export default class Metadata {
     const unboundActions = actionNames.reduce((previousAction, currentAction) => {
       const result = { ...previousAction };
       const action = this._server.actions[currentAction];
-      const attachToRoot = (name, value) => { result[name] = value; };
 
       result[currentAction] = action.getMetadata();
 
@@ -163,7 +162,7 @@ export default class Metadata {
         $Kind: 'EntityContainer',
         ...entitySets,
         ...actionImports
-      },
+      }
     };
 
     return new Promise((resolve) => {

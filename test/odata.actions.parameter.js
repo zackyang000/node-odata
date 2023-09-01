@@ -43,7 +43,8 @@ describe('odata.actions', () => {
 
   it('should fail if required parameter is not given', async function () {
     server.action('change-password', (req, res, next) => {
-      should.fail(false, true, 'Not aborted although required parameters were not specified')
+      should.fail(false, true, 'Not aborted although required parameters were not specified');
+      next();
     }, {
       $Parameter: [{
         $Type: 'Edm.String',
@@ -61,6 +62,7 @@ describe('odata.actions', () => {
     res.statusCode.should.equal(400);
     res.body.should.deepEqual({
       error: {
+        code: '400',
         message: `Obligatory parameter 'repeat' not given`
       }
     });

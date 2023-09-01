@@ -198,18 +198,28 @@ export default class XmlWriter {
 
   visitAction(node, name) {
     const isBound = node.$IsBound ? ' IsBound="true"' : '';
-    const parameter = node.$Parameter && node.$Parameter.map((item) => {
-      let type = '';
+    const parameter = node.$Parameter && node.$Parameter
+      .map((item) => {
+        const annotations = Object.keys(item)
+          .filter(attribute => attribute[0] === '@')
+          .reduce((previous, current) => `${previous}${this.visitAnnotation(item[current], current)}`, "");
+        let type = '';
 
-      if (item.$Collection) {
-        type = ` Type="Collection(${item.$Type})"`;
-      } else if (item.$Type) {
-        type = ` Type="${item.$Type}"`;
-      }
+        if (item.$Collection) {
+          type = ` Type="Collection(${item.$Type})"`;
+        } else if (item.$Type) {
+          type = ` Type="${item.$Type}"`;
+        }
+        if (!annotations) {
+          return `<Parameter Name="${item.$Name}"${type}/>`;
+        }
+        return `<Parameter Name="${item.$Name}"${type}>
+                  ${annotations}
+                </Parameter>`;
+      })
+      .reduce((previos, current) => `${previos}${current}`, '');
 
-      return `<Parameter Name="${item.$Name}"${type}/>`;
-    });
-
+    debugger;
     return (`
   <Action Name="${name}"${isBound}>
     ${parameter || ''}
