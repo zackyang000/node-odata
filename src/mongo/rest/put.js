@@ -22,7 +22,10 @@ export default async (req, res, next) => {
       const newEntity = new req.$odata.Model(req.$odata.body);
 
       newEntity._id = req.$odata.$Key._id;
-      await newEntity.save();
+      await newEntity.save({
+        validateBeforeSave: true,
+        validateModifiedOnly: true
+      });
 
       res.$odata.result = newEntity.toObject();
       res.$odata.status = 201;

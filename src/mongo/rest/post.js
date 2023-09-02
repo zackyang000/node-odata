@@ -10,7 +10,10 @@ export default async (req, res, next) => {
 
     const entity = new req.$odata.Model(req.body);
 
-    await entity.save();
+    await entity.save({
+      validateBeforeSave: true,
+      validateModifiedOnly: true
+    });
     res.$odata.result = entity.toObject();
     res.$odata.status = 201;
     next();
