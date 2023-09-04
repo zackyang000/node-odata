@@ -1,8 +1,10 @@
 
 import mongoose from 'mongoose';
 import { conn } from '../support/setup';
+import error from '../../src/mongo/middlewares/error';
 
 export function init(server) {
+  server.error = error;
   server.addBefore((req, res, next) => {
     req.$odata = {
       ...req.$odata,

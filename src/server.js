@@ -60,6 +60,7 @@ class Server {
 
     this._serviceDocument = new ServiceDocument(this);
     this.annotations = new Vocabulary();
+    this.error = error;
   }
 
   vocabulary() {
@@ -214,7 +215,7 @@ class Server {
       result.push(action.getRouter());
     });
 
-    return [...this.hooks.before, ...result, ...this.hooks.after, error];
+    return [...this.hooks.before, ...result, ...this.hooks.after, this.error];
   }
 
   complexType(name, properties) {

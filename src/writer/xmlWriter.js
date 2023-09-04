@@ -219,7 +219,6 @@ export default class XmlWriter {
       })
       .reduce((previos, current) => `${previos}${current}`, '');
 
-    debugger;
     return (`
   <Action Name="${name}"${isBound}>
     ${parameter || ''}

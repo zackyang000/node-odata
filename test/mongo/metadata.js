@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-describe('metadata', () => {
+describe('mongo.metadata', () => {
   let httpServer, server;
 
   before(() => {

@@ -5,15 +5,21 @@ export default function(err, req, res, next) {
   const status = err.status || 500;
   const result = {
     error: {
-      code: status.toString(),
-      message: status < 500 ? err.message || http.STATUS_CODES[status] : http.STATUS_CODES[status]    
+      code: status.toString()
     }
-  
   };
-  if (status >= 500) {
+  
+  if (status < 500) {
+    result.error.message = err.message || http.STATUS_CODES[status];
+    result.error.target = err.target;
+    result.error.details = err.details;  
+
+  } else {
     const cons = new Console();
 
+    result.error.message = http.STATUS_CODES[status];
     cons.log(err);
+
   }
-  res.status(status).jsonp(result);
+  res.status(+status).jsonp(result);
 }
