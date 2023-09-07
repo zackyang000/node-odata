@@ -44,11 +44,11 @@ describe('metadata.annotations', () => {
           $Collection: true,
           $Type: `node.odata.book`,
         }
-      },
+      }
     };
     const vocabulary = server.vocabulary();
 
-    vocabulary.define('readonly', Boolean, ['Property']);
+    vocabulary.define('readonly', 'boolean', ['Property']);
 
     server.entity('book', null, {
       $Key: ['id'],
@@ -93,7 +93,7 @@ describe('metadata.annotations', () => {
     </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
     const vocabulary = server.vocabulary();
 
-    vocabulary.define('readonly', Boolean, ['Property']);
+    vocabulary.define('readonly', 'boolean', ['Property']);
     server.entity('book', null, {
       $Key: ['id'],
       id: {
@@ -155,7 +155,7 @@ describe('metadata.annotations', () => {
     };
     const vocabulary = server.vocabulary();
 
-    vocabulary.define('readonly', Boolean, ['Property']);
+    vocabulary.define('readonly', 'boolean', ['Property']);
 
     const book = server.entity('book', null, {
       $Key: ['id'],
@@ -207,7 +207,7 @@ describe('metadata.annotations', () => {
     };
     const vocabulary = server.vocabulary();
 
-    vocabulary.define('readonly', Boolean, ['Parameter']);
+    vocabulary.define('readonly', 'boolean', ['Parameter']);
 
     const action = server.action('changePassword',
       (req, res, next) => { }, {
@@ -250,7 +250,7 @@ describe('metadata.annotations', () => {
   </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
     const vocabulary = server.vocabulary();
 
-    vocabulary.define('readonly', Boolean, ['Parameter']);
+    vocabulary.define('readonly', 'boolean', ['Parameter']);
 
     const action = server.action('changePassword',
       (req, res, next) => { }, {
@@ -269,5 +269,168 @@ describe('metadata.annotations', () => {
     const res = await request(host).get('/$metadata?$format=xml');
     assertSuccess(res);
     res.text.should.equal(xmlDocument);
+  });
+
+
+  it('should works collection annotations', async function () {
+    const jsonDocument = {
+      $Version: '4.0',
+      fields: {
+        $Kind: "Term",
+        $AppliesTo: [
+          "Action"
+        ],
+        $Collection: true
+      },
+      'changePassword': {
+        $Kind: 'Action',
+        $Parameter: [{
+          $Type: 'Edm.String',
+          $Name: 'newPassword'
+        }, {
+          $Type: 'Edm.String',
+          $Name: 'repeat'
+        }],
+        '@fields': ['newPassword', 'repeat']
+      },
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
+        $Kind: 'EntityContainer',
+        'changePassword-import': {
+          $Action: 'node.odata.changePassword'
+        }
+      },
+    };
+    const vocabulary = server.vocabulary();
+
+    vocabulary.define('fields', {
+      item: 'parameter',
+      type: 'string'
+    }, ['Action']);
+
+    const action = server.action('changePassword',
+      (req, res, next) => { }, {
+      $Parameter: [{
+        $Type: 'Edm.String',
+        $Name: 'newPassword'
+      }, {
+        $Type: 'Edm.String',
+        $Name: 'repeat'
+      }]
+    });
+
+    action.annotate('fields', ['newPassword', 'repeat']);
+
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata?$format=json');
+    assertSuccess(res);
+    res.body.should.deepEqual(jsonDocument);
+  });
+
+  it('should works collection annotations in xml', async function () {
+    const xmlDocument =
+    ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:DataServices>
+      <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
+        <Term Name="fields" Type="Collection(Edm.String)" AppliesTo="Action"/>
+        <Action Name="changePassword">
+          <Annotation Term="fields">
+            <Collection>
+              <String>newPassword</String>
+              <String>repeat</String>
+            </Collection>
+          </Annotation>
+          <Parameter Name="newPassword" Type="Edm.String"/>
+          <Parameter Name="repeat" Type="Edm.String"/>
+        </Action>
+        <EntityContainer Name="Container">
+          <ActionImport Name="changePassword-import" Action="node.odata.changePassword"/>
+        </EntityContainer>
+      </Schema>
+    </edmx:DataServices>
+  </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
+  
+  const vocabulary = server.vocabulary();
+
+    vocabulary.define('fields', {
+      item: 'parameter',
+      type: 'string'
+    }, ['Action']);
+
+    const action = server.action('changePassword',
+      (req, res, next) => { }, {
+      $Parameter: [{
+        $Type: 'Edm.String',
+        $Name: 'newPassword'
+      }, {
+        $Type: 'Edm.String',
+        $Name: 'repeat'
+      }]
+    });
+
+    action.annotate('fields', ['newPassword', 'repeat']);
+
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata?$format=xml');
+    assertSuccess(res);
+    res.text.should.equal(xmlDocument);
+  });
+
+
+  it('should works with collection annotations on entities', async function () {
+    const jsonDocument = {
+      $Version: '4.0',
+      fields: {
+        $Kind: "Term",
+        $AppliesTo: [
+          "Entity Type"
+        ],
+        $Collection: true
+      },
+      book: {
+        $Kind: "EntityType",
+        $Key: ["id"],
+        id: {
+          $Type: 'Edm.String',
+          $MaxLength: 24
+        },
+        author: {
+          $Type: 'Edm.String'
+        },
+        '@fields': ['id', 'author']
+      },
+      $EntityContainer: 'node.odata',
+      ['node.odata']: {
+        $Kind: 'EntityContainer',
+        book: {
+          $Collection: true,
+          $Type: `node.odata.book`,
+        }
+      }
+    };
+    const vocabulary = server.vocabulary();
+
+    vocabulary.define('fields', {
+      item: ['property'],
+      type: 'string'
+    }, ['Entity Type']);
+
+    const entity = server.entity('book', null, {
+      $Key: ['id'],
+      id: {
+        $Type: 'Edm.String',
+        $MaxLength: 24
+      },
+      author: {
+        $Type: 'Edm.String'
+      }
+    });
+
+    entity.annotate('fields', ['id', 'author']);
+
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata?$format=json');
+    assertSuccess(res);
+    res.body.should.deepEqual(jsonDocument);
   });
 });

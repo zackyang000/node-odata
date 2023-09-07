@@ -39,6 +39,31 @@ export default class Action {
     this.addBefore(this.parseParameter.bind(this));
   }
 
+  annotate(anno, value) {
+    if (!anno) {
+      throw new Error('Name of annotation term should be given');
+    }
+
+    const term = `@${anno}`;
+    const list = this.annotations.items[anno];
+
+    this.getMetadata();
+
+    if (list?.item?.indexOf('parameter') >= 0) {
+      if (!Array.isArray(value) || !value.length) {
+        throw new Error('List of parameter names was expected');
+      }
+
+      value.forEach(param => {
+        if (!this.metadata.$Parameter.find(item => item.$Name === param)) {
+          throw new Error(`Unknown parameter with name '${param}'`);
+        }
+      });
+    }
+
+    this.metadata[term] = this.annotations.annotate(anno, 'Action', value)[term];
+  }
+
   annotateParameter(name, anno, value) {
     if (!name) {
       throw new Error('Parameter name should be given');

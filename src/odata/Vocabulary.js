@@ -1,6 +1,8 @@
 export default class Vocabulary {
   constructor() {
     this.terms = {};
+    this.enumerations = {};
+    this.items = {};
   }
 
   getMetadata() {
@@ -21,11 +23,21 @@ export default class Vocabulary {
   }
 
   define(name, prototype, scope) {
+    debugger;
     if (this.terms[name]) {
       throw new Error(`Annotation with name '${name}' is allready defined`);
     }
 
-    const type = this.getType(prototype);
+    const isEnum = Array.isArray(prototype);
+
+    if (isEnum) {
+      if (!prototype.length) {
+        throw new Error('For enumeration array at least one item is required');
+      }
+      this.enumerations[name] = prototype;
+    }
+
+    const type = isEnum ? this.getTypeOf(prototype[0]) : this.getType(prototype);
     const supportedTargets = [ 'Action', 'Action Import', 'Complex Type', 'Entity Container',
       'Entity Set', 'Entity Type', 'Enumeration Type', 'Enumeration Type Member', 'Function',
       'Function Import', 'Navigation Property', 'Parameter', 'Property', 'Return Type',
@@ -40,13 +52,22 @@ export default class Vocabulary {
     }
 
     this.terms[name] = {
-      $AppliesTo: scope && scope.length ? scope : supportedTargets,
-      $Type: type
+      $AppliesTo: scope && scope.length ? scope : supportedTargets
     };
+
+    if (type) {
+      this.terms[name].$Type = type;
+    }
+
+    if (prototype.item) {
+      this.terms[name].$Collection = true;
+      this.items[name] = prototype.item;
+    }
   }
 
   annotate(name, destination, value) {
     const anno = this.terms[name];
+    const enumeration = this.enumerations[name];
 
     if (!anno) {
       throw new Error(`Annotation with name '${name}' is not defined`);
@@ -65,38 +86,34 @@ export default class Vocabulary {
       throw new Error(`Annotation '${name}' can not assigned to '${destination}'`);
     }
 
+    if (enumeration && enumeration.indexOf(value) === -1) {
+      throw new Error(`Annotation value '${value}' can not be used as '${name}'`);
+    } 
+
     return {
       [`@${name}`]: value
     }
   }
 
   getTypeOf(value) {
-    const type = typeof value;
+    const type = Array.isArray(value) && value.length > 0 ? typeof value[0] : typeof value;
 
-    switch (type) {
+    return this.getType(type);
+  }
+
+  getType(prototype) {
+    if (prototype.item) {
+      return this.getType(prototype.type);
+    }
+
+    switch (prototype) {
       case 'number':
         return 'Edm.Double';
 
       case 'string':
-        return 'Edm.String';
+        return undefined; //Edm.String is default
 
       case 'boolean':
-        return 'Edm.Boolean';
-
-      default:
-        throw Error(`type of value '${value}' is not supported`);
-    }
-  }
-
-  getType(prototype) {
-    switch (prototype) {
-      case Number:
-        return 'Edm.Double';
-
-      case String:
-        return 'Edm.String';
-
-      case Boolean:
         return 'Edm.Boolean';
 
       default:

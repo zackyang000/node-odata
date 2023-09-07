@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/connected/error.js"
+        "test/metadata/annotation.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

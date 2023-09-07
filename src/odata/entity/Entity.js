@@ -263,6 +263,30 @@ export default class Entity {
   getMetadata() {
     return this.metadata;
   }
+  annotate(anno, value) {
+    if (!anno) {
+      throw new Error('Name of annotation term should be given');
+    }
+
+    const term = `@${anno}`;
+    const list = this.annotations.items[anno];
+
+    this.getMetadata();
+
+    if (list?.item?.indexOf('property') >= 0) {
+      if (!Array.isArray(value) || !value.length) {
+        throw new Error('List of property names was expected');
+      }
+
+      value.forEach(prop => {
+        if (!this.metadata[prop]) {
+          throw new Error(`Unknown property with name '${prop}'`);
+        }
+      });
+    }
+
+    this.metadata[term] = this.annotations.annotate(anno, 'Entity Type', value)[term];
+  }
 
   annotateProperty(prop, anno, value) {
     if (!prop) {

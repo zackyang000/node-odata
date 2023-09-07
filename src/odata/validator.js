@@ -153,7 +153,7 @@ function validateEntityType(node) {
     throw new Error('$Key of Entitytype has to be an array of property names');
   }
 
-  const properties = attributes.filter(name => name !== '$Kind' && name !== '$Key');
+  const properties = attributes.filter(name => name !== '$Kind' && name !== '$Key' && name[0] != '@');
 
   properties.forEach(name => validateProperty(name, node[name]));
 

@@ -49,9 +49,12 @@ export default class XmlWriter {
     const appliesTo = node.$AppliesTo.reduce((previos, current) => {
       return previos ? `${previos} ${current}` : current;
     }, "");
+    let type = node.$Collection ? `Collection(${node.$Type || 'Edm.String'})` : node.$Type;
+    
+    type = type ? `Type="${type}" ` : '';
 
     return `
-    <Term Name="${name}" Type="${node.$Type}" AppliesTo="${appliesTo}"/>
+    <Term Name="${name}" ${type}AppliesTo="${appliesTo}"/>
     `;
   }
 
@@ -143,11 +146,19 @@ export default class XmlWriter {
       throw new Error(`Term '${termName}' is not defined in scope`);
     }
 
-    const type = term.$Type.split('.')[1];
+    const type = term.$Type ? term.$Type.split('.')[1] : 'String';
+    let values;
+    
+    if (term.$Collection) {
+      values = node.reduce((previous, current) => `${previous}<${type}>${current}</${type}>`, "");
+      values = `<Collection>${values}</Collection>`;
+    } else {
+      values = `<${type}>${node}</${type}>`; 
+    }
 
     return `
     <Annotation Term="${termName}">
-      <${type}>${node}</${type}>
+      ${values}
     </Annotation>`;
   }
 
@@ -198,9 +209,12 @@ export default class XmlWriter {
 
   visitAction(node, name) {
     const isBound = node.$IsBound ? ' IsBound="true"' : '';
+    const annotations = Object.keys(node)
+      .filter(attribute => attribute[0] === '@')
+      .reduce((previous, current) => `${previous}${this.visitAnnotation(node[current], current)}`, "");
     const parameter = node.$Parameter && node.$Parameter
       .map((item) => {
-        const annotations = Object.keys(item)
+        const parameterAnnotations = Object.keys(item)
           .filter(attribute => attribute[0] === '@')
           .reduce((previous, current) => `${previous}${this.visitAnnotation(item[current], current)}`, "");
         let type = '';
@@ -210,17 +224,18 @@ export default class XmlWriter {
         } else if (item.$Type) {
           type = ` Type="${item.$Type}"`;
         }
-        if (!annotations) {
+        if (!parameterAnnotations) {
           return `<Parameter Name="${item.$Name}"${type}/>`;
         }
         return `<Parameter Name="${item.$Name}"${type}>
-                  ${annotations}
+                  ${parameterAnnotations}
                 </Parameter>`;
       })
       .reduce((previos, current) => `${previos}${current}`, '');
 
     return (`
   <Action Name="${name}"${isBound}>
+      ${annotations}
     ${parameter || ''}
   </Action>
   `);
