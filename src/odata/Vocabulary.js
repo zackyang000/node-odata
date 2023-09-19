@@ -23,7 +23,6 @@ export default class Vocabulary {
   }
 
   define(name, prototype, scope) {
-    debugger;
     if (this.terms[name]) {
       throw new Error(`Annotation with name '${name}' is allready defined`);
     }

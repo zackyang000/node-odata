@@ -433,4 +433,56 @@ describe('metadata.annotations', () => {
     assertSuccess(res);
     res.body.should.deepEqual(jsonDocument);
   });
+
+  it('should works with collection annotations on entities in xml', async function () {
+    const xmlDocument =
+    ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:DataServices>
+      <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
+      <Term Name="fields" Type="Collection(Edm.String)" AppliesTo="Entity Type"/>
+        <EntityType Name="book">
+          <Key>
+            <PropertyRef Name="id"/>
+          </Key>
+          <Property Name="id" Type="Edm.String" MaxLength="24"/>
+          <Property Name="author" Type="Edm.String"/>
+          <Annotation Term="fields">
+            <Collection>
+              <String>id</String>
+              <String>author</String>
+            </Collection>
+          </Annotation>
+        </EntityType>
+        <EntityContainer Name="Container">
+          <EntitySet Name="book" EntityType="node.odata.book"/>
+        </EntityContainer>
+      </Schema>
+    </edmx:DataServices>
+  </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
+
+    const vocabulary = server.vocabulary();
+
+    vocabulary.define('fields', {
+      item: ['property'],
+      type: 'string'
+    }, ['Entity Type']);
+
+    const entity = server.entity('book', null, {
+      $Key: ['id'],
+      id: {
+        $Type: 'Edm.String',
+        $MaxLength: 24
+      },
+      author: {
+        $Type: 'Edm.String'
+      }
+    });
+
+    entity.annotate('fields', ['id', 'author']);
+
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata?$format=xml');
+    assertSuccess(res);
+    res.text.should.equal(xmlDocument);
+  });
 });

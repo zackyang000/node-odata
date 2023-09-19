@@ -13,7 +13,7 @@ export default class Singleton {
     };
 
     this.name = name;
-    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, annotations, mapping);
+    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, null, annotations, mapping);
 
     this.handler = {
       ...this.entity.handler, // get, post, put, delete, patch
@@ -106,5 +106,14 @@ export default class Singleton {
         url: listRoute.url,
         regex: listRoute.regex
       }));
+  }
+
+
+  annotate(anno, value) {
+    this.entity.annotate(anno, value);
+  }
+
+  annotateProperty(prop, anno, value) {
+    this.entity.annotateProperty(prop, anno, value);
   }
 }

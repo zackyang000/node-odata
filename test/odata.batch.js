@@ -134,7 +134,9 @@ describe('odata.batch', () => {
 
   it('should work with post entity', async function () {
     const result = {
-      title: "War and peace"
+      title: "War and peace",
+      createdAt: null,
+      updatedAt: null
     };
     const server = odata();
 
@@ -266,6 +268,7 @@ describe('odata.batch', () => {
       delete: (req, res, next) => {
         req.$odata.$Key.id.should.be.equal('1');
         res.$odata.status = 204;
+        delete res.$odata.result;
         next();
       }
     }, BookMetadata);

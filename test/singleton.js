@@ -46,7 +46,7 @@ describe('singleton', () => {
       "title": "XML Developer's Guide"
     };
     const book = server.entity('book', null, BookMetadata);
-    server.singleton('current-book', {
+    server.singletonFrom('current-book', {
       get: (req, res, next) => {
         res.$odata.result = result;
         next();

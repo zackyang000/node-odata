@@ -3,7 +3,7 @@ import request from 'supertest';
 import { host, port, odata, assertSuccess } from '../support/setup';
 import { BookMetadata } from '../support/books.model';
 
-describe('metadata.custom.resource', () => {
+describe('metadata.singleton', () => {
   let httpServer, server;
 
   beforeEach(async function() {
@@ -52,8 +52,8 @@ describe('metadata.custom.resource', () => {
             <Property Name="price" Type="Edm.Double"/>
             <Property Name="publish_date" Type="Edm.DateTimeOffset"/>
             <Property Name="title" Type="Edm.String"/>
-            <Property Name="createdAt" Type="Edm.DateTimeOffset"/>
-            <Property Name="updatedAt" Type="Edm.DateTimeOffset"/>
+            <Property Name="createdAt" Type="Edm.DateTimeOffset" Nullable="true"/>
+            <Property Name="updatedAt" Type="Edm.DateTimeOffset" Nullable="true"/>
           </EntityType>
           <EntityContainer Name="Container">
             <Singleton Name="book" Type="node.odata.book"/>
@@ -91,7 +91,7 @@ describe('metadata.custom.resource', () => {
       },
     };
     const bookEntity = server.entity('book', null, BookMetadata);
-    server.singleton('current-book', null, bookEntity);
+    server.singletonFrom('current-book', null, bookEntity);
     httpServer = server.listen(port);
 
     const res = await request(host).get('/$metadata?$format=json');

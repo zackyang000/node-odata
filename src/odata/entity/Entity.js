@@ -97,9 +97,9 @@ export default class Entity {
   adaptResultAccordingMetadata(req, res, next) {
     if (res.$odata.result?.value && Array.isArray(res.$odata.result?.value)) {
       // list of entities
-      res.$odata.result.value.forEach(this.adaptEntityAccordingMetadata.bind(this));
+      res.$odata.result.value.forEach(entity => this.adaptEntityAccordingMetadata(entity, req, res));
     } else if (res.$odata.result) {
-      this.adaptEntityAccordingMetadata(res.$odata.result);
+      this.adaptEntityAccordingMetadata(res.$odata.result, req, res);
     }
     next();
   }
@@ -156,24 +156,44 @@ export default class Entity {
     }
   }
 
-  adaptEntityAccordingMetadata(entity) {
+  getPropertyMetadata(member) {
+    const entityMetadata = this.getMetadata();
+    const result = {
+      propertyMetadata: null,
+      mapping: null
+    }
+
+    if (entityMetadata[member]) {
+      result.propertyMetadata = entityMetadata[member];
+
+    } else {
+      const keys = Object.keys(this.mapping);
+      result.mapping = keys.find(name => this.mapping[name].target === member);
+
+      if (result.mapping) {
+        result.propertyMetadata = this.mapping[result.mapping].attributes;
+      }
+
+    }
+
+    return result;
+  }
+
+  adaptEntityAccordingMetadata(entity, req, res) {
     const entityMetadata = this.getMetadata();
     const keys = Object.keys(entity);
 
+    if (req.$odata.$count || res.$odata.status === 204) {
+      // no classic body
+      return;
+    }
+
     keys.forEach(member => {
-      let propertyMetadata;
+      const { propertyMetadata, mapping } = this.getPropertyMetadata(member);
 
-      if (entityMetadata[member]) {
-        propertyMetadata = entityMetadata[member];
-
-      } else {
-        const keys = Object.keys(this.mapping);
-        const mapping = keys.find(name => this.mapping[name].target === member);
-
+      if (!entityMetadata[member]) {
         if (mapping) {
-          propertyMetadata = this.mapping[mapping].attributes;
           entity[mapping] = entity[member];
-
         }
 
         delete entity[member]; // hide attributes not exposed in metadata
@@ -188,7 +208,24 @@ export default class Entity {
         && Object.prototype.toString.call(entity[member]) === '[object Date]') {
         entity[member] = entity[member].toISOString().replace(/\.[0-9]{3}/, '')
       }
+
     });
+
+    const nullables = Object.keys(entityMetadata)
+      .filter(item => item != '$Key' && item != '$Kind' && !entity[item]);
+
+    nullables.forEach(member => {
+      const { propertyMetadata } = this.getPropertyMetadata(member);
+
+      if (req.$odata.$select && req.$odata.$select.indexOf(member) === -1) {
+        // explizit projection doesn't include current field
+        return;
+      }
+
+      if (propertyMetadata.$Nullable) {
+        entity[member] = null;
+      }
+    })
   }
 
   getRouter() {
@@ -263,6 +300,7 @@ export default class Entity {
   getMetadata() {
     return this.metadata;
   }
+  
   annotate(anno, value) {
     if (!anno) {
       throw new Error('Name of annotation term should be given');

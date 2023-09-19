@@ -136,12 +136,12 @@ class Server {
     return this.resources[name];
   }
 
-  singleton(name, handler, entity) {
+  singletonFrom(name, handler, entity, mapping) {
     if (this.resources[name]) {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Singleton(name, handler, entity, this.annotations);
+    this.resources[name] = new Singleton(name, handler, entity, this.annotations, mapping);
 
     return this.resources[name];
   }
@@ -173,7 +173,7 @@ class Server {
     }, {
       ...entity.entity.getMetadata(),
       ...metadata
-    }, null, {
+    }, {
       ...entity.entity.getMapping(),
       ...mapping
     });

@@ -125,4 +125,33 @@ describe('odata.entity', () => {
     });
   });
 
+  it('should return null for nullable values automatically', async function () {
+    server.entity('book', {
+      get: (req, res, next) => {
+        res.$odata.result = {
+          "id": '1'
+        };
+        next();
+      }
+    }, {
+      $Key: ['id'],
+      id: {
+        $Type: 'Edm.String',
+        $MaxLength: 24
+      },
+      createdAt: {
+        $Type: 'Edm.DateTimeOffset',
+        $Nullable: true
+      }
+    });
+    httpServer = server.listen(port);
+
+    const res = await request(host).get(`/book('1')`);
+
+    res.body.should.deepEqual({
+      "id": '1',
+      "createdAt": null
+    });
+  });
+
 });

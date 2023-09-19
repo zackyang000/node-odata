@@ -44,9 +44,11 @@ export const BookMetadata = {
     $Type: 'Edm.String'
   },
   createdAt: {
-    $Type: 'Edm.DateTimeOffset'
+    $Type: 'Edm.DateTimeOffset',
+    $Nullable: true
   },
   updatedAt: {
-    $Type: 'Edm.DateTimeOffset'
+    $Type: 'Edm.DateTimeOffset',
+    $Nullable: true
   }
 };

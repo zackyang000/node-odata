@@ -1,10 +1,8 @@
-// For issue: https://github.com/TossShinHwa/node-odata/issues/96
-// For issue: https://github.com/TossShinHwa/node-odata/issues/25
-
 import 'should';
 import request from 'supertest';
 import { host, port, odata, assertSuccess } from '../support/setup';
 import mongoose from 'mongoose';
+import { BookModel } from '../support/books.model';
 
 const Schema = mongoose.Schema;
 
@@ -71,9 +69,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata?$format=json');
     assertSuccess(res);
@@ -117,9 +115,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
@@ -158,9 +156,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata?$format=json');
     assertSuccess(res);
@@ -192,9 +190,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
@@ -233,9 +231,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata?$format=json');
     assertSuccess(res);
@@ -267,9 +265,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
@@ -306,9 +304,9 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata?$format=json');
     assertSuccess(res);
@@ -339,13 +337,46 @@ describe('mongo.metadata', () => {
       }
     });
     
-    const BookModel = mongoose.model('book', BookSchema);
+    const CustomBookModel = mongoose.model('book', BookSchema);
 
-    server.mongoEntity('book', BookModel);
+    server.mongoEntity('book', CustomBookModel);
     httpServer = server.listen(port);
     const res = await request(host).get('/$metadata');
     assertSuccess(res);
     res.text.should.equal(xmlDocument);
   });
 
+
+  it('should render timestamps as nullable for singleton', async function() {
+    const xmlDocument =
+    ` <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+      <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
+          <EntityType Name="book">
+            <Key>
+              <PropertyRef Name="id"/>
+            </Key>
+            <Property Name="author" Type="Edm.String" Nullable="true"/>
+            <Property Name="description" Type="Edm.String" Nullable="true"/>
+            <Property Name="genre" Type="Edm.String" Nullable="true"/>
+            <Property Name="price" Type="Edm.Double" Nullable="true"/>
+            <Property Name="publish_date" Type="Edm.DateTimeOffset" Nullable="true"/>
+            <Property Name="title" Type="Edm.String" Nullable="true"/>
+            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="createdAt" Type="Edm.DateTimeOffset" Nullable="true"/>
+            <Property Name="updatedAt" Type="Edm.DateTimeOffset" Nullable="true"/>
+          </EntityType>
+          <EntityContainer Name="Container">
+            <Singleton Name="book" Type="node.odata.book"/>
+          </EntityContainer>
+        </Schema>
+      </edmx:DataServices>
+    </edmx:Edmx>`.replace(/\s*</g, '<').replace(/>\s*/g, '>');
+
+    server.mongoSingleton('book', BookModel);
+    httpServer = server.listen(port);
+    const res = await request(host).get('/$metadata');
+    assertSuccess(res);
+    res.text.should.equal(xmlDocument);
+  });
 });

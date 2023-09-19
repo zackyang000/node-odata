@@ -164,12 +164,19 @@ export default class XmlWriter {
 
   visitEntityType(node, name) {
     let properties = '';
+    let annotations = '';
 
     Object.keys(node)
-      .filter((item) => item !== '$Kind' && item !== '$Key')
+      .filter((item) => item !== '$Kind' && item !== '$Key' && item[0] != '@')
       .forEach((item) => {
         properties += this.visitor('Property', node[item], item);
       });
+
+      Object.keys(node)
+        .filter((item) => item[0] === '@')
+        .forEach((item) => {
+          annotations += this.visitAnnotation(node[item], item);
+        });
 
     return (
       `<EntityType Name="${name}">
@@ -177,6 +184,7 @@ export default class XmlWriter {
       <PropertyRef Name="${node.$Key}"/>
     </Key>
     ${properties}
+    ${annotations}
   </EntityType>`);
   }
 
