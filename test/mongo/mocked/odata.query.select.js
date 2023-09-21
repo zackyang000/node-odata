@@ -125,7 +125,11 @@ describe('mongo.mocked.odata.query.select', () => {
       title: 1
     });
     queryMock.expects('exec').once()
-      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => item })))));
+      .returns(new Promise(resolve => resolve(books.map(item => ({ toObject: () => ({
+        price: item.price,
+        title: item.title,
+        _id: item.id
+      }) })))));
 
     const res = await request(host).get('/book?$select=price,title,id');
 

@@ -27,7 +27,7 @@ const ConfigSchema = new Schema({
 const ConfigModel = mongoose.model('Config', ConfigSchema);
 
 describe('mongo.mocked.singleton', () => {
-  let httpServer, modelMock, queryMock, bookInstanceMock, server;
+  let httpServer, modelMock, queryMock, instanceMock, server;
 
   beforeEach(async function () {
     server = odata();
@@ -37,7 +37,7 @@ describe('mongo.mocked.singleton', () => {
     httpServer.close();
     modelMock?.restore();
     queryMock?.restore();
-    bookInstanceMock?.restore();
+    instanceMock?.restore();
   });
 
   it('should select anyone field', async function () {
@@ -97,8 +97,8 @@ describe('mongo.mocked.singleton', () => {
     });
     queryMock.expects('exec').once()
       .returns(new Promise(resolve => resolve(undefined)));
-    bookInstanceMock = sinon.mock(BookModel.prototype);
-    bookInstanceMock.expects('toObject').once().returns(JSON.parse(JSON.stringify(data[0])));
+    instanceMock = sinon.mock(BookModel.prototype);
+    instanceMock.expects('toObject').once().returns(JSON.parse(JSON.stringify(data[0])));
     server.mongoSingleton('book', BookModel);
     httpServer = server.listen(port);
 
@@ -107,7 +107,7 @@ describe('mongo.mocked.singleton', () => {
     assertSuccess(res);
     modelMock.verify();
     queryMock.verify();
-    bookInstanceMock.verify();
+    instanceMock.verify();
     res.body.should.deepEqual(books[0]);
   });
 
@@ -126,23 +126,24 @@ describe('mongo.mocked.singleton', () => {
     queryMock = sinon.mock(query);
     modelMock.expects('findOne').once().returns(query);
     queryMock.expects('select').once().withArgs({
-      _id: 0,
+      _id: 1,
       isAutoLogOffActive: 1
     });
     queryMock.expects('exec').once()
       .returns(new Promise(resolve => resolve(undefined)));
-    bookInstanceMock = sinon.mock(ConfigModel.prototype);
-    bookInstanceMock.expects('toObject').once().returns(JSON.parse(JSON.stringify({ isAutoLogOffActive: true })));
+    instanceMock = sinon.mock(ConfigModel.prototype);
+    instanceMock.expects('toObject').once().returns(JSON.parse(JSON.stringify({ isAutoLogOffActive: true, _id: '1' })));
     server.mongoSingleton('config', ConfigModel);
     httpServer = server.listen(port);
 
-    const res = await request(host).get('/config?$select=isAutoLogOffActive');
+    const res = await request(host).get('/config?$select=id,isAutoLogOffActive');
 
     assertSuccess(res);
     modelMock.verify();
     queryMock.verify();
-    bookInstanceMock.verify();
+    instanceMock.verify();
     res.body.should.deepEqual({
+      id: '1',
       isAutoLogOffActive: true
     });
   });
