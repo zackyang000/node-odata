@@ -1,9 +1,9 @@
 export default async (req, res, next) => {
   try {
-    const entity = await req.$odata.Model.findOne({ id: req.params.id });
-    const patched = { ...entity.toObject(), ...req.body };
+    const entity = await req.$odata.Model.findOne({ id: req.$odata.$Key.id });
+    const patched = { ...entity.toObject(), ...req.$odata.body };
 
-    await req.$odata.Model.update({ id: req.params.id }, patched);
+    await req.$odata.Model.updateOne({ _id: req.$odata.$Key.id }, patched);
     res.$odata.result = patched;
     next();
 

@@ -2,8 +2,8 @@ import MongoEntity from "./Entity";
 import post from './rest/post';
 import put from './rest/put';
 import del from './rest/delete';
-import patch from './rest/patch';
 import getSingleton from "./rest/getSingleton";
+import patchSingleton from "./rest/patchSingleton";
 
 export default class MongoSingleton {
   constructor(name, model, annotations, mapping) {
@@ -16,7 +16,7 @@ export default class MongoSingleton {
     const rest = {
       post,
       put,
-      patch,
+      patch: patchSingleton,
       delete: del,
       get: getSingleton
     };

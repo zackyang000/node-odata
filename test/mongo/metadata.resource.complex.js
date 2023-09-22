@@ -27,7 +27,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Kind: 'ComplexType',
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p2: {
           $Type: 'Edm.String',
@@ -39,7 +40,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p1: {
           $Type: 'node.odata.complex-modelp1Child1',
@@ -77,14 +79,14 @@ describe('mongo.metadata.resource.complex', () => {
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="node.odata">
           <ComplexType Name="complex-modelp1Child1">
             <Property Name="p2" Type="Edm.String" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </ComplexType>
           <EntityType Name="complex-model">
             <Key>
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="p1" Type="Collection(node.odata.complex-modelp1Child1)" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -114,7 +116,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p3: {
           $Type: 'Edm.String',
@@ -153,7 +156,7 @@ describe('mongo.metadata.resource.complex', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="p3" Type="Collection(Edm.String)" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -184,7 +187,7 @@ describe('mongo.metadata.resource.complex', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="p3" Type="Collection(Edm.String)" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="complex-model" EntityType="node.odata.complex-model"/>
@@ -223,7 +226,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p4: {
           $Type: 'node.odata.complex-modelp4Child1'
@@ -264,7 +268,7 @@ describe('mongo.metadata.resource.complex', () => {
             <Key>
               <PropertyRef Name="id"/>
             </Key>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
             <Property Name="p4" Type="node.odata.complex-modelp4Child1"/>
           </EntityType>
           <EntityContainer Name="Container">
@@ -301,7 +305,8 @@ describe('mongo.metadata.resource.complex', () => {
         },
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         }
       },
       p1p4Child2: {
@@ -316,7 +321,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p2: {
           $Type: 'node.odata.p1p2Child1',
@@ -360,7 +366,7 @@ describe('mongo.metadata.resource.complex', () => {
           </ComplexType>
           <ComplexType Name="p1p2Child1">
             <Property Name="p3" Type="Edm.String" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
             <Property Name="p4" Type="node.odata.p1p4Child2"/>
           </ComplexType>
           <EntityType Name="p1">
@@ -368,7 +374,7 @@ describe('mongo.metadata.resource.complex', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="p2" Type="Collection(node.odata.p1p2Child1)" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="p1" EntityType="node.odata.p1"/>
@@ -400,7 +406,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Kind: "ComplexType",
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p3: {
           $Type: 'Edm.String'
@@ -411,7 +418,8 @@ describe('mongo.metadata.resource.complex', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         p2: {
           $Type: 'node.odata.myComlexType'
@@ -436,7 +444,8 @@ describe('mongo.metadata.resource.complex', () => {
     server.complexType('myComlexType', {
       id: {
         $Type: 'Edm.String',
-        $MaxLength: 24
+        $MaxLength: 24,
+        $Nullable: true
       },
       p3: {
         $Type: 'Edm.String'

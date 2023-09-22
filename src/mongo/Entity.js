@@ -20,7 +20,8 @@ export default class MongoEntity {
         target: '_id',
         attributes: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         }
       },
       ...mapping

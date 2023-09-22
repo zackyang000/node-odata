@@ -7,13 +7,18 @@ export default async (req, res, next) => {
     await selectParser(query, req.$odata.$select);
   
     let entity = await query.exec();
+    let transient = false;
 
     if (!entity) {
       // return default properties of singleton
       entity = new req.$odata.Model();
+      transient = true;
     }
 
     res.$odata.result = entity.toObject();
+    if (transient) {
+      res.$odata.result._id = null;
+    }
 
     if (req.$odata.$select) {
       Object.keys(res.$odata.result)

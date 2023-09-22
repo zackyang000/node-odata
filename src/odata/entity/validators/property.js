@@ -16,5 +16,6 @@ export default function validateProperty(name, req, entity, currentMetadata) {
   const err = new Error(`Entity '${entity}' has no property named '${property}'`);
 
   err.status = 400;
+  err.target = property;
   throw err;
 }

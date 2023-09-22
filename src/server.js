@@ -53,7 +53,8 @@ class Server {
       };
       res.$odata = {
         status: 404,
-        supportedMimetypes: ['application/json']
+        supportedMimetypes: ['application/json'],
+        messages: []
       }
     }, 'service-initialization');
     this.hooks.addAfter(writer, 'writer', true);

@@ -3,9 +3,10 @@ import validateProperty from "../validators/property";
 
 export default function(req, entity, metadata, mapping) {
   return req.query.$select?.split(',').map((item) => {
-    const property = parseProperty(item.trim(), mapping);
+    const name = item.trim().replace('/', '.');
+    const property = parseProperty(name, mapping);
 
-    validateProperty(item.trim(), req, entity, metadata);
+    validateProperty(name, req, entity, metadata);
 
     return property;
   });

@@ -143,8 +143,47 @@ describe('mongo.mocked.singleton', () => {
     queryMock.verify();
     instanceMock.verify();
     res.body.should.deepEqual({
-      id: '1',
+      id: null,
       isAutoLogOffActive: true
+    });
+  });
+
+  it('should supports upsert', async function () {
+    const now = new Date();
+    const query = {
+      $where: () => { },
+      where: () => { },
+      equals: () => { },
+      select: () => { },
+      sort: () => { },
+      exec: () => { },
+      model: ConfigModel
+    };
+
+    modelMock = sinon.mock(ConfigModel);
+    modelMock.expects('findOne').once().returns(new Promise((resolve) => resolve()));
+    instanceMock = sinon.mock(ConfigModel.prototype);
+    instanceMock.expects('save').once().returns(new Promise((resolve) => resolve()));
+    instanceMock.expects('toObject').once().returns({ 
+      isAutoLogOffActive: false, 
+      _id: '1',
+      createdAt: now
+    });
+    server.mongoSingleton('config', ConfigModel);
+    httpServer = server.listen(port);
+
+    const res = await request(host).patch('/config').send({
+      isAutoLogOffActive: false
+    });
+
+    assertSuccess(res);
+    modelMock.verify();
+    instanceMock.verify();
+    res.body.should.deepEqual({
+      id: '1',
+      isAutoLogOffActive: false,
+      createdAt: now.toISOString().replace(/\.[0-9]{3}/, ''),
+      updatedAt: null
     });
   });
 });

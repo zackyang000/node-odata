@@ -55,7 +55,29 @@ function getWriter(req, res, result) {
   }
 }
 
+function writeMessages(res) {
+  if (res.$odata.messages.length) {
+    res.$odata.messages.forEach(msg => {
+      if (!msg.code) {
+        throw new Error(`Missing 'code' property in message`);
+      }
+      if (!msg.message) {
+        throw new Error(`Missing 'message' property in message`);
+      }
+      if (!msg.numericSeverity) {
+        throw new Error(`Missing 'numericSeverity' property in message`);
+      }
+      if ([1,2,3,4].indexOf(msg.numericSeverity) === -1) {
+        throw new Error(`Value '${msg.numericSeverity}' is invalid for severity`);
+      }
+    });
+    res.setHeader('sap-messages', JSON.stringify(res.$odata.messages));
+  }
+}
+
 export default function writer(req, res) {
+  writeMessages(res);
+
   switch (res.$odata.status) {
     case 404:
       // not found or no handler worked on

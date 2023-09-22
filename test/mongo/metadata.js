@@ -30,7 +30,8 @@ describe('mongo.metadata', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         price: {
           $Type: 'Edm.Double',
@@ -89,7 +90,7 @@ describe('mongo.metadata', () => {
             </Key>
             <Property Name="price" Type="Edm.Double" Nullable="true"/>
             <Property Name="author" Type="Edm.String"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -132,7 +133,8 @@ describe('mongo.metadata', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         author: {
           $Type: 'Edm.String',
@@ -175,7 +177,7 @@ describe('mongo.metadata', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="author" Type="Edm.String" Nullable="true" MaxLength="25"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -207,7 +209,8 @@ describe('mongo.metadata', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         author: {
           $Type: 'Edm.String',
@@ -250,7 +253,7 @@ describe('mongo.metadata', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="author" Type="Edm.String" Nullable="true" DefaultValue="William Shakespeare"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -282,7 +285,8 @@ describe('mongo.metadata', () => {
         $Key: ["id"],
         id: {
           $Type: 'Edm.String',
-          $MaxLength: 24
+          $MaxLength: 24,
+          $Nullable: true
         },
         salted: {
           $Type: 'Edm.Boolean',
@@ -323,7 +327,7 @@ describe('mongo.metadata', () => {
               <PropertyRef Name="id"/>
             </Key>
             <Property Name="salted" Type="Edm.Boolean" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
           </EntityType>
           <EntityContainer Name="Container">
             <EntitySet Name="book" EntityType="node.odata.book"/>
@@ -362,7 +366,7 @@ describe('mongo.metadata', () => {
             <Property Name="price" Type="Edm.Double" Nullable="true"/>
             <Property Name="publish_date" Type="Edm.DateTimeOffset" Nullable="true"/>
             <Property Name="title" Type="Edm.String" Nullable="true"/>
-            <Property Name="id" Type="Edm.String" MaxLength="24"/>
+            <Property Name="id" Type="Edm.String" Nullable="true" MaxLength="24"/>
             <Property Name="createdAt" Type="Edm.DateTimeOffset" Nullable="true"/>
             <Property Name="updatedAt" Type="Edm.DateTimeOffset" Nullable="true"/>
           </EntityType>

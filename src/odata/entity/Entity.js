@@ -222,7 +222,7 @@ export default class Entity {
         return;
       }
 
-      if (propertyMetadata.$Nullable) {
+      if (propertyMetadata.$Nullable && entity[member] === undefined) {
         entity[member] = null;
       }
     })
