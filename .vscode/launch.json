@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.select.js"
+        "test/odata.actions.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

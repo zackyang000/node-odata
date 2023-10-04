@@ -1,6 +1,6 @@
 {
-  "name": "node-odata",
-  "version": "0.7.16",
+  "name": "@bitech-ag/nota",
+  "version": "0.1.0",
   "private": false,
   "description": "A module for easily create a REST API based on oData protocol",
   "main": "index.js",
