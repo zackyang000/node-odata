@@ -1,6 +1,6 @@
 {
   "name": "@bitech-ag/nota",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
   "private": false,
   "description": "A module for easily create a REST API based on oData protocol",
   "main": "index.js",
