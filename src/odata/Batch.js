@@ -172,7 +172,7 @@ export default class Batch {
         $odata: res.$odata
       };
 
-      const paramsMatch = request.url.match(/^\/[^#?(]+\('(\w+)'\)/);
+      const paramsMatch = request.url.match(/^\/?[^#?(]+\('(\w+)'\)/);
 
       if (paramsMatch && paramsMatch.length > 1) {
         currentRequest.params = {

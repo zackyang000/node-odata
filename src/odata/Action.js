@@ -27,6 +27,14 @@ export default class Action {
     }
     this.hooks = new Hooks();
 
+    if (options) {
+      Object.keys(options).forEach(name => {
+        if (['binding', 'resource', '$Parameter'].indexOf(name) === -1) {
+          throw new Error(`Option '${name}' is not supported`);
+        }
+      });
+    }
+
     this.binding = options?.binding;
     this.resource = options?.resource;
     this.$Parameter = options?.$Parameter || [];
@@ -205,7 +213,11 @@ export default class Action {
 
       this.$Parameter.forEach(param => {
         if (req.body && req.body[param.$Name]) {
-          req.$odata.$Parameter[param.$Name] = parseValue(req.body[param.$Name], param);
+          if (param.$Type.indexOf('node.odata') === -1) {
+            req.$odata.$Parameter[param.$Name] = parseValue(req.body[param.$Name], param);
+          } else {
+            req.$odata.$Parameter[param.$Name] = req.body[param.$Name];
+          }
 
         } else if (!param.$Nullable && (!req.body || !req.body[param.$Name])) {
           const error = new Error(`Obligatory parameter '${param.$Name}' not given`);
