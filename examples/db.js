@@ -1,15 +1,21 @@
 const mongoose = require('mongoose');
+const server = require('./server');
 
-require('./models/book');
-require('./models/complex-resource');
-require('./models/user');
+server.addBefore(async (req, res, next) => {
+  try {
+    req.$odata = {
+      ...req.$odata,
+      mongo: await mongoose.connect(process.env.DATABASE || 'mongodb://localhost:27017/odata-test')
+    };
 
-module.exports = mongoose.connect(process.env.DATABASE || 'mongodb://localhost:27017/odata-test', null, (err) => {
-  if (err) {
+    next();
+
+  } catch(err) {
     console.error(err.message);
     console.error('Failed to connect to database on startup.');
     process.exit();
   }
+
 });
 
 // provide a event listener to handle not able to connect DB.
