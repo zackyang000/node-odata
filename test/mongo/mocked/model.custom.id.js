@@ -22,18 +22,21 @@ describe('mongo.mocked.model.custom.id', () => {
 
     Model = mongoose.model('custom-id', ModelSchema);
 
-    server.mongoEntity('custom-id', Model, undefined, {
+    const entity = server.mongoEntity('custom-id', Model, undefined, {
       id: {
         $Type: 'Edm.Int16'
       }
-    }, undefined, {
+    }, undefined);
+
+    entity.mapping = {
       id: {
-        target: 'id',
+        intern: 'id',
         attributes: {
           $Type: 'Edm.Int16'
         }
       }
-    });
+    };
+
     init(server);
 
     httpServer = server.listen(port);
@@ -51,14 +54,14 @@ describe('mongo.mocked.model.custom.id', () => {
   it('should work when use a custom id to query specific entity', async function () {
     modelMock = sinon.mock(Model);
     modelMock.expects('findById').once()
-    .returns(new Promise(resolve => resolve({
-      toObject: () => ({
-        id: 100
-      })
-    })));
+      .returns(new Promise(resolve => resolve({
+        toObject: () => ({
+          id: 100
+        })
+      })));
 
     const res = await request(host).get('/custom-id(100)');
-    
+
     assertSuccess(res);
     res.body.id.should.be.equal(100);
     modelMock.verify();
@@ -73,13 +76,13 @@ describe('mongo.mocked.model.custom.id', () => {
     };
     modelMock = sinon.mock(Model);
     queryMock = sinon.mock(query);
-    modelMock.expects('find').once().withArgs({id: {$eq: 100}}).returns(query);
+    modelMock.expects('find').once().withArgs({ id: { $eq: 100 } }).returns(query);
     queryMock.expects('exec').once()
-    .returns(new Promise(resolve => resolve([{
-      toObject: () => ({
-        id: 100
-      })
-    }])));
+      .returns(new Promise(resolve => resolve([{
+        toObject: () => ({
+          id: 100
+        })
+      }])));
 
     const res = await request(host).get('/custom-id?$filter=id eq 100');
 

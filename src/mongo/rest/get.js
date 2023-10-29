@@ -1,15 +1,25 @@
+function throwNotFound() {
+  const result = new Error('Not Found');
+
+  result.status = 404;
+  throw result;
+}
 export default async (req, res, next) => {
   try {
-    const entity = await req.$odata.Model.findById(req.$odata.$Key._id);
+    let entity = await req.$odata.Model.findById(req.$odata.$Key._id);
 
-    if (!entity) {
-      const result = new Error('Not Found');
-
-      result.status = 404;
-      throw result;
+    debugger;
+    if (!entity) { // client check
+      throwNotFound();
     }
 
-    res.$odata.result = entity.toObject();
+    entity = entity.toObject();
+
+    if (req.$odata.clientField && entity[req.$odata.clientField] !== req.$odata.client) {
+      throwNotFound();
+    }
+
+    res.$odata.result = entity;
     next();
 
   } catch (err) {

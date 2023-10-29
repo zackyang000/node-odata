@@ -6,10 +6,18 @@ import getSingleton from "./rest/getSingleton";
 import patchSingleton from "./rest/patchSingleton";
 
 export default class MongoSingleton {
-  constructor(name, model, annotations, mapping) {
+  constructor(name, model, annotations) {
     this.name = name;
-    this.entity = new MongoEntity(name, model, annotations, mapping);
+    this.entity = new MongoEntity(name, model, annotations);
 
+  }
+
+  get mapping() {
+    return this.entity.mapping;
+  }
+
+  set mapping(value) {
+    this.entity.mapping = value;
   }
 
   getHandler() {

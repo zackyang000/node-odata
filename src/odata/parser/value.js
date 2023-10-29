@@ -40,7 +40,6 @@ function parseDate(value, metadata) {
 export default function (value, metadata) {
   const trimmed = value.trim();
 
-  debugger;
   if (metadata.$Nullable && trimmed === 'null') {
     return null;
   }

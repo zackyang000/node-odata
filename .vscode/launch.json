@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/odata.actions.js"
+        "test/mongo/mocked/odata.client.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

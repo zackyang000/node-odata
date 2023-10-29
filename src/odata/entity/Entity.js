@@ -7,10 +7,39 @@ import parseKeys from './parser/keys';
 import parseCount from './parser/count';
 import parseFilter from './parser/filter';
 import parseOrderBy from "./parser/orderby";
+import parseClient from './parser/client';
 import { parseSkip, parseTop } from "./parser/skiptop";
 
 export default class Entity {
-  constructor(name, handler, metadata, settings, annotations, mapping) {
+
+  get mapping() {
+    return this._mapping;
+  }
+
+  set mapping(value) {
+    // update types of properties
+    Object.keys(value).forEach(name => {
+      //TODO: validation
+      if (this.metadata[name]?.$Type != value[name]?.attributes?.$Type) {
+        this.metadata[name].$Type = value[name].attributes.$Type;
+      }
+    });
+
+    this._mapping = value;
+  }
+
+  get clientField() {
+    return this._clientField;
+  }
+
+  set clientField(value) {
+    if (!this.metadata[value]) {
+      throw new Error(`Entity '${this.name}' does'nt have property named '${value}'`);
+    }
+    this._clientField = value;
+  }
+
+  constructor(name, handler, metadata, settings, annotations) {
     const notImplemented = op => (req, res) => {
       const error = new Error(`Operation '${op}' is not implemented'`);
 
@@ -42,7 +71,7 @@ export default class Entity {
     };
 
     this.annotations = annotations;
-    this.mapping = mapping || {};
+    this._mapping = {};
   }
 
   addBefore(fn, name) {
@@ -134,16 +163,17 @@ export default class Entity {
 
   parsingMiddleware(req, res, next) {
     try {
-      req.$odata.$Key = parseKeys(req, this.name, this.metadata, this.mapping);
-      req.$odata.$select = parseSelect(req, this.name, this.metadata, this.mapping);
-      req.$odata.$filter = parseFilter(req, this.name, this.metadata, this.mapping);
-      req.$odata.$count = parseCount(req, this.name, this.metadata);
-      req.$odata.$orderby = parseOrderBy(req, this.name, this.metadata, this.mapping, this.options.orderby);
-      req.$odata.$skip = parseSkip(req, this.options.maxSkip);
-      req.$odata.$top = parseTop(req, this.options.maxTop);
-
       req.$odata = {
         ...req.$odata,
+        $Key: parseKeys(req, this.name, this.metadata, this.mapping),
+        $select: parseSelect(req, this.name, this.metadata, this.mapping),
+        $filter: parseFilter(req, this.name, this.metadata, this.mapping),
+        $count: parseCount(req, this.name, this.metadata),
+        $orderby: parseOrderBy(req, this.name, this.metadata, this.mapping, this.options.orderby),
+        $skip: parseSkip(req, this.options.maxSkip),
+        $top: parseTop(req, this.options.maxTop),
+        clientField: this.clientField,
+        client: parseClient(req, this.clientField, this.metadata),
         body: req.body,
         $expand: req.query.$expand, // TODO : implement expand
         $search: req.query.$search // TODO : implement search
@@ -168,7 +198,7 @@ export default class Entity {
 
     } else {
       const keys = Object.keys(this.mapping);
-      result.mapping = keys.find(name => this.mapping[name].target === member);
+      result.mapping = keys.find(name => this.mapping[name].intern === member);
 
       if (result.mapping) {
         result.propertyMetadata = this.mapping[result.mapping].attributes;
@@ -267,40 +297,40 @@ export default class Entity {
   ctrl(name, handler) {
     return async (req, res, next) => {
       try {
-      res.$odata.status = 200;
+        res.$odata.status = 200;
 
-      if (name === 'list' && req.$odata.$count) {
-        const countResponse = {
-          $odata: {}
-        };
-
-        this.handler.count(req, countResponse, async err => {
-          if (err) {
-            next(err);
-            return;
-          }
-
-          res.$odata.result = {
-            ['@odata.count']: countResponse.$odata.result
+        if (name === 'list' && req.$odata.$count) {
+          const countResponse = {
+            $odata: {}
           };
+
+          this.handler.count(req, countResponse, async err => {
+            if (err) {
+              next(err);
+              return;
+            }
+
+            res.$odata.result = {
+              ['@odata.count']: countResponse.$odata.result
+            };
+            await handler(req, res, next);
+          });
+
+        } else {
           await handler(req, res, next);
-        });
 
-      } else {
-        await handler(req, res, next);
+        }
 
+      } catch (err) {
+        next(err);
       }
-
-    } catch(err) { 
-      next(err);
-    }
     };
   }
 
   getMetadata() {
     return this.metadata;
   }
-  
+
   annotate(anno, value) {
     if (!anno) {
       throw new Error('Name of annotation term should be given');
@@ -360,7 +390,7 @@ export default class Entity {
   }
 
   getResourceUrl(name) {
-    const entityName = name || this.name;
+        const entityName = name || this.name;
     const resourceListURL = `/${entityName}`;
 
     if (this.metadata.$Key.length === 1) {
@@ -395,7 +425,7 @@ export default class Entity {
         regex: resourceListRegex
       },
       {
-        name: 'put',
+                name: 'put',
         method: 'put',
         url: resourceURL,
         regex: resourceRegex

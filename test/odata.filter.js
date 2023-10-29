@@ -270,17 +270,17 @@ describe('odata.filter', () => {
 
   });
   it('should use mapping', async function () {
-    server.entity('book', {
+    const book = server.entity('book', {
       list: (req, res, next) => {
         req.$odata.$filter.should.deepEqual({ _id: { $eq: '2' } });
         res.$odata.result = { value: [] };
         next();
       }
-    }, BookMetadata, null, {
-      id: {
-        target: '_id'
-      }
-    });
+    }, BookMetadata, null);
+
+    book.mapping.id = {
+      intern: '_id'
+    };
     httpServer = server.listen(port);
 
     const res = await request(host).get(encodeURI(`/book?$filter=id eq '2'`));

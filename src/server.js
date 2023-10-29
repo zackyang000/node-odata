@@ -22,7 +22,7 @@ function checkAuth(auth, req) {
 class Server {
   constructor(prefix, options) {
     const opts = (options && options.expressRequestLimit)
-    ? { limit: options.expressRequestLimit } : {};
+      ? { limit: options.expressRequestLimit } : {};
 
     this._app = createExpress(options);
     this._settings = {
@@ -75,14 +75,14 @@ class Server {
   addAfter(fn, name) {
     this.hooks.addAfter(fn, name);
   }
-  
+
   function(url, middleware, params) {
     const func = new Func(url.replace(/[ /]+/, ''), middleware, params);
 
     this.resources[func.getName()] = func;
   }
 
-  entity(name, handler, metadata, settings, mapping) {
+  entity(name, handler, metadata, settings) {
     if (this.resources[name]) {
       throw new Error(`Entity with name "${name}" already defined`);
     }
@@ -92,12 +92,12 @@ class Server {
       maxTop: this._settings.maxTop,
       orderby: this._settings.orderby,
       ...settings
-    }, this.annotations, mapping);
+    }, this.annotations);
 
     return this.resources[name];
   }
 
-  mongoEntity(name, model, handler, metadata, settings, mapping) {
+  mongoEntity(name, model, handler, metadata, settings, registerComplexTypes = true) {
     if (name && !model) {
       if (!this.resources[name]) {
         throw new Error(`Entity '${name}' is not defined`);
@@ -105,49 +105,55 @@ class Server {
       return this.resources[name];
     }
 
-    const entity = new MongoEntity(name, model, this.annotations, mapping);
+    const mongoEntity = new MongoEntity(name, model, this.annotations);
 
-    const complexTypes = entity.getComplexTypes();
+    if (registerComplexTypes) {
+      const complexTypes = mongoEntity.getComplexTypes();
 
-    if (complexTypes) {
-      Object.keys(complexTypes)
-        .forEach(typeName => {
-          const type = complexTypes[typeName];
+      if (complexTypes) {
+        Object.keys(complexTypes)
+          .forEach(typeName => {
+            const type = complexTypes[typeName];
 
-          this.complexType(typeName, type);
-        });
+            this.complexType(typeName, type);
+          });
+      }
     }
 
-    return this.entity(name, {
-      ...entity.getHandler(),
+    const entity = this.entity(name, {
+      ...mongoEntity.getHandler(),
       ...handler
     }, {
-      ...entity.getMetadata(),
+      ...mongoEntity.getMetadata(),
       ...metadata
-    }, settings, entity.getMapping());
+    }, settings);
+
+    entity.mapping = mongoEntity.mapping;
+
+    return entity;
   }
 
-  singleton(name, handler, metadata, mapping) {
+  singleton(name, handler, metadata) {
     if (this.resources[name]) {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Singleton(name, handler, metadata, this.annotations, mapping);
+    this.resources[name] = new Singleton(name, handler, metadata, this.annotations);
 
     return this.resources[name];
   }
 
-  singletonFrom(name, handler, entity, mapping) {
+  singletonFrom(name, handler, entity) {
     if (this.resources[name]) {
       throw new Error(`Entity with name "${name}" already defined`);
     }
 
-    this.resources[name] = new Singleton(name, handler, entity, this.annotations, mapping);
+    this.resources[name] = new Singleton(name, handler, entity, this.annotations);
 
     return this.resources[name];
   }
 
-  mongoSingleton(name, model, handler, metadata, mapping) {
+  mongoSingleton(name, model, handler, metadata) {
     if (name && !model) {
       if (!this.resources[name]) {
         throw new Error(`Entity '${name}' is not defined`);
@@ -155,7 +161,7 @@ class Server {
       return this.resources[name];
     }
 
-    const entity = new MongoSingleton(name, model, this.annotations, mapping);
+    const entity = new MongoSingleton(name, model, this.annotations);
 
     const complexTypes = entity.entity.getComplexTypes();
 
@@ -168,18 +174,20 @@ class Server {
         });
     }
 
-    return this.singleton(name, {
+    const singletonEntity = this.singleton(name, {
       ...entity.getHandler(),
       ...handler
     }, {
       ...entity.entity.getMetadata(),
       ...metadata
-    }, {
-      ...entity.entity.getMapping(),
-      ...mapping
     });
+
+    singletonEntity.mapping = {
+      ...singletonEntity.mapping,
+      ...entity.mapping
+    }
   }
-  
+
   defaultConfiguration(prefix = '') {
     this.set('app', this._app);
     this.set('prefix', prefix);

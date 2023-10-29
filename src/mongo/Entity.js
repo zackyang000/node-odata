@@ -8,23 +8,22 @@ import count from './rest/count';
 import { validate, validateIdentifier } from '../odata/validator';
 
 export default class MongoEntity {
-  constructor(name, model, annotations, mapping) {
+  constructor(name, model, annotations) {
     this.name = name;
     this.model = model;
     this.annotations = annotations;
 
     this.complexTypes = {};
     this.count = 0;
-    this.mapping = {
+    this._mapping = {
       id: {
-        target: '_id',
+        intern: '_id',
         attributes: {
           $Type: 'Edm.String',
           $MaxLength: 24,
           $Nullable: true
         }
-      },
-      ...mapping
+      }
     };
 
   }
@@ -70,12 +69,20 @@ export default class MongoEntity {
     return this.metadata;
   }
 
-  getMapping() {
-    if (!this.metadata) {
-      this.getMetadata();
-    }
+  get mapping() {
+    return this._mapping;
+  }
 
-    return this.mapping;
+  set mapping(value) {
+    // update types of properties
+    Object.keys(value).forEach(name => {
+      //TODO: validation
+      if (this.metadata[name]?.$Type != value[name]?.attributes?.$Type) {
+        delete this.complexType[this.metadata[name].$Type];
+        this.metadata[name].$Type = value[name].attributes.$Type;
+      }
+    });
+    this._mapping = value;
   }
 
   getComplexTypes() {
@@ -171,7 +178,7 @@ export default class MongoEntity {
   }
 
   complexType(node) {
-    const mapping = Object.keys(this.mapping).find(item => this.mapping[item].target === node.path);
+    const mapping = Object.keys(this.mapping).find(item => this.mapping[item].intern === node.path);
 
     if (mapping && this.mapping[mapping].attributes?.$Type) {
       return this.mapping[mapping].attributes?.$Type;
@@ -209,7 +216,7 @@ export default class MongoEntity {
       .reduce((previousProperty, curentProperty) => {
         let result;
         let propertyName = Object.keys(this.mapping)
-          .find(name => this.mapping[name]?.target === curentProperty);
+          .find(name => this.mapping[name]?.intern === curentProperty);
 
         if (propertyName && this.mapping[propertyName].attributes) {
           result = {
@@ -293,7 +300,7 @@ export default class MongoEntity {
     }
 
     this.mapping[odataProperty] = {
-      target: mongoProperty
+      intern: mongoProperty
     };
   }
 

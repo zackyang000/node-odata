@@ -451,16 +451,22 @@ describe('mongo.metadata.resource.complex', () => {
         $Type: 'Edm.String'
       }
     });
-    server.mongoEntity('p1', ComplexModel, undefined, undefined, undefined, {
+    const entity = server.mongoEntity('p1', ComplexModel, undefined, undefined, undefined, false);
+
+    entity.mapping = {
+      ...entity.mapping,
       p2: {
-        target: 'p2',
+        intern: 'p2',
         attributes: {
           $Type: 'node.odata.myComlexType'
         }
       }
-    });
+    };
+    entity.update
     httpServer = server.listen(port);
+
     const res = await request(host).get('/$metadata?$format=json');
+
     res.statusCode.should.equal(200);
     res.body.should.deepEqual(jsonDocument);
   });

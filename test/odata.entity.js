@@ -1,6 +1,6 @@
 import 'should';
 import request from 'supertest';
-import { odata, host, port } from './support/setup';
+import { odata, host, port, assertSuccess } from './support/setup';
 
 describe('odata.entity', () => {
   let httpServer, server;
