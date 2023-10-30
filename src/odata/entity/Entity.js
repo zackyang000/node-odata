@@ -173,7 +173,7 @@ export default class Entity {
         $skip: parseSkip(req, this.options.maxSkip),
         $top: parseTop(req, this.options.maxTop),
         clientField: this.clientField,
-        client: parseClient(req, this.clientField, this.metadata),
+        client: parseClient(req, this.name, this.metadata, this.clientField),
         body: req.body,
         $expand: req.query.$expand, // TODO : implement expand
         $search: req.query.$search // TODO : implement search

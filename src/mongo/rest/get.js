@@ -8,14 +8,13 @@ export default async (req, res, next) => {
   try {
     let entity = await req.$odata.Model.findById(req.$odata.$Key._id);
 
-    debugger;
-    if (!entity) { // client check
+    if (!entity) { 
       throwNotFound();
     }
 
     entity = entity.toObject();
 
-    if (req.$odata.clientField && entity[req.$odata.clientField] !== req.$odata.client) {
+    if (req.$odata.clientField && entity[req.$odata.clientField] !== req.$odata.client) { // client check
       throwNotFound();
     }
 
