@@ -1,6 +1,3 @@
-import mongoose from 'mongoose';
-import id from '../../lib/model/idPlugin';
-
 export odata from '../../src';
 export const host = 'http://localhost:3000';
 export const port = '3000';
