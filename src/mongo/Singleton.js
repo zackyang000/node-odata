@@ -8,8 +8,16 @@ import patchSingleton from "./rest/patchSingleton";
 export default class MongoSingleton {
   constructor(name, model, annotations) {
     this.name = name;
-    this.entity = new MongoEntity(name, model, annotations);
+    this._entity = new MongoEntity(name, model, annotations);
 
+  }
+
+  get entity () {
+    return this._entity;
+  }
+
+  set entity(value) {
+    this._entity = value;
   }
 
   get mapping() {

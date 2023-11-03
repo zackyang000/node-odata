@@ -2,7 +2,9 @@ import selectParser from "../parser/selectParser";
 
 export default async (req, res, next) => {
   try {
-    const query = req.$odata.Model.findOne();
+    debugger;
+    const param = req.$odata.clientField ? { [req.$odata.clientField]: req.$odata.client } : undefined;
+    const query = req.$odata.Model.findOne(param);
   
     await selectParser(query, req.$odata.$select);
   
@@ -18,6 +20,9 @@ export default async (req, res, next) => {
     res.$odata.result = entity.toObject();
     if (transient) {
       res.$odata.result._id = null;
+      if (req.$odata.clientField) {
+        res.$odata.result[req.$odata.clientField] = req.$odata.client;
+      }
     }
 
     if (req.$odata.$select) {

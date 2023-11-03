@@ -13,7 +13,7 @@ export default class Singleton {
     };
 
     this.name = name;
-    this.entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, null, annotations);
+    this._entity = metadata instanceof Entity ? metadata : new Entity(name, handler, metadata, null, annotations);
 
     this.handler = {
       ...this.entity.handler, // get, post, put, delete, patch
@@ -26,12 +26,28 @@ export default class Singleton {
 
   }
 
+  get entity () {
+    return this._entity;
+  }
+
+  set entity(value) {
+    this._entity = value;
+  }
+
   get mapping() {
     return this.entity.mapping;
   }
 
   set mapping(value) {
     this.entity.mapping = value;
+  }
+
+  get clientField() {
+    return this.entity.clientField;
+  }
+
+  set clientField(value) {
+    this.entity.clientField = value; 
   }
 
   addBefore(fn, name) {

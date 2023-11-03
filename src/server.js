@@ -186,6 +186,7 @@ class Server {
       ...singletonEntity.mapping,
       ...entity.mapping
     }
+    return singletonEntity;
   }
 
   defaultConfiguration(prefix = '') {
