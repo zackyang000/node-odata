@@ -5,25 +5,31 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-const Schema = mongoose.Schema;
-const ModelSchema = new Schema({
-  client: Number
-});
+describe('mongo.mocked.client.count', () => {
+  let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
-const Model = mongoose.model('client', ModelSchema);
+  before(() => {
+    const Schema = mongoose.Schema;
+    const ModelSchema = new Schema({
+      client: Number
+    });
+    
+    mongoose.set('overwriteModels', true);
 
-describe('mongo.mocked.odata.client', () => {
-  const query = {
-    $where: () => { },
-    where: () => { },
-    equals: () => { },
-    gte: () => { },
-    lt: () => { },
-    exec: () => { },
-    count: () => new Promise((resolve) => resolve(1)),
-    model: Model
-  };
-  let httpServer, server, modelMock, instanceMock, queryMock;
+
+    Model = mongoose.model('client', ModelSchema);
+
+    query = {
+      $where: () => { },
+      where: () => { },
+      equals: () => { },
+      gte: () => { },
+      lt: () => { },
+      exec: () => { },
+      count: () => new Promise((resolve) => resolve(1)),
+      model: Model
+    };
+  });
 
   beforeEach(async function () {
     server = odata();
@@ -54,9 +60,9 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client/$count?sap-client=099`);
 
+    modelMock.verify();
     assertSuccess(res);
 
-    modelMock.verify();
   });
 
 });

@@ -16,6 +16,7 @@ test:
 		--reporter $(REPORTER) \
 		--exclude test/failing/*.js \
 		--exclude test/support/*.js \
+		test/**/**/**/*.js \
 		test/**/**/*.js \
 		test/**/*.js \
 		test/*.js

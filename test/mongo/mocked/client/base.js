@@ -5,25 +5,31 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-const Schema = mongoose.Schema;
-const ModelSchema = new Schema({
-  client: Number
-});
+describe('mongo.mocked.client.base', () => {
+  let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
-const Model = mongoose.model('client', ModelSchema);
+  before(() => {
+    const Schema = mongoose.Schema;
+    const ModelSchema = new Schema({
+      client: Number
+    });
+    
+    mongoose.set('overwriteModels', true);
 
-describe('mongo.mocked.odata.client', () => {
-  const query = {
-    $where: () => { },
-    where: () => { },
-    equals: () => { },
-    gte: () => { },
-    lt: () => { },
-    exec: () => { },
-    count: () => new Promise((resolve) => resolve(1)),
-    model: Model
-  };
-  let httpServer, server, modelMock, instanceMock, queryMock;
+
+    Model = mongoose.model('client', ModelSchema);
+
+    query = {
+      $where: () => { },
+      where: () => { },
+      equals: () => { },
+      gte: () => { },
+      lt: () => { },
+      exec: () => { },
+      count: () => new Promise((resolve) => resolve(1)),
+      model: Model
+    };
+  });
 
   beforeEach(async function () {
     server = odata();
@@ -51,6 +57,7 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client('1')`);
 
+    modelMock.verify();
     res.body.should.deepEqual({
       error: {
         code: '400',
@@ -58,7 +65,6 @@ describe('mongo.mocked.odata.client', () => {
       }
     });
 
-    modelMock.verify();
   });
 
   it('should apply client to the key', async function () {
@@ -79,9 +85,9 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client('1')?sap-client=099`);
 
+    modelMock.verify();
     assertSuccess(res);
 
-    modelMock.verify();
   });
 
   it('should fail with correct key and wrong client', async function () {
@@ -102,9 +108,9 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client('1')?sap-client=099`);
 
+    modelMock.verify();
     res.status.should.be.equal(404);
 
-    modelMock.verify();
   });
 
 });

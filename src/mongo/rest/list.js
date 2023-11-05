@@ -8,7 +8,9 @@ export default async (req, res, next) => {
   try {
     // TODO expand: req.$odata.$expand,
     // TODO search: req.$odata.$search,
-    const query = req.$odata.Model.find(filterParser(req.$odata.$filter));
+    const filter = filterParser(req.$odata.$filter, req.$odata);
+    debugger;
+    const query = req.$odata.Model.find(filter);
 
     if (req.$odata.$orderby) {
       query.sort(req.$odata.$orderby);

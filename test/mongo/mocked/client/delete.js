@@ -5,25 +5,31 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-const Schema = mongoose.Schema;
-const ModelSchema = new Schema({
-  client: Number
-});
+describe('mongo.mocked.client.delete', () => {
+  let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
-const Model = mongoose.model('client', ModelSchema);
+  before(() => {
+    const Schema = mongoose.Schema;
+    const ModelSchema = new Schema({
+      client: Number
+    });
+    
+    mongoose.set('overwriteModels', true);
 
-describe('mongo.mocked.odata.client', () => {
-  const query = {
-    $where: () => { },
-    where: () => { },
-    equals: () => { },
-    gte: () => { },
-    lt: () => { },
-    exec: () => { },
-    count: () => new Promise((resolve) => resolve(1)),
-    model: Model
-  };
-  let httpServer, server, modelMock, instanceMock, queryMock;
+
+    Model = mongoose.model('client', ModelSchema);
+
+    query = {
+      $where: () => { },
+      where: () => { },
+      equals: () => { },
+      gte: () => { },
+      lt: () => { },
+      exec: () => { },
+      count: () => new Promise((resolve) => resolve(1)),
+      model: Model
+    };
+  });
 
   beforeEach(async function () {
     server = odata();
@@ -58,9 +64,9 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).delete(`/client('1')?sap-client=099`);
 
+    modelMock.verify();
     res.status.should.be.equal(404);
 
-    modelMock.verify();
   });
 
   it('should work on delete with client', async function () {
@@ -83,10 +89,10 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).delete(`/client('1')?sap-client=099`);
 
-    res.status.should.be.equal(204);
-
     modelMock.verify();
     instanceMock.verify();
+    res.status.should.be.equal(204);
+
   });
 
 });

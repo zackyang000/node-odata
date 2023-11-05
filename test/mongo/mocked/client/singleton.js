@@ -5,25 +5,32 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-const Schema = mongoose.Schema;
-const ModelSchema = new Schema({
-  client: Number
-});
 
-const Model = mongoose.model('client', ModelSchema);
+describe('mongo.mocked.client.singleton', () => {
+  let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
-describe('mongo.mocked.odata.client', () => {
-  const query = {
-    $where: () => { },
-    where: () => { },
-    equals: () => { },
-    gte: () => { },
-    lt: () => { },
-    exec: () => { },
-    count: () => new Promise((resolve) => resolve(1)),
-    model: Model
-  };
-  let httpServer, server, modelMock, instanceMock, queryMock;
+  before(() => {
+    const Schema = mongoose.Schema;
+    const ModelSchema = new Schema({
+      client: Number
+    });
+    
+    mongoose.set('overwriteModels', true);
+
+
+    Model = mongoose.model('client', ModelSchema);
+
+    query = {
+      $where: () => { },
+      where: () => { },
+      equals: () => { },
+      gte: () => { },
+      lt: () => { },
+      exec: () => { },
+      count: () => new Promise((resolve) => resolve(1)),
+      model: Model
+    };
+  });
 
   beforeEach(async function () {
     server = odata();
@@ -61,14 +68,14 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client?sap-client=099`);
 
+    modelMock.verify();
+    queryMock.verify();
+    instanceMock.verify();
     res.body.should.deepEqual({
       id: null,
       client: 99
     });
 
-    modelMock.verify();
-    queryMock.verify();
-    instanceMock.verify();
   });
 
   it('should returns a singleton with client', async function () {
@@ -94,13 +101,13 @@ describe('mongo.mocked.odata.client', () => {
 
     const res = await request(host).get(`/client?sap-client=099`);
 
+    modelMock.verify();
+    queryMock.verify();
+    instanceMock.verify();
     res.body.should.deepEqual({
       id: '1',
       client: 99
     });
 
-    modelMock.verify();
-    queryMock.verify();
-    instanceMock.verify();
   });
 });

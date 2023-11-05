@@ -58,4 +58,15 @@ function parse($filter) {
 
 };
 
-export default parse;
+export default ($filter, $odata) => {
+  let result = parse($filter);
+
+  debugger;
+  if ($odata.clientField) {
+    const clientCondition = { [$odata.clientField]: { $eq: $odata.client } };
+
+    result = result ? { $and: [ clientCondition, result ] } : clientCondition
+  }
+
+  return result;
+};
