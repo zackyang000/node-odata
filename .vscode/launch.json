@@ -20,7 +20,7 @@
         "dot",
         "--timeout",
         "300000",
-        "test/mongo/mocked/client/list.js"
+        "test/mongo/mocked/client/patch.js"
       ],
       "env": {
         "LOG_LEVEL": "debug"

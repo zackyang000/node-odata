@@ -5,8 +5,7 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-
-describe('mongo.mocked.client.singleton', () => {
+describe('mongo.mocked.client.get', () => {
   let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
   before(() => {
@@ -47,67 +46,51 @@ describe('mongo.mocked.client.singleton', () => {
     queryMock?.restore();
   });
 
-  it('should returns a transient singleton with wrong client', async function () {
-    const entity = server.mongoSingleton('client', Model);
+
+  it('should apply client to the key', async function () {
+    const entity = server.mongoEntity('client', Model);
 
     entity.clientField = 'client';
 
     modelMock = sinon.mock(Model);
-    modelMock.expects('findOne').once()
-      .withArgs({
-        client: 99
-      })
-      .returns(query);
-    queryMock = sinon.mock(query);
-    queryMock.expects('exec').once()
-      .returns(new Promise(resolve => resolve()));
-    instanceMock = sinon.mock(Model.prototype);
-    instanceMock.expects('toObject').once()
-      .returns({});
-    httpServer = server.listen(port);
-
-    const res = await request(host).get(`/client?sap-client=099`);
-
-    modelMock.verify();
-    queryMock.verify();
-    instanceMock.verify();
-    res.body.should.deepEqual({
-      id: null,
-      client: 99
-    });
-
-  });
-
-  it('should returns a singleton with client', async function () {
-    const entity = server.mongoSingleton('client', Model);
-
-    entity.clientField = 'client';
-
-    modelMock = sinon.mock(Model);
-    modelMock.expects('findOne').once()
-      .withArgs({
-        client: 99
-      })
-      .returns(query);
-    queryMock = sinon.mock(query);
-    queryMock.expects('exec').once()
+    modelMock.expects('findById').once()
+      .withArgs('1')
       .returns(new Promise(resolve => resolve({
         toObject: () => ({
-          id: '1',
+          _id: 1,
           client: 99
         })
       })));
     httpServer = server.listen(port);
 
-    const res = await request(host).get(`/client?sap-client=099`);
+    const res = await request(host).get(`/client('1')?sap-client=099`);
 
     modelMock.verify();
-    queryMock.verify();
-    instanceMock.verify();
-    res.body.should.deepEqual({
-      id: '1',
-      client: 99
-    });
+    assertSuccess(res);
 
   });
+
+  it('should fail with correct key and wrong client', async function () {
+    const entity = server.mongoEntity('client', Model);
+
+    entity.clientField = 'client';
+
+    modelMock = sinon.mock(Model);
+    modelMock.expects('findById').once()
+      .withArgs('1')
+      .returns(new Promise(resolve => resolve({
+        toObject: () => ({
+          _id: 1,
+          client: 98
+        })
+      })));
+    httpServer = server.listen(port);
+
+    const res = await request(host).get(`/client('1')?sap-client=099`);
+
+    modelMock.verify();
+    res.status.should.be.equal(404);
+
+  });
+
 });

@@ -2,7 +2,6 @@ import selectParser from "../parser/selectParser";
 
 export default async (req, res, next) => {
   try {
-    debugger;
     const param = req.$odata.clientField ? { [req.$odata.clientField]: req.$odata.client } : undefined;
     const query = req.$odata.Model.findOne(param);
   
