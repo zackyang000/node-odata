@@ -30,7 +30,10 @@ describe('mongo.mocked.rest.put', () => {
     book.title = 'modify book';
     modelMock = sinon.mock(BookModel);
     modelMock.expects('findOne').once().withArgs({_id: '1'})
-      .returns(new Promise((resolve, reject) => resolve(JSON.parse(JSON.stringify(books[0])))));
+      .returns(new Promise((resolve, reject) => resolve(JSON.parse(JSON.stringify({
+        ...books[0],
+        _id: books[0].id
+      })))));
     modelMock.expects('findByIdAndUpdate').once().withArgs('1', book)
       .returns(new Promise(resolve => resolve()));
 
@@ -38,9 +41,9 @@ describe('mongo.mocked.rest.put', () => {
       .put(`/book('${book.id}')`)
       .send(book);
 
+    modelMock.verify();
     res.body.should.be.have.property('title');
     res.body.title.should.be.equal(book.title);
-    modelMock.verify();
   });
   it('should create resource if send with a id which not exist', async function () {
     const book = JSON.parse(JSON.stringify(books[0]));

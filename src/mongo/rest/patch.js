@@ -1,3 +1,5 @@
+import applyClient from "../applyClient";
+
 export default async (req, res, next) => {
   try {
     const entity = (await req.$odata.Model.findById(req.$odata.$Key._id)).toObject();
@@ -20,6 +22,8 @@ export default async (req, res, next) => {
     }
 
     const patched = { ...entity, ...req.$odata.body };
+
+    applyClient(req, patched);
 
     await req.$odata.Model.updateOne({ _id: req.$odata.$Key._id }, patched);
     res.$odata.result = patched;

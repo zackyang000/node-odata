@@ -1,3 +1,5 @@
+import applyClient from "../applyClient";
+
 export default async (req, res, next) => {
   try {
     if (!Object.keys(req.body).length) {
@@ -7,8 +9,21 @@ export default async (req, res, next) => {
       throw error;
 
     }
+    if (req.$odata.clientField) {
+      const bodyField = req.body[req.$odata.clientField];
+
+      if (bodyField && bodyField !== req.$odata.client) {
+        const error = new Error('Client value in custom parameter differs from client value in body');
+
+        error.status = 400;
+        throw error;
+      }
+
+    }
 
     const entity = new req.$odata.Model(req.body);
+
+    applyClient(req, entity);
 
     await entity.save({
       validateBeforeSave: true,

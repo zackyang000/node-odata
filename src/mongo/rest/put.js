@@ -1,13 +1,34 @@
+import applyClient from "../applyClient";
+
 export default async (req, res, next) => {
   try {
     const entity = await req.$odata.Model.findOne({ _id: req.$odata.$Key._id });
 
-    if (entity) {
-      await req.$odata.Model.findByIdAndUpdate(entity.id, req.$odata.body);
+    if (req.$odata.clientField) {
+      if (entity && entity.client !== req.$odata.client) {
+        const error1 = new Error('Not found');
+  
+        error1.status = 404;
+        throw error1;
+      }
 
+      const bodyClient = req.$odata.body[req.$odata.clientField];
+
+      if (bodyClient && bodyClient !== req.$odata.client) {
+        const error2 = new Error('Client value in custom parameter differs from client value in body');
+
+        error2.status = 400;
+        throw error2;
+      }
+    }
+
+    if (entity) {
       const newEntity = req.$odata.body;
 
-      newEntity.id = entity.id;
+      applyClient(req, newEntity);
+      await req.$odata.Model.findByIdAndUpdate(entity._id, req.$odata.body);
+
+      newEntity._id = entity._id;
       res.$odata.result = newEntity;
 
     } else {

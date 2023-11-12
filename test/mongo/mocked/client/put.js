@@ -5,7 +5,7 @@ import { odata, host, port, assertSuccess } from '../../../support/setup';
 import mongoose from 'mongoose';
 import { init } from '../../../support/db';
 
-describe('mongo.mocked.client.patch', () => {
+describe('mongo.mocked.client.put', () => {
   let httpServer, server, modelMock, instanceMock, queryMock, query, Model;
 
   before(() => {
@@ -53,27 +53,31 @@ describe('mongo.mocked.client.patch', () => {
     entity.clientField = 'client';
 
     modelMock = sinon.mock(Model);
-    modelMock.expects('findById').once()
-      .withArgs('1')
+    modelMock.expects('findOne').once()
+      .withArgs({
+        _id: '1'
+      })
       .returns(new Promise(resolve => resolve({
-        toObject: () => ({
+        _id: '1',
+        client: 99,
+        toObject: () => (
+          {
           _id: '1',
           client: 99,
           text: 'original'
         })
       })));
-    modelMock.expects('updateOne').once()
-    .withArgs({
-      _id: '1'
-    }, {
+    modelMock.expects('findByIdAndUpdate').once()
+    .withArgs('1', {
       _id: '1',
       client: 99,
       text: 'patched'
     }).returns(new Promise(resolve => resolve()));
     httpServer = server.listen(port);
 
-    const res = (await request(host).patch(`/client('1')?sap-client=099`)
+    const res = (await request(host).put(`/client('1')?sap-client=099`)
       .send({
+        _id: '1',
         client: 99,
         text: 'patched'
       }));
@@ -95,20 +99,26 @@ describe('mongo.mocked.client.patch', () => {
     entity.clientField = 'client';
 
     modelMock = sinon.mock(Model);
-    modelMock.expects('findById').once()
-      .withArgs('1')
+    modelMock.expects('findOne').once()
+      .withArgs({
+        _id: '1'
+      })
       .returns(new Promise(resolve => resolve({
-        toObject: () => ({
+        _id: '1',
+        client: 99,
+        toObject: () => (
+          {
           _id: '1',
           client: 99,
           text: 'original'
         })
       })));
-    modelMock.expects('updateOne').never();
+    modelMock.expects('findByIdAndUpdate').never();
     httpServer = server.listen(port);
 
-    const res = (await request(host).patch(`/client('1')?sap-client=099`)
+    const res = (await request(host).put(`/client('1')?sap-client=099`)
       .send({
+        _id: '1',
         client: 98,
         text: 'patched'
       }));
@@ -129,20 +139,27 @@ describe('mongo.mocked.client.patch', () => {
     entity.clientField = 'client';
 
     modelMock = sinon.mock(Model);
-    modelMock.expects('findById').once()
-      .withArgs('1')
+    modelMock.expects('findOne').once()
+      .withArgs({
+        _id: '1'
+      })
       .returns(new Promise(resolve => resolve({
-        toObject: () => ({
+        _id: '1',
+        client: 99,
+        toObject: () => (
+          {
           _id: '1',
           client: 99,
           text: 'original'
         })
       })));
-    modelMock.expects('updateOne').never();
+    modelMock.expects('findByIdAndUpdate').never();
     httpServer = server.listen(port);
 
-    const res = (await request(host).patch(`/client('1')?sap-client=098`)
+    const res = (await request(host).put(`/client('1')?sap-client=098`)
       .send({
+        _id: '1',
+        client: 98,
         text: 'patched'
       }));
 
@@ -157,27 +174,30 @@ describe('mongo.mocked.client.patch', () => {
     entity.clientField = 'client';
 
     modelMock = sinon.mock(Model);
-    modelMock.expects('findById').once()
-      .withArgs('1')
+    modelMock.expects('findOne').once()
+      .withArgs({
+        _id: '1'
+      })
       .returns(new Promise(resolve => resolve({
+        _id: '1',
+        client: 99,
         toObject: () => ({
           _id: '1',
           client: 99,
           text: 'original'
         })
       })));
-    modelMock.expects('updateOne').once()
-      .withArgs({
-        _id: '1'
-      }, {
+    modelMock.expects('findByIdAndUpdate').once()
+      .withArgs('1', {
         _id: '1',
         client: 99,
         text: 'patched'
       }).returns(new Promise(resolve => resolve()));
     httpServer = server.listen(port);
 
-    const res = (await request(host).patch(`/client('1')?sap-client=099`)
+    const res = (await request(host).put(`/client('1')?sap-client=099`)
       .send({
+        _id: '1',
         text: 'patched'
       }));
 
