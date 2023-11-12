@@ -544,6 +544,29 @@ const entity = server.entity('book', null, {
 entity.annotate('filterable', ['author', 'title']);
 ```
 
+## Client support
+
+Clients are supported via the custom parameter ```sap-client```. Querying an entity with client support could look like this:
+
+```
+books?sap-client=99
+```
+
+ Client support is built in for Mongo Entity and Singleton. If you implement the entity handler yourself, the passed client is available to you in ```req.$odata.client```. To activate tenant support for an entity or singleton, all you need to do is specify the name of the corresponding property in the collection.
+
+```Javascript
+const BookSchema = new Schema({
+  MANDT: String
+  author: String
+});
+
+const BookModel = mongoose.model('Book', BookSchema);
+
+ const entity = server.entity('book', BookModel);
+
+ entity.clientField = 'MANDT';
+ ```
+
 ## Current State
 
 node-odata is currently at an beta stage, it is stable but not 100% feature complete. 
