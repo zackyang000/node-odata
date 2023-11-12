@@ -1,62 +1,99 @@
 import 'should';
 import sinon from 'sinon';
 import request from 'supertest';
-import { odata, host, port, bookSchema } from './support/setup';
-import FakeDb from './support/fake-db';
+import { odata, host, port, assertSuccess } from './support/setup';
+import { BookMetadata } from './support/books.model';
 
 describe('options.maxTop', () => {
-  let httpServer, server, resource, mock;
+  let httpServer, server;
 
   beforeEach(async function() {
-    const db = new FakeDb();
-    server = odata(db);
-    resource = server.resource('book', bookSchema);
+    server = odata();
   });
 
   afterEach(() => {
     httpServer.close();
-    mock.restore();
   });
 
   it('global-limit should work', async function() {
-    mock = sinon.mock(resource.model);
-    mock.expects('limit').once().withArgs(1).returns(resource.model);
+    server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        req.$odata.$top.should.be.equal(1);
+        next();
+      }
+    }, BookMetadata);
     server.set('maxTop', 1);
     httpServer = server.listen(port);
-    await request(host).get('/book?$top=100');
-    mock.verify();
+
+    const res = await request(host).get('/book?$top=100');
+
+    assertSuccess(res);
   });
   it('resource-limit should work', async function() {
-    mock = sinon.mock(resource.model);
-    mock.expects('limit').once().withArgs(1).returns(resource.model);
-    resource.maxTop(1);
+    const entity = server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        req.$odata.$top.should.be.equal(1);
+        next();
+      }
+    }, BookMetadata);
+    entity.set('maxTop', 1);
     httpServer = server.listen(port);
-    await request(host).get('/book?$top=2');
-    mock.verify();
+
+    const res = await request(host).get('/book?$top=2');
+    
+    assertSuccess(res);
   });
   it('should use resource-limit even global-limit already set', async function() {
-    mock = sinon.mock(resource.model);
-    mock.expects('limit').once().withArgs(1).returns(resource.model);
+    const entity = server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        req.$odata.$top.should.be.equal(1);
+        next();
+      }
+    }, BookMetadata);
     server.set('maxTop', 2);
-    resource.maxTop(1);
+    entity.set('maxTop', 1);
     httpServer = server.listen(port);
-    await request(host).get('/book?$top=100');
-    mock.verify();
+
+    const res = await request(host).get('/book?$top=100');
+
+    assertSuccess(res);
   });
   it('should use query-limit if it is minimum global-limit', async function() {
-    mock = sinon.mock(resource.model);
-    mock.expects('limit').once().withArgs(1).returns(resource.model);
+    const entity = server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        req.$odata.$top.should.be.equal(1);
+        next();
+      }
+    }, BookMetadata);
     server.set('maxTop', 2);
     httpServer = server.listen(port);
-    await request(host).get('/book?$top=1');
-    mock.verify();
+
+    const res = await request(host).get('/book?$top=1');
+
+    assertSuccess(res);
   });
   it('should use query-limit if it is minimum resource-limit', async function() {
-    mock = sinon.mock(resource.model);
-    mock.expects('limit').once().withArgs(1).returns(resource.model);
-    resource.maxTop(2);
+    const entity = server.entity('book', {
+      list: (req, res, next) => {
+        res.$odata.result = [];
+        res.$odata.status = 200;
+        req.$odata.$top.should.be.equal(1);
+        next();
+      }
+    }, BookMetadata);
+    entity.set('maxTop', 2);
     httpServer = server.listen(port);
-    await request(host).get('/book?$top=1');
-    mock.verify();
+
+    const res = await request(host).get('/book?$top=1');
+
+    assertSuccess(res);
   });
 });

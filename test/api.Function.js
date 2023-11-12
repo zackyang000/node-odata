@@ -1,14 +1,12 @@
 import 'should';
 import request from 'supertest';
 import { odata, host, port } from './support/setup';
-import FakeDb from './support/fake-db';
 
 describe('odata.api.Function', () => {
   let httpServer;
 
   before(() => {
-    const db = new FakeDb();
-    const server = odata(db);
+    const server = odata();
     server.function('/test', (req, res, next) => res.jsonp({ test: 'ok' }));
     httpServer = server.listen(port);
   });

@@ -1,7 +1,6 @@
 import 'should';
 import request from 'supertest';
 import { odata, host, port, assertSuccess } from './support/setup';
-import FakeDb from './support/fake-db';
 
 describe('odata.functions', () => {
   ['get', 'post', 'put', 'delete'].map((method) => {
@@ -9,7 +8,7 @@ describe('odata.functions', () => {
       let httpServer;
 
       before(() => {
-        const server = odata(new FakeDb());
+        const server = odata();
         server.function('test',
           (req, res, next) => res.jsonp({ test: 'ok' }),
           { method });
